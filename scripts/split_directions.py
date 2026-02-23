@@ -3,8 +3,10 @@ import os
 import glob
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-folder = os.path.join(base_dir, "data", "traffic_volume")
-files = glob.glob(os.path.join(folder, "*_raw.CSV"))
+traffic_dir = os.path.join(base_dir, "data", "traffic_volume")
+
+# Raw-Dateien liegen jetzt in Unterordnern pro Ort: traffic_volume/<Ort>/*_raw.CSV
+files = glob.glob(os.path.join(traffic_dir, "**", "*_raw.CSV"), recursive=True)
 
 for file in files:
     try:
@@ -25,10 +27,15 @@ for file in files:
             df_r2.columns = common_cols + [f'H{str(i).zfill(2)}' for i in range(24)]
             df_r2 = df_r2.sort_values(by=['JJMMTT']).reset_index(drop=True)
             
-            out_file_r1 = file.replace('_raw.CSV', '_R1.csv')
+            # Output in Richtungsgetrennt-Unterordner
+            out_dir = os.path.join(os.path.dirname(file), "Richtungsgetrennt")
+            os.makedirs(out_dir, exist_ok=True)
+            
+            basename = os.path.basename(file)
+            out_file_r1 = os.path.join(out_dir, basename.replace('_raw.CSV', '_R1.csv'))
             df_r1.to_csv(out_file_r1, index=False)
             
-            out_file_r2 = file.replace('_raw.CSV', '_R2.csv')
+            out_file_r2 = os.path.join(out_dir, basename.replace('_raw.CSV', '_R2.csv'))
             df_r2.to_csv(out_file_r2, index=False)
             print(f"Erstellt: {os.path.basename(out_file_r1)} und {os.path.basename(out_file_r2)}")
         else:
