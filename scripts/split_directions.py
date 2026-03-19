@@ -1,3 +1,8 @@
+"""
+Liest rohe Verkehrsdaten-CSV-Dateien ein und teilt diese nach den beiden Fahrtrichtungen (R1 und R2) auf. 
+Die aufgeteilten Daten werden in separaten CSV-Dateien im Unterordner 'Richtungsgetrennt' gespeichert.
+"""
+
 import pandas as pd
 import os
 import glob

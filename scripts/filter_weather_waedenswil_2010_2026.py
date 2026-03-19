@@ -1,3 +1,9 @@
+"""
+Liest die Wetterdaten für Wädenswil (2010-2026) ein, filtert die relevanten Spalten 
+(Zeit, Temperatur, Regen, Schnee, Sonne) heraus, formatiert die Zeitstempel nach ISO 8601 
+und speichert die bereinigten Daten in einer neuen CSV-Datei.
+"""
+
 import pandas as pd
 import os
 
