@@ -1,12 +1,20 @@
+"""
+Liest die vorbereiteten Datensätze aus 'merged_gapless_time' ein und berechnet
+für jede Datei die Pearson-Korrelationsmatrix über alle numerischen Variablen.
+Speichert die berechneten Matrizen als CSV und generiert visuelle Heatmaps
+(PNG-Plots) im Ordner 'correlation_analysis'.
+"""
+
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import os
 import glob
 
-# Define paths
-input_dir = r"C:\Users\jants\Documents\Developing\Maturaarbeit\Jan-Tschuemperlin-MATA-2026\data\merged_gapless_time"
-output_dir = r"C:\Users\jants\Documents\Developing\Maturaarbeit\Jan-Tschuemperlin-MATA-2026\correlation_analysis"
+# Define paths relative to the script location
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+input_dir = os.path.join(base_dir, "data", "merged_gapless_time")
+output_dir = os.path.join(base_dir, "correlation_analysis")
 
 def main():
     # Create the separate folder if it doesn't exist

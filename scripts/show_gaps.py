@@ -1,3 +1,10 @@
+"""
+Überprüft alle zusammengeführten Datensätze ('_merged.csv') auf fehlende 
+Verkehrsdaten (lückenhafte Stunden). Die gefundenen Lücken werden berechnet 
+(Start, Ende, Dauer) und in einer Übersichtstextdatei ('gaps.txt') im Ordner 
+'merged_gapless' gespeichert.
+"""
+
 import pandas as pd
 import os
 
