@@ -1,9 +1,5 @@
 """
-Fügt die Spalte 'snow_1h' zu den gefilterten Wetterdaten hinzu.
-snow_1h = max(0, snowheight[t] - snowheight[t-1])
-Das heisst: Schneezuwachs pro Stunde in cm. Negative Differenzen
-(Schmelzen) werden als 0 gesetzt.
-Die Dateien werden direkt überschrieben.
+"Fügt die Spalte 'snow_1h' zu den gefilterten Wetterdaten hinzu. snow_1h = max(0, snowheight[t] - snowheight[t-1]). Das heisst: Schneezuwachs pro Stunde in cm. Negative Differenzen (Schmelzen) werden als 0 gesetzt. Die Dateien werden direkt überschrieben."
 """
 
 import pandas as pd

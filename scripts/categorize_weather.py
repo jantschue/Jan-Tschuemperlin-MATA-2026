@@ -1,13 +1,5 @@
 """
-Fügt die Spalte 'weather_cat' zu den gefilterten Wetterdaten hinzu.
-Kategorien (Prioritätsreihenfolge):
-  1. Snow   – Neuschnee fällt (snow_1h > 0)
-  2. Rain   – Regen > 0.1 mm und kein Schnee
-  3. Night  – Dunkelheit: 20:00 – 06:00 (kein Niederschlag)
-  4. Clear  – Kein Niederschlag + Sonnenschein >= 30 Min/h
-  5. Cloudy – Kein Niederschlag + wenig Sonne (tagsüber 07:00–19:00)
-
-Erstellt neue CSV-Dateien mit dem Suffix '_categorized.csv'.
+"Fügt die Spalte 'weather_cat' zu den gefilterten Wetterdaten hinzu. Kategorien (Prioritätsreihenfolge): 1. Snow, 2. Rain, 3. Night, 4. Clear, 5. Cloudy. Erstellt neue CSV-Dateien mit dem Suffix '_categorized.csv'."
 """
 
 import pandas as pd

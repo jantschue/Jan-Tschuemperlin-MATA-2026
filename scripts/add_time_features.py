@@ -1,8 +1,5 @@
 """
-Liest die bereinigten Datensätze aus 'merged_gapless' ein und erweitert sie um
-verschiedene zeitbezogene Merkmale (Tag des Jahres, Tag des Monats, Wochentag,
-Jahr, Monat, Stunde), basierend auf der Spalte 'datetime'. Die neuen Dateien
-werden im Ordner 'merged_gapless_time' gespeichert.
+"Liest die bereinigten Datensätze aus 'merged_gapless' ein und erweitert sie um verschiedene zeitbezogene Merkmale (Tag des Jahres, Tag des Monats, Wochentag, Jahr, Monat, Stunde), basierend auf der Spalte 'datetime'. Die neuen Dateien werden im Ordner 'merged_gapless_time' gespeichert."
 """
 
 import pandas as pd

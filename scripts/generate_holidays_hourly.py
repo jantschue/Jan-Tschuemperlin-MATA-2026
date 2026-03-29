@@ -1,10 +1,5 @@
 """
-Erstellt ein stündliches Feiertags-Dataset für den gesamten Zeitraum 2015-2026.
-Liest die Feiertage aus 'feiertage_SZ_2015_2026.csv' und erzeugt für jede Stunde
-des Zeitraums einen Eintrag mit den Spalten:
-  - datetime: Zeitstempel im ISO 8601 Format (z.B. 2015-01-01T00:00:00)
-  - is_holiday: 1 wenn die Stunde auf einen Feiertag fällt, sonst 0
-Das Ergebnis wird als 'feiertage_SZ_2015_2026_hourly.csv' gespeichert.
+"Erstellt ein stündliches Feiertags-Dataset für den gesamten Zeitraum 2015-2026. Liest die Feiertage aus 'feiertage_SZ_2015_2026.csv' und erzeugt für jede Stunde des Zeitraums einen Eintrag mit den Spalten datetime und is_holiday. Das Ergebnis wird als 'feiertage_SZ_2015_2026_hourly.csv' gespeichert."
 """
 
 import pandas as pd

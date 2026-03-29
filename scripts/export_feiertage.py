@@ -1,6 +1,5 @@
 """
-Lädt die gesetzlichen Feiertage für den Kanton Schwyz (SZ) für die Jahre 2015 bis 2026 herunter 
-und speichert sie als CSV-Datei im Verzeichnis 'data/holidays'.
+"Lädt die gesetzlichen Feiertage für den Kanton Schwyz (SZ) für die Jahre 2015 bis 2026 herunter und speichert sie als CSV-Datei im Verzeichnis 'data/holidays'."
 """
 
 import holidays

@@ -1,5 +1,5 @@
 """
-Entfernt die Spalte 'snowheight' aus den kategorisierten Wetterdaten.
+"Entfernt die Spalte 'snowheight' aus den kategorisierten Wetterdaten."
 """
 
 import pandas as pd

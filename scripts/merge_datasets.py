@@ -1,11 +1,5 @@
 """
-Erstellt 10 zusammengeführte Datensets (5 Zählstellen × 2 Richtungen).
-Für jede stündliche Verkehrsdatei wird:
-  1. Das Verkehrsvolumen (volume) geladen
-  2. Die Feiertags-Daten (is_holiday) über den Zeitstempel angehängt
-  3. Die kategorisierten Wetterdaten von Wädenswil (temp, rain_1h, sun_1h, snow_1h, weather_cat) angehängt
-Die zusammengeführten Dateien werden im Ordner 'data/merged' gespeichert.
-Spaltenreihenfolge: datetime, volume, is_holiday, temp, rain_1h, sun_1h, snow_1h, weather_cat
+"Erstellt 10 zusammengeführte Datensets (5 Zählstellen × 2 Richtungen). Für jede stündliche Verkehrsdatei wird: 1. Das Verkehrsvolumen geladen, 2. Die Feiertags-Daten angehängt, 3. Die kategorisierten Wetterdaten angehängt. Die Dateien werden im Ordner 'data/merged' gespeichert."
 """
 
 import pandas as pd

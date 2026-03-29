@@ -1,8 +1,5 @@
 """
-Liest die vorbereiteten Datensätze aus 'merged_gapless_time' ein und berechnet
-für jede Datei die Pearson-Korrelationsmatrix über alle numerischen Variablen.
-Speichert die berechneten Matrizen als CSV und generiert visuelle Heatmaps
-(PNG-Plots) im Ordner 'correlation_analysis'.
+"Liest die vorbereiteten Datensätze aus 'merged_gapless_time' ein und berechnet für jede Datei die Pearson-Korrelationsmatrix über alle numerischen Variablen. Speichert die berechneten Matrizen als CSV und generiert visuelle Heatmaps (PNG-Plots) im Ordner 'correlation_analysis'."
 """
 
 import pandas as pd

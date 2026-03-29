@@ -1,10 +1,5 @@
 """
-Transformiert die R1- und R2-CSV-Dateien in ein stündliches Format.
-Für jeden der 5 Ordner werden zwei neue CSV-Dateien erstellt (*_R1_hourly.csv, *_R2_hourly.csv).
-Jede Zeile enthält:
-  - datetime: Zeitstempel im ISO 8601 Format (z.B. 2015-01-01T00:00:00)
-  - volume:   Anzahl Fahrzeuge in dieser Stunde
-Die Originaldateien bleiben unverändert.
+"Transformiert die R1- und R2-CSV-Dateien in ein stündliches Format. Für jeden der 5 Ordner werden zwei neue CSV-Dateien erstellt (*_R1_hourly.csv, *_R2_hourly.csv). Die Originaldateien bleiben unverändert."
 """
 
 import os

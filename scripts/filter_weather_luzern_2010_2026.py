@@ -1,7 +1,5 @@
 """
-Liest die Wetterdaten für Luzern (2010-2019 und 2020-2026) ein, fügt diese zusammen,
-filtert die relevanten Spalten (Zeit, Temperatur, Regen, Schnee, Sonne) heraus, 
-formatiert die Zeitstempel nach ISO 8601 und speichert die bereinigten Daten in einer neuen CSV-Datei.
+"Liest die Wetterdaten für Luzern (2010-2019 und 2020-2026) ein, fügt diese zusammen, filtert die relevanten Spalten (Zeit, Temperatur, Regen, Schnee, Sonne) heraus, formatiert die Zeitstempel nach ISO 8601 und speichert die bereinigten Daten in einer neuen CSV-Datei."
 """
 
 import pandas as pd
@@ -10,8 +8,8 @@ import os
 def main():
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     base_path = os.path.join(base_dir, "data", "weather", "Luzern")
-    file1 = os.path.join(base_path, "wetter_luzern_2010-2019.csv")
-    file2 = os.path.join(base_path, "wetter_luzern_2020-2026.csv")
+    file1 = os.path.join(base_path, "raw", "wetter_luzern_2010-2019.csv")
+    file2 = os.path.join(base_path, "raw", "wetter_luzern_2020-2026.csv")
     output_file = os.path.join(base_path, "wetter_luzern_2010-2026_filtered.csv")
 
     print(f"Lade Daten von {file1}...")

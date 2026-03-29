@@ -1,7 +1,5 @@
 """
-"Liest die Feature-Engineered-Datensätze ein, berechnet die Pearson-Korrelationsmatrix 
-über alle numerischen Variablen und visualisiert sie als Heatmap.
-Die Ergebnisse (CSV und Plot) werden im Ordner 'correlation_analysis_engineered' abgelegt."
+"Liest die Feature-Engineered-Datensätze ein, berechnet die Pearson-Korrelationsmatrix über alle numerischen Variablen und visualisiert sie als Heatmap. Die Ergebnisse (CSV und Plot) werden im Ordner 'correlation_analysis_engineered' abgelegt."
 """
 
 import pandas as pd

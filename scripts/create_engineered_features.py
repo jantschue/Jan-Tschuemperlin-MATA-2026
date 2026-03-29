@@ -1,6 +1,5 @@
 """
-"Erstellt neue Datensätze mit zyklischen und binären Features (inklusive is_weekend und is_holiday) 
-sowie relevanten Wetterdaten in einer logischen Reihenfolge für das anschliessende Machine Learning."
+"Erstellt neue Datensätze mit zyklischen und binären Features (inklusive is_weekend und is_holiday) sowie relevanten Wetterdaten in einer logischen Reihenfolge für das anschliessende Machine Learning."
 """
 
 import pandas as pd

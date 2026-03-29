@@ -1,9 +1,5 @@
 """
-Dieses Skript berechnet den durchschnittlichen Verlauf von Temperatur, Sonnenstunden und Verkehrsvolumen 
-über die Stunden des Tages (0-23) für alle Datensätze in 'merged_gapless_time'.
-Es erstellt Liniendiagramme und speichert diese im Ordner 'hourly_plots', um visuell zu erklären, 
-warum die Pearson-Korrelation zwischen 'Hour' und Variablen wie 'temp' oder 'sun_1h' nahe 0 ist 
-(da der Zusammenhang nicht linear, sondern kurvenförmig ist).
+"Dieses Skript berechnet den durchschnittlichen Verlauf von Temperatur, Sonnenstunden und Verkehrsvolumen über die Stunden des Tages (0-23) für alle Datensätze in 'merged_gapless_time'. Es erstellt Liniendiagramme und speichert diese im Ordner 'hourly_plots'."
 """
 
 import pandas as pd

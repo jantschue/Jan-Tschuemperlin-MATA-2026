@@ -1,7 +1,5 @@
 """
-Liest die Wetterdaten für Wädenswil (2010-2026) ein, filtert die relevanten Spalten 
-(Zeit, Temperatur, Regen, Schnee, Sonne) heraus, formatiert die Zeitstempel nach ISO 8601 
-und speichert die bereinigten Daten in einer neuen CSV-Datei.
+"Liest die Wetterdaten für Wädenswil (2010-2026) ein, filtert die relevanten Spalten (Zeit, Temperatur, Regen, Schnee, Sonne) heraus, formatiert die Zeitstempel nach ISO 8601 und speichert die bereinigten Daten in einer neuen CSV-Datei."
 """
 
 import pandas as pd
@@ -9,7 +7,7 @@ import os
 
 def main():
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    input_file = os.path.join(base_dir, "data", "weather", "Waedenswil", "wetter_waedenswil_2010-2026.csv")
+    input_file = os.path.join(base_dir, "data", "weather", "Waedenswil", "raw", "wetter_waedenswil_2010-2026.csv")
     output_file = os.path.join(base_dir, "data", "weather", "Waedenswil", "wetter_waedenswil_2010-2026_filtered.csv")
 
     print(f"Lade Daten von {input_file}...")
