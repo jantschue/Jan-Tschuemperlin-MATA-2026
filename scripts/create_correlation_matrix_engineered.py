@@ -10,8 +10,8 @@ import glob
 
 # Pfade relativ zum Skript-Speicherort festlegen
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-input_dir = os.path.join(base_dir, "data", "engineered_features")
-output_dir = os.path.join(base_dir, "correlation_analysis_engineered")
+input_dir = os.path.join(base_dir, "data", "v5_engineered")
+output_dir = os.path.join(base_dir, "results", "correlation_analysis")
 
 def main():
     # Zielordner erstellen, falls nicht vorhanden

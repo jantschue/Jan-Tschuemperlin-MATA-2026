@@ -7,10 +7,11 @@ import os
 import glob
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-traffic_dir = os.path.join(base_dir, "data", "traffic_volume")
+traffic_dir_in = os.path.join(base_dir, "data", "v1_raw", "traffic")
+traffic_dir_out = os.path.join(base_dir, "data", "v2_intermediate", "traffic")
 
-# Raw-Dateien liegen jetzt in Unterordnern pro Ort: traffic_volume/<Ort>/*_raw.CSV
-files = glob.glob(os.path.join(traffic_dir, "**", "*_raw.CSV"), recursive=True)
+# Raw-Dateien liegen jetzt im Ordner: data/v1_raw/traffic/*_raw.CSV
+files = glob.glob(os.path.join(traffic_dir_in, "*_raw.CSV"))
 
 for file in files:
     try:
@@ -31,8 +32,8 @@ for file in files:
             df_r2.columns = common_cols + [f'H{str(i).zfill(2)}' for i in range(24)]
             df_r2 = df_r2.sort_values(by=['JJMMTT']).reset_index(drop=True)
             
-            # Output in Richtungsgetrennt-Unterordner
-            out_dir = os.path.join(os.path.dirname(file), "Richtungsgetrennt")
+            # Output in neuen Ordner
+            out_dir = traffic_dir_out
             os.makedirs(out_dir, exist_ok=True)
             
             basename = os.path.basename(file)

@@ -10,15 +10,15 @@ import glob
 
 # Define paths relative to the script location
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-input_dir = os.path.join(base_dir, "data", "merged_gapless_time")
-output_dir = os.path.join(base_dir, "correlation_analysis")
+input_dir = os.path.join(base_dir, "data", "v5_engineered")
+output_dir = os.path.join(base_dir, "results", "correlation_analysis")
 
 def main():
     # Create the separate folder if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
     
     # Get all csv files
-    csv_files = glob.glob(os.path.join(input_dir, "*.csv"))
+    csv_files = glob.glob(os.path.join(input_dir, "*_merged_gapless_time.csv"))
     
     if not csv_files:
         print(f"No CSV files found in {input_dir}")

@@ -9,10 +9,10 @@ import numpy as np
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 files = {
-    os.path.join(base_dir, "data", "weather", "Luzern", "wetter_luzern_2010-2026_filtered.csv"):
-        os.path.join(base_dir, "data", "weather", "Luzern", "wetter_luzern_2010-2026_categorized.csv"),
-    os.path.join(base_dir, "data", "weather", "Waedenswil", "wetter_waedenswil_2010-2026_filtered.csv"):
-        os.path.join(base_dir, "data", "weather", "Waedenswil", "wetter_waedenswil_2010-2026_categorized.csv"),
+    os.path.join(base_dir, "data", "v2_intermediate", "weather", "Luzern", "wetter_luzern_2010-2026_filtered.csv"):
+        os.path.join(base_dir, "data", "v2_intermediate", "weather", "Luzern", "wetter_luzern_2010-2026_categorized.csv"),
+    os.path.join(base_dir, "data", "v2_intermediate", "weather", "Waedenswil", "wetter_waedenswil_2010-2026_filtered.csv"):
+        os.path.join(base_dir, "data", "v2_intermediate", "weather", "Waedenswil", "wetter_waedenswil_2010-2026_categorized.csv"),
 }
 
 for input_file, output_file in files.items():

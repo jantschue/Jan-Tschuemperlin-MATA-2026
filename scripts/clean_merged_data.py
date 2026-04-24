@@ -6,8 +6,8 @@ import pandas as pd
 import os
 
 # Paths
-merged_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'merged')
-output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'merged_gapless')
+merged_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'v3_merged')
+output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'v4_cleaned')
 
 # Create output directory if it doesn't exist
 os.makedirs(output_dir, exist_ok=True)

@@ -7,15 +7,15 @@ import numpy as np
 import os
 
 # Pfade für In- und Output definieren
-input_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'merged_gapless_time')
-output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'engineered_features')
+input_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'v5_engineered')
+output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'v5_engineered')
 
 # Output-Verzeichnis erstellen, falls es nicht existiert
 os.makedirs(output_dir, exist_ok=True)
 
 # Alle Dateien im Input-Verzeichnis verarbeiten
 for filename in sorted(os.listdir(input_dir)):
-    if not filename.endswith('.csv'):
+    if not filename.endswith('_merged_gapless_time.csv'):
         continue
 
     filepath = os.path.join(input_dir, filename)
@@ -73,4 +73,4 @@ for filename in sorted(os.listdir(input_dir)):
     out_df.to_csv(output_path, index=False)
     print(f'{filename} verarbeitet -> {output_filename}')
 
-print(f'\nAlle neuen Datensätze im Ordner "data/engineered_features" gespeichert.')
+print(f'\nAlle neuen Datensätze im Ordner "data/v5_engineered" gespeichert.')

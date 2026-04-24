@@ -6,8 +6,8 @@ import pandas as pd
 import os
 
 # Paths
-input_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'merged_gapless')
-output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'merged_gapless_time')
+input_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'v4_cleaned')
+output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'v5_engineered')
 
 # Create output directory if it doesn't exist
 os.makedirs(output_dir, exist_ok=True)
@@ -38,4 +38,4 @@ for filename in sorted(os.listdir(input_dir)):
 
     print(f'{filename}: {len(df)} Zeilen, 6 Zeit-Features hinzugefuegt -> {output_filename}')
 
-print('\nAlle Dateien in data/merged_gapless_time gespeichert.')
+print('\nAlle Dateien in data/v5_engineered gespeichert.')

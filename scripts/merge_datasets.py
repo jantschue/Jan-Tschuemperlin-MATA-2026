@@ -1,5 +1,5 @@
 """
-"Erstellt 10 zusammengeführte Datensets (5 Zählstellen × 2 Richtungen). Für jede stündliche Verkehrsdatei wird: 1. Das Verkehrsvolumen geladen, 2. Die Feiertags-Daten angehängt, 3. Die kategorisierten Wetterdaten angehängt. Die Dateien werden im Ordner 'data/merged' gespeichert."
+"Erstellt 10 zusammengeführte Datensets (5 Zählstellen × 2 Richtungen). Für jede stündliche Verkehrsdatei wird: 1. Das Verkehrsvolumen geladen, 2. Die Feiertags-Daten angehängt, 3. Die kategorisierten Wetterdaten angehängt. Die Dateien werden im Ordner 'data/v3_merged' gespeichert."
 """
 
 import pandas as pd
@@ -9,14 +9,14 @@ import glob
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # --- Quell-Dateien ---
-weather_file = os.path.join(base_dir, "data", "weather", "Waedenswil",
+weather_file = os.path.join(base_dir, "data", "v2_intermediate", "weather", "Waedenswil",
                             "wetter_waedenswil_2010-2026_categorized.csv")
-holiday_file = os.path.join(base_dir, "data", "holidays",
+holiday_file = os.path.join(base_dir, "data", "v2_intermediate", "holidays",
                             "feiertage_SZ_2015_2026_hourly.csv")
-traffic_dir = os.path.join(base_dir, "data", "traffic_volume")
+traffic_dir = os.path.join(base_dir, "data", "v2_intermediate", "traffic")
 
 # --- Ausgabe-Ordner ---
-output_dir = os.path.join(base_dir, "data", "merged")
+output_dir = os.path.join(base_dir, "data", "v3_merged")
 os.makedirs(output_dir, exist_ok=True)
 
 # --- Wetter laden ---
@@ -30,8 +30,7 @@ df_holidays = pd.read_csv(holiday_file)
 
 # --- Alle stündlichen Verkehrsdateien finden ---
 traffic_files = sorted(glob.glob(
-    os.path.join(traffic_dir, "**", "Richtungsgetrennt_stündlich", "*_hourly.csv"),
-    recursive=True
+    os.path.join(traffic_dir, "*_hourly.csv")
 ))
 
 print(f"\n{len(traffic_files)} Verkehrsdateien gefunden.\n")
@@ -68,4 +67,4 @@ for traffic_file in traffic_files:
     if missing_holiday > 0:
         print(f"     [!] {missing_holiday} Zeilen ohne Feiertagsdaten")
 
-print("\nFertig! Alle Datensets wurden in 'data/merged/' gespeichert.")
+print("\nFertig! Alle Datensets wurden in 'data/v3_merged/' gespeichert.")
