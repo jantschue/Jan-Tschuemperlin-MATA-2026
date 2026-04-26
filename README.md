@@ -8,7 +8,7 @@ Die in diesem Projekt verwendeten Rohdaten stammen aus den folgenden offiziellen
 
 *   **Verkehrsdaten:** Bundesamt für Strassen (ASTRA). Die Veröffentlichung der hier aufbereiteten Verkehrsdaten erfolgt mit freundlicher Genehmigung des ASTRA.
 *   **Wetterdaten:** Bundesamt für Meteorologie und Klimatologie (MeteoSchweiz) über das [Daten-Portal](https://www.meteoschweiz.admin.ch/service-und-publikationen/applikationen/ext/daten-ohne-programmierkenntnisse-herunterladen.html)
-*   **Feiertage:** Offizielle Publikationen des Kantons Schwyz (Beispiel: [Feiertage im Kanton Schwyz](https://www.sz.ch/public/upload/assets/86157/Feiertage_im_Kanton_Schwyz_fuer_das_Jahr_2026.pdf?fp=1))
+*   **Feiertage:** Automatisch generiert über das Python-Modul `holidays` (basierend auf den offiziellen Feiertagen des Kantons Schwyz).
 
 *Hinweis: Jegliche Weiterverwendung der rohen Verkehrsdaten erfordert eine eigene Abklärung mit den jeweiligen Ämtern.*
 
