@@ -1,1 +1,16 @@
+# Eigene Ordner
 models/
+
+# Virtuelle Umgebungen
+.venv/
+venv/
+env/
+
+# Python Cache-Dateien
+__pycache__/
+*.pyc
+
+# IDEs und Systemdateien
+.idea/
+.vscode/
+.DS_Store

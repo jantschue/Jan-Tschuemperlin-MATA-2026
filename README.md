@@ -22,6 +22,14 @@ Das Projekt ist vollständig reproduzierbar aufgebaut. Die Daten durchlaufen 5 V
 4.  `data/v4_cleaned/`: Bereinigte Datensätze ohne fehlende Werte
 5.  `data/v5_engineered/`: Finale Datensätze mit Machine-Learning-Features
 
+## Installation (Setup)
+
+Damit das Projekt einwandfrei ausgeführt werden kann, müssen die nötigen Python-Bibliotheken (siehe `requirements.txt`) installiert sein. 
+Dafür gibt es im Hauptordner zwei fertige Installations-Skripte, welche automatisch eine virtuelle Umgebung (`.venv`) erstellen und alles Nötige installieren:
+
+*   **Für Windows:** Einfach einen Doppelklick auf `install_windows.bat` machen.
+*   **Für Mac/Linux:** Das Skript `install_mac_linux.sh` im Terminal ausführen (`bash install_mac_linux.sh`).
+
 ## Reproduktion
 
 Um die gesamte Daten-Pipeline auszuführen und alle Ergebnisse und Plots von Grund auf neu zu generieren, führen Sie einfach folgendes Skript aus:

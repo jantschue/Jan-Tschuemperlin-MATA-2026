@@ -1,4 +1,5 @@
 # Automatisch generierte und manuell bereinigte requirements.txt
+# Benötigte Python-Version: >= 3.11
 # Enthält nur die Haupt-Module, die der aktuelle Stand des Projektes (MATA-2026) direkt benötigt.
 # Bitte neue Module nur hier hinzufügen, wenn sie aktiv im Projekt importiert werden.
 
