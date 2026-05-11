@@ -26,7 +26,6 @@ def main():
         "add_time_features.py",
         "create_engineered_features.py",
         "plot_hourly_averages.py",
-        "create_correlation_matrix.py",
         "create_correlation_matrix_engineered.py"
     ]
 

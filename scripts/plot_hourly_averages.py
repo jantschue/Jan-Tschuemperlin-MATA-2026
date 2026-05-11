@@ -16,8 +16,8 @@ def main():
     # Erstelle den Ausgabeordner, falls er nicht existiert
     os.makedirs(output_dir, exist_ok=True)
     
-    # Hole alle CSV-Dateien
-    csv_files = glob.glob(os.path.join(input_dir, "*_merged_gapless_time.csv"))
+    # Hole alle CSV-Dateien mit '_engineered.csv'
+    csv_files = glob.glob(os.path.join(input_dir, "*_engineered.csv"))
     
     if not csv_files:
         print(f"Keine CSV-Dateien in {input_dir} gefunden.")
@@ -29,6 +29,9 @@ def main():
         
         print(f"Verarbeite Datensatz: {filename}...")
         df = pd.read_csv(file_path)
+        # Extrahiere die Stunde aus der datetime-Spalte
+        df['datetime'] = pd.to_datetime(df['datetime'])
+        df['Hour'] = df['datetime'].dt.hour
         
         # Berechne den Durchschnitt pro Stunde
         hourly_avg = df.groupby('Hour')[['temp', 'sun_1h', 'volume']].mean()

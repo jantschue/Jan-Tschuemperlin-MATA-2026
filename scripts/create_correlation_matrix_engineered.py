@@ -17,8 +17,8 @@ def main():
     # Zielordner erstellen, falls nicht vorhanden
     os.makedirs(output_dir, exist_ok=True)
     
-    # Alle .csv-Dateien laden
-    csv_files = glob.glob(os.path.join(input_dir, "*.csv"))
+    # Alle .csv-Dateien laden, die '_engineered.csv' am Ende haben
+    csv_files = glob.glob(os.path.join(input_dir, "*_engineered.csv"))
     
     if not csv_files:
         print(f"Keine CSV-Dateien in {input_dir} gefunden.")
