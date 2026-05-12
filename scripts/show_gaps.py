@@ -6,7 +6,9 @@ import pandas as pd
 import os
 
 merged_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'v3_merged')
-output_file = os.path.join(os.path.dirname(__file__), '..', 'data', 'v4_cleaned', 'gaps.txt')
+results_dir = os.path.join(os.path.dirname(__file__), '..', 'results')
+os.makedirs(results_dir, exist_ok=True)
+output_file = os.path.join(results_dir, 'gaps.txt')
 
 lines = []
 

@@ -71,6 +71,7 @@ for filename in sorted(os.listdir(input_dir)):
     output_path = os.path.join(output_dir, output_filename)
     
     out_df.to_csv(output_path, index=False)
-    print(f'{filename} verarbeitet -> {output_filename}')
+    os.remove(filepath)  # Clean up intermediate file
+    print(f'{filename} verarbeitet -> {output_filename} und Original gelöscht')
 
 print(f'\nAlle neuen Datensätze im Ordner "data/v5_engineered" gespeichert.')

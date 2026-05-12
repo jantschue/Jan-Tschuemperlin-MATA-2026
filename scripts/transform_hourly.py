@@ -54,6 +54,7 @@ for src_file in files:
     out_basename = os.path.basename(src_file).replace(".csv", "_hourly.csv")
     out_file = os.path.join(traffic_dir, out_basename)
     out_df.to_csv(out_file, index=False)
-    print(f"  -> Erstellt: {os.path.basename(out_file)}  ({len(out_df)} Zeilen)")
+    os.remove(src_file)  # Clean up intermediate file
+    print(f"  -> Erstellt: {os.path.basename(out_file)} und Original gelöscht ({len(out_df)} Zeilen)")
 
 print("\nFertig!")

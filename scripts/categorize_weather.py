@@ -43,7 +43,8 @@ for input_file, output_file in files.items():
     df = df.drop(columns=['_hour'])
 
     df.to_csv(output_file, index=False)
-    print(f"  -> Erstellt: {os.path.basename(output_file)}  ({len(df)} Zeilen)")
+    os.remove(input_file)  # Clean up intermediate file
+    print(f"  -> Erstellt: {os.path.basename(output_file)} und Original gelöscht ({len(df)} Zeilen)")
 
     # Verteilung anzeigen
     print(f"     Verteilung:")
