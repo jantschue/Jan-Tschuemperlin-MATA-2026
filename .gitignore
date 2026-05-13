@@ -14,3 +14,10 @@ __pycache__/
 .idea/
 .vscode/
 .DS_Store
+
+# Modell-Weights
+results/model_results/**/model_weights/
+
+# Claude Code
+.claude/
+CLAUDE.md

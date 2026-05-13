@@ -1,8 +1,9 @@
 @echo off
-rem "Dieses Skript erstellt eine virtuelle Python-Umgebung (.venv) und installiert alle für das Projekt benötigten Pakete über pip."
+rem Erstellt eine virtuelle Python-Umgebung und installiert alle benoetigten Pakete.
+rem PyTorch wird mit CUDA 12.1 installiert (benoetigt kompatible NVIDIA-GPU und Treiber).
 
 echo ===================================================
-echo Starte Installation für MATA-2026 Projekt (Windows)...
+echo Starte Installation fuer MATA-2026 Projekt (Windows)
 echo ===================================================
 
 echo.
@@ -15,13 +16,13 @@ call .venv\Scripts\activate.bat
 python -m pip install --upgrade pip
 
 echo.
-echo [3/3] Installiere Module aus requirements.txt...
-pip install -r requirements.txt
+echo [3/3] Installiere Module aus requirements.txt (inkl. PyTorch CUDA 12.1)...
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
 
 echo.
 echo ===================================================
-echo Installation erfolgreich! 
-echo Um das Projekt auszufuehren, nutze die aktivierte Umgebung.
-echo (Der Befehl dazu lautet: .venv\Scripts\activate)
+echo Installation erfolgreich!
+echo Umgebung aktivieren mit: .venv\Scripts\activate
+echo Gesamte Pipeline ausfuehren mit: python run_pipeline.py
 echo ===================================================
 pause

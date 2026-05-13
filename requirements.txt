@@ -1,15 +1,13 @@
-# Automatisch generierte und manuell bereinigte requirements.txt
 # Benötigte Python-Version: >= 3.11
-# Enthält nur die Haupt-Module, die der aktuelle Stand des Projektes (MATA-2026) direkt benötigt.
-# Bitte neue Module nur hier hinzufügen, wenn sie aktiv im Projekt importiert werden.
+# Enthält nur direkt importierte Pakete (keine transitiven Abhängigkeiten).
+# Hinweis: torch ist als CUDA-12.1-Variante angegeben (Windows/GPU).
+# Mac/Linux: install_mac_linux.sh installiert automatisch die CPU-Version.
 
 holidays==0.91
 matplotlib==3.10.8
 numpy==1.26.4
+optuna==4.8.0
 pandas==2.3.3
 scikit-learn==1.8.0
 seaborn==0.13.2
-torch==2.11.0
-
-# Optional (für Jupyter/Colab Notebooks)
-ipykernel==7.2.0
+torch==2.5.1+cu121

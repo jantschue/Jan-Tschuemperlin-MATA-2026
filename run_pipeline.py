@@ -36,7 +36,8 @@ def main():
 
     # Phase 2: Modelltraining (Skripte in models/)
     training_scripts = [
-        "linear_regression.py"
+        "linear_regression.py",
+        "mlp.py",
     ]
 
     total_steps = len(pipeline_scripts) + len(training_scripts)
