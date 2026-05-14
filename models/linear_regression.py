@@ -3,6 +3,7 @@ Dieses Skript trainiert ein lineares Regressionsmodell für die Verkehrsvorhersa
 """
 
 import os
+import json
 from pathlib import Path
 import time
 import torch
@@ -97,8 +98,27 @@ def main():
         split_idx = int(len(df) * 0.8)
         X_train, X_test = X[:split_idx], X[split_idx:]
         y_train, y_test = y[:split_idx], y[split_idx:]
-        
+
         df_test = df.iloc[split_idx:].copy() # Für Plotting
+
+        # Split-Info als JSON speichern (Reproduzierbarkeit/Dokumentation)
+        train_idx = df.index[:split_idx]
+        test_idx = df.index[split_idx:]
+        split_info = {
+            "total_samples": len(df),
+            "train_samples": len(X_train),
+            "train_pct": round(len(X_train) / len(df) * 100, 2),
+            "val_samples": None,
+            "val_pct": None,
+            "test_samples": len(X_test),
+            "test_pct": round(len(X_test) / len(df) * 100, 2),
+            "split_type": "chronological 80/20",
+            "date_range_train": {"start": str(train_idx[0]), "end": str(train_idx[-1])},
+            "date_range_val": None,
+            "date_range_test": {"start": str(test_idx[0]), "end": str(test_idx[-1])},
+        }
+        with open(RESULTS_DIR / "summary" / f"split_info_{name}.json", "w") as f:
+            json.dump(split_info, f, indent=4)
 
         # StandardScaler NUR auf Trainingsdaten fitten
         scaler = StandardScaler()

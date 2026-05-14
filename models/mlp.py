@@ -2,6 +2,7 @@
 Dieses Skript trainiert ein MLP (Multi-Layer Perceptron) für die Verkehrsvorhersage.
 """
 
+import json
 import time
 from pathlib import Path
 import numpy as np
@@ -130,6 +131,26 @@ def main():
         X_train, X_val, X_test = X[:train_end], X[train_end:val_end], X[val_end:]
         y_train, y_val, y_test = y[:train_end], y[train_end:val_end], y[val_end:]
         df_test = df.iloc[val_end:].copy()  # Für Plotting
+
+        # Split-Info als JSON speichern (Reproduzierbarkeit/Dokumentation)
+        train_idx = df.index[:train_end]
+        val_idx   = df.index[train_end:val_end]
+        test_idx  = df.index[val_end:]
+        split_info = {
+            "total_samples": len(df),
+            "train_samples": len(X_train),
+            "train_pct": round(len(X_train) / len(df) * 100, 2),
+            "val_samples": len(X_val),
+            "val_pct": round(len(X_val) / len(df) * 100, 2),
+            "test_samples": len(X_test),
+            "test_pct": round(len(X_test) / len(df) * 100, 2),
+            "split_type": "chronological 70/15/15",
+            "date_range_train": {"start": str(train_idx[0]), "end": str(train_idx[-1])},
+            "date_range_val":   {"start": str(val_idx[0]),   "end": str(val_idx[-1])},
+            "date_range_test":  {"start": str(test_idx[0]),  "end": str(test_idx[-1])},
+        }
+        with open(RESULTS_DIR / "summary" / f"split_info_{name}.json", "w") as f:
+            json.dump(split_info, f, indent=4)
 
         # StandardScaler NUR auf Trainingsdaten fitten
         x_scaler  = StandardScaler()
