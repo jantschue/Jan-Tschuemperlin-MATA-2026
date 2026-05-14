@@ -4,6 +4,7 @@ Tuning läuft ausschliesslich auf 050_Brunnen_Mositunnel_R1.
 Die besten Hyperparameter werden in results/model_results/mlp/best_params.json gespeichert.
 """
 
+import json
 import time
 from pathlib import Path
 
@@ -25,7 +26,7 @@ DATA_DIR    = Path("data/v5_engineered")
 RESULTS_DIR = Path("results/model_results/mlp")
 
 TUNING_DATASET = "050_Brunnen_Mositunnel_R1_engineered.csv"
-N_TRIALS       = 50
+N_TRIALS       = 150
 TUNING_EPOCHS  = 150  # Reduziert gegenüber Final-Training für schnellere Trials
 ES_PATIENCE    = 25
 
@@ -71,10 +72,9 @@ class MLP(nn.Module):
 
 
 def objective(trial, X_train_s, y_train_s, X_val_s, y_val_s, input_dim):
-    n_layers     = trial.suggest_int("n_layers", 2, 5)
-    n_units      = trial.suggest_categorical("n_units", [32, 64, 128, 256, 512])
-    hidden_dims  = [n_units] * n_layers
-    dropout      = trial.suggest_float("dropout", 0.1, 0.5)
+    n_layers     = trial.suggest_int("n_layers", 2, 4)
+    hidden_dims  = [trial.suggest_categorical(f"n_units_l{i}", [32, 64, 128, 256, 512]) for i in range(n_layers)]
+    dropout      = trial.suggest_float("dropout", 0.0, 0.3)
     lr           = trial.suggest_float("lr", 1e-4, 1e-2, log=True)
     weight_decay = trial.suggest_float("weight_decay", 1e-5, 1e-2, log=True)
     batch_size   = trial.suggest_categorical("batch_size", [128, 256, 512])
@@ -171,8 +171,11 @@ def main():
     optuna.logging.set_verbosity(optuna.logging.WARNING)
 
     study = optuna.create_study(
+        study_name="mlp_tuning",
+        storage="sqlite:///optuna_mlp.db",
+        load_if_exists=True,
         direction="minimize",
-        sampler=optuna.samplers.TPESampler(seed=42),
+        sampler=optuna.samplers.TPESampler(seed=None),
         pruner=optuna.pruners.MedianPruner(n_startup_trials=10, n_warmup_steps=20),
     )
 
@@ -193,7 +196,7 @@ def main():
     print(f"\nBester Trial: #{best.number}")
     print(f"Bester Validation Loss: {best.value:.6f}")
 
-    hidden_dims   = [best.params["n_units"]] * best.params["n_layers"]
+    hidden_dims   = [best.params[f"n_units_l{i}"] for i in range(best.params["n_layers"])]
     dropout       = best.params["dropout"]
     learning_rate = best.params["lr"]
     weight_decay  = best.params["weight_decay"]
@@ -208,6 +211,25 @@ def main():
     print(f"  WEIGHT_DECAY  = {weight_decay:.4f}")
     print(f"  BATCH_SIZE    = {batch_size}")
     print(sep)
+
+    # Beste Hyperparameter als JSON speichern
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    best_params = {
+        "HIDDEN_DIMS":   hidden_dims,
+        "DROPOUT":       dropout,
+        "LEARNING_RATE": learning_rate,
+        "WEIGHT_DECAY":  weight_decay,
+        "BATCH_SIZE":    batch_size,
+        "best_val_loss": best.value,
+        "trial_number":  best.number,
+        "n_trials_completed": len(completed),
+        "n_trials_pruned":    len(pruned),
+        "raw_params":    best.params,
+    }
+    best_params_path = RESULTS_DIR / "best_params.json"
+    with open(best_params_path, "w") as f:
+        json.dump(best_params, f, indent=4)
+    print(f"\nGespeichert: {best_params_path}")
 
 
 if __name__ == "__main__":

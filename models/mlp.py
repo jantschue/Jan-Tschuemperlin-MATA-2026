@@ -23,15 +23,15 @@ np.random.seed(42)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ── Hyperparameter ──────────────────────────────────────────────────────────
-HIDDEN_DIMS   = [64, 64, 64]        # Grösse der Hidden Layers
-DROPOUT       = 0.22                # Dropout-Rate (nicht nach letzter Hidden Layer)
+HIDDEN_DIMS   = [256, 128, 128, 64]        # Grösse der Hidden Layers
+DROPOUT       = 0.2582               # Dropout-Rate (nicht nach letzter Hidden Layer)
 BATCH_SIZE    = 128
 MAX_EPOCHS    = 500
-LEARNING_RATE = 0.0002
-WEIGHT_DECAY  = 0.0073
-LR_PATIENCE   = 10    # ReduceLROnPlateau: Epochen ohne Verbesserung bis LR sinkt
+LEARNING_RATE = 0.0003352
+WEIGHT_DECAY  = 0.0016735
+LR_PATIENCE   = 15    # ReduceLROnPlateau: Epochen ohne Verbesserung bis LR sinkt
 LR_FACTOR     = 0.5   # ReduceLROnPlateau: Faktor um den LR reduziert wird
-ES_PATIENCE   = 30    # Early Stopping: Epochen ohne Verbesserung bis Abbruch
+ES_PATIENCE   = 10    # Early Stopping: Epochen ohne Verbesserung bis Abbruch
 TRAIN_RATIO   = 0.70
 VAL_RATIO     = 0.10
 # TEST_RATIO  = 0.20 (implizit: 1 - TRAIN_RATIO - VAL_RATIO)
@@ -236,10 +236,13 @@ def main():
             # LR-Scheduler auf Validation Loss anwenden
             scheduler.step(epoch_val_loss)
 
+            # Loss-Werte jede Epoche speichern (für hochaufgelöste Loss-Kurven)
+            epoch_count.append(epoch)
+            train_losses.append(epoch_train_loss)
+            val_losses.append(epoch_val_loss)
+
+            # Konsolenausgabe nur alle 10 Epochen, um die Logs übersichtlich zu halten
             if epoch % 10 == 0:
-                epoch_count.append(epoch)
-                train_losses.append(epoch_train_loss)
-                val_losses.append(epoch_val_loss)
                 print(f"Epoch: {epoch} | Train Loss: {epoch_train_loss:.4f} | Val Loss: {epoch_val_loss:.4f}")
 
             # Early Stopping: bestes Modell anhand Validation Loss merken
@@ -323,15 +326,34 @@ def main():
         plt.savefig(RESULTS_DIR / "plots" / "scatter" / f"scatter_{name}.png")
         plt.close()
 
-        # Plot C – Zeitreihe (erste 2 Wochen = 336 Stunden)
+        # Plot C – Zeitreihe (erste 2 zusammenhängende Wochen im Testset)
+        # Manche Stationen (z.B. Sattel) haben grosse Lücken im Testset, daher
+        # suchen wir den ersten Block ohne grosse Datenlücken (> 2 Stunden).
+        plot_start, plot_end = 0, min(336, len(df_test))
+        if isinstance(df_test.index, pd.DatetimeIndex) and len(df_test) > 1:
+            time_diffs = df_test.index.to_series().diff()
+            gap_positions = np.where(time_diffs > pd.Timedelta(hours=2))[0]
+            # Block-Grenzen: zwischen aufeinanderfolgenden Lücken
+            block_starts = np.concatenate(([0], gap_positions))
+            block_ends   = np.concatenate((gap_positions, [len(df_test)]))
+            # Ersten Block mit mind. 336 Stunden wählen, sonst längsten Block
+            block_lengths = block_ends - block_starts
+            valid_blocks  = np.where(block_lengths >= 336)[0]
+            if len(valid_blocks) > 0:
+                b = valid_blocks[0]
+            else:
+                b = int(np.argmax(block_lengths))
+            plot_start = int(block_starts[b])
+            plot_end   = min(plot_start + 336, int(block_ends[b]))
+
         plt.figure(figsize=(15, 5))
-        time_x = df_test.index[:336]
-        plt.plot(time_x, y_test[:336], color="black",  label="Ground Truth")
-        plt.plot(time_x, preds[:336],  color="orange", label="Vorhersage")
+        time_x = df_test.index[plot_start:plot_end]
+        plt.plot(time_x, y_test[plot_start:plot_end], color="black",  label="Ground Truth")
+        plt.plot(time_x, preds[plot_start:plot_end],  color="orange", label="Vorhersage")
         if isinstance(df_test.index, pd.DatetimeIndex):
             plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
             plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=2))
-        plt.title(f"Zeitreihe (erste 2 Wochen Testset) - {name}")
+        plt.title(f"Zeitreihe (erste 2 zusammenhängende Wochen Testset) - {name}")
         plt.xlabel("Datum/Zeit")
         plt.ylabel("Fahrzeuge/h")
         plt.legend()

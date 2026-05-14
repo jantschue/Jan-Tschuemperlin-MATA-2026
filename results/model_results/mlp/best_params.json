@@ -1,0 +1,27 @@
+{
+    "HIDDEN_DIMS": [
+        256,
+        128,
+        128,
+        64
+    ],
+    "DROPOUT": 0.25816869316601054,
+    "LEARNING_RATE": 0.0003351507804636482,
+    "WEIGHT_DECAY": 0.0016735369721307433,
+    "BATCH_SIZE": 128,
+    "best_val_loss": 0.164342690717068,
+    "trial_number": 52,
+    "n_trials_completed": 114,
+    "n_trials_pruned": 36,
+    "raw_params": {
+        "n_layers": 4,
+        "n_units_l0": 256,
+        "n_units_l1": 128,
+        "n_units_l2": 128,
+        "n_units_l3": 64,
+        "dropout": 0.25816869316601054,
+        "lr": 0.0003351507804636482,
+        "weight_decay": 0.0016735369721307433,
+        "batch_size": 128
+    }
+}
