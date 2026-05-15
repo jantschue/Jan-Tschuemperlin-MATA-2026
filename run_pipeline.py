@@ -1,7 +1,10 @@
 """
 Master-Skript, um das gesamte Projekt vollständig reproduzieren zu können.
-Es führt nacheinander alle 16 Daten-Aufbereitungsskripte und anschliessend
-das Modelltraining in der korrekten, chronologischen Reihenfolge aus.
+Die Pipeline läuft in drei Phasen:
+    Phase 1: Datenverarbeitung (Rohdaten -> v5_engineered)
+    Phase 2: Analyse + v6_withoutcorona (Corona-bereinigter Datensatz)
+    Phase 3: Modelltraining (Lineare Regression & MLP, jeweils auf v5 und v6)
+Alle Schritte werden in der korrekten Reihenfolge ausgefuehrt.
 """
 
 import subprocess
@@ -9,13 +12,13 @@ import os
 import sys
 
 def main():
-    """Führt die gesamte Pipeline aus: Datenverarbeitung und Modelltraining."""
+    """Führt die gesamte Pipeline aus: Datenverarbeitung, Analyse und Modelltraining."""
     base_dir = os.path.dirname(os.path.abspath(__file__))
     scripts_dir = os.path.join(base_dir, "scripts")
     models_dir = os.path.join(base_dir, "models")
 
-    # Phase 1: Datenverarbeitung (16 Skripte in scripts/)
-    pipeline_scripts = [
+    # Phase 1: Datenverarbeitung (v1 -> v5_engineered)
+    data_scripts = [
         "split_directions.py",
         "transform_hourly.py",
         "export_feiertage.py",
@@ -31,63 +34,67 @@ def main():
         "add_time_features.py",
         "create_engineered_features.py",
         "plot_hourly_averages.py",
-        "create_correlation_matrix_engineered.py"
+        "create_correlation_matrix_engineered.py",
     ]
 
-    # Phase 2: Modelltraining (Skripte in models/)
+    # Phase 2: Analyse + v6_withoutcorona
+    analysis_scripts = [
+        "dataset_overview.py",
+        "covid_anomaly_analysis.py",
+        "create_v6_withoutcorona.py",
+    ]
+
+    # Phase 3: Modelltraining (v5 + v6)
     training_scripts = [
         "linear_regression.py",
         "mlp.py",
+        "linear_regression_v6.py",
+        "mlp_v6.py",
     ]
 
-    total_steps = len(pipeline_scripts) + len(training_scripts)
+    total_steps = len(data_scripts) + len(analysis_scripts) + len(training_scripts)
+    step_counter = 0
 
-    print("="*60)
-    print("Starte vollständige Reproduzierbarkeits-Pipeline...")
-    print("="*60)
+    def run_step(script_path, label):
+        """Fuehrt ein Skript aus und beendet die Pipeline bei Fehlern sauber."""
+        nonlocal step_counter
+        step_counter += 1
+        print(f"\n[{step_counter}/{total_steps}] Fuehre aus: {label} ...")
+        try:
+            subprocess.run([sys.executable, script_path], check=True)
+            print(f"-> {label} erfolgreich beendet.")
+        except subprocess.CalledProcessError as e:
+            print(f"\n[FEHLER] Pipeline abgebrochen. {label} ist mit Fehler beendet worden.")
+            print(f"Exit Code: {e.returncode}")
+            sys.exit(1)
+        except Exception as e:
+            print(f"\n[FEHLER] Konnte {label} nicht ausfuehren: {e}")
+            sys.exit(1)
+
+    print("=" * 60)
+    print("Starte vollstaendige Reproduzierbarkeits-Pipeline...")
+    print("=" * 60)
 
     # --- Phase 1: Datenverarbeitung ---
-    print("\n--- Phase 1: Datenverarbeitung ---")
-    for i, script_name in enumerate(pipeline_scripts, start=1):
-        script_path = os.path.join(scripts_dir, script_name)
-        
-        print(f"\n[{i}/{total_steps}] Führe aus: {script_name} ...")
-        
-        try:
-            # Verwendet denselben Python-Interpreter wie dieses Skript
-            result = subprocess.run([sys.executable, script_path], check=True)
-            print(f"-> {script_name} erfolgreich beendet.")
-        except subprocess.CalledProcessError as e:
-            print(f"\n[FEHLER] Pipeline abgebrochen. Das Skript {script_name} hat einen Fehler verursacht.")
-            print(f"Exit Code: {e.returncode}")
-            sys.exit(1)
-        except Exception as e:
-            print(f"\n[FEHLER] Konnte {script_name} nicht ausführen: {e}")
-            sys.exit(1)
+    print("\n--- Phase 1: Datenverarbeitung (Rohdaten -> v5_engineered) ---")
+    for name in data_scripts:
+        run_step(os.path.join(scripts_dir, name), name)
 
-    # --- Phase 2: Modelltraining ---
-    print("\n--- Phase 2: Modelltraining ---")
-    for j, script_name in enumerate(training_scripts, start=1):
-        step_num = len(pipeline_scripts) + j
-        script_path = os.path.join(models_dir, script_name)
-        
-        print(f"\n[{step_num}/{total_steps}] Führe aus: models/{script_name} ...")
-        
-        try:
-            result = subprocess.run([sys.executable, script_path], check=True)
-            print(f"-> models/{script_name} erfolgreich beendet.")
-        except subprocess.CalledProcessError as e:
-            print(f"\n[FEHLER] Pipeline abgebrochen. Das Skript models/{script_name} hat einen Fehler verursacht.")
-            print(f"Exit Code: {e.returncode}")
-            sys.exit(1)
-        except Exception as e:
-            print(f"\n[FEHLER] Konnte models/{script_name} nicht ausführen: {e}")
-            sys.exit(1)
+    # --- Phase 2: Analyse + v6_withoutcorona ---
+    print("\n--- Phase 2: Analyse + Corona-Bereinigung (v6_withoutcorona) ---")
+    for name in analysis_scripts:
+        run_step(os.path.join(scripts_dir, name), name)
 
-    print("\n" + "="*60)
+    # --- Phase 3: Modelltraining (v5 + v6) ---
+    print("\n--- Phase 3: Modelltraining (Lineare Regression & MLP, jeweils v5 und v6) ---")
+    for name in training_scripts:
+        run_step(os.path.join(models_dir, name), f"models/{name}")
+
+    print("\n" + "=" * 60)
     print("Pipeline erfolgreich und fehlerfrei abgeschlossen!")
-    print("Alle Datensätze, Analysen und Modelle wurden reproduziert.")
-    print("="*60)
+    print("Alle Datensaetze, Analysen und Modelle wurden reproduziert.")
+    print("=" * 60)
+
 
 if __name__ == "__main__":
     main()
