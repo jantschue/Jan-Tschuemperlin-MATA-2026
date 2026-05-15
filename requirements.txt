@@ -2,6 +2,9 @@
 # Enthält nur direkt importierte Pakete (keine transitiven Abhängigkeiten).
 # Hinweis: torch ist als CUDA-12.1-Variante angegeben (Windows/GPU).
 # Mac/Linux: install_mac_linux.sh installiert automatisch die CPU-Version.
+# Installation: pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
+
+--extra-index-url https://download.pytorch.org/whl/cu121
 
 holidays==0.91
 matplotlib==3.10.8
