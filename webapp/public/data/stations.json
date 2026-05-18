@@ -21,7 +21,7 @@
   {
     "id": "050_Brunnen_Mositunnel_R2",
     "name": "Brunnen Mositunnel",
-    "direction": "Süd",
+    "direction": "SÃ¼d",
     "lat": 46.990594,
     "lng": 8.610647,
     "metrics": {
@@ -59,7 +59,7 @@
   {
     "id": "171_Sattel_R2",
     "name": "Sattel",
-    "direction": "Süd",
+    "direction": "SÃ¼d",
     "lat": 47.083324,
     "lng": 8.638712,
     "metrics": {
@@ -135,7 +135,7 @@
   {
     "id": "299_Wollerau_Blatttunnel_R2",
     "name": "Wollerau Blatttunnel",
-    "direction": "Süd",
+    "direction": "SÃ¼d",
     "lat": 47.197828,
     "lng": 8.700594,
     "metrics": {

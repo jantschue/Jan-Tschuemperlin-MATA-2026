@@ -161,7 +161,7 @@ def export_linear(station_id: str) -> dict | None:
                           "std":  y_scaler.scale_.tolist()},
     }
     out = OUT_WEIGHTS / f"{station_id}_linear.json"
-    out.write_text(json.dumps(payload))
+    out.write_text(json.dumps(payload), encoding="utf-8")
     return payload
 
 
@@ -228,7 +228,7 @@ def export_mlp(station_id: str) -> dict | None:
                           "std":  y_scaler.scale_.tolist()},
     }
     out = OUT_WEIGHTS / f"{station_id}_mlp.json"
-    out.write_text(json.dumps(payload))
+    out.write_text(json.dumps(payload), encoding="utf-8")
     return payload
 
 
@@ -262,7 +262,7 @@ def export_daily_results(station_id: str) -> list[dict]:
     )]
 
     out = OUT_RESULTS / f"{station_id}_daily.json"
-    out.write_text(json.dumps(records))
+    out.write_text(json.dumps(records), encoding="utf-8")
     return records
 
 
@@ -335,7 +335,8 @@ def main():
         })
 
     (OUT_DATA / "stations.json").write_text(
-        json.dumps(stations_out, indent=2, ensure_ascii=False)
+        json.dumps(stations_out, indent=2, ensure_ascii=False),
+        encoding="utf-8",
     )
     print(f"\nOK Export abgeschlossen: {len(stations_out)} Stationen in stations.json")
     print(f"  Weights:        {OUT_WEIGHTS}")
