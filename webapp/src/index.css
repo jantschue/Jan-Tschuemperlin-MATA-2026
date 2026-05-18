@@ -1,0 +1,280 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Globale CSS-Variablen für das gesamte Design-System */
+:root {
+  --bg-base: #0a0a0f;
+  --bg-surface: #13131a;
+  --bg-elevated: #1c1c27;
+  --border: #2a2a3a;
+  --text-primary: #f0f0f5;
+  --text-muted: #6b6b80;
+  --accent: #4f8ef7;
+  --accent-dim: #1e3a6e;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --lr-color: #a78bfa;
+
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-mono {
+  font-family: 'DM Mono', 'Space Mono', ui-monospace, monospace;
+}
+
+/* Schlanke Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bg-elevated);
+}
+
+/* Schieberegler (input[type=range]) komplett ent-styled und neu gebaut */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  background: transparent;
+  height: 18px;
+  cursor: pointer;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  height: 3px;
+  background: var(--border);
+  border-radius: 0;
+}
+input[type='range']::-moz-range-track {
+  height: 3px;
+  background: var(--border);
+  border-radius: 0;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 0;
+  margin-top: -5.5px;
+  border: none;
+  transition: transform 120ms ease;
+}
+input[type='range']::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+input[type='range']::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 0;
+  border: none;
+}
+
+/* Dropdowns – kein Browser-Default-Look */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  padding: 8px 32px 8px 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3e%3cpath d='M1 1l4 4 4-4' stroke='%236b6b80' stroke-width='1.5'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  cursor: pointer;
+}
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Date-Input dunkel */
+input[type='date'],
+input[type='text'],
+input[type='number'] {
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  color-scheme: dark;
+}
+input[type='date']:focus,
+input[type='text']:focus,
+input[type='number']:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Toggle-Switch */
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 20px;
+}
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.toggle .slider {
+  position: absolute;
+  inset: 0;
+  background-color: var(--border);
+  transition: 200ms;
+  border-radius: 4px;
+}
+.toggle .slider::before {
+  content: '';
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--text-primary);
+  transition: 200ms;
+  border-radius: 2px;
+}
+.toggle input:checked + .slider {
+  background-color: var(--accent-dim);
+}
+.toggle input:checked + .slider::before {
+  transform: translateX(18px);
+  background-color: var(--accent);
+}
+
+/* Radio-Buttons als Pills */
+.radio-pill {
+  display: inline-flex;
+  gap: 4px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px;
+  background: var(--bg-elevated);
+}
+.radio-pill label {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: 120ms;
+}
+.radio-pill input[type='radio'] {
+  display: none;
+}
+.radio-pill input[type='radio']:checked + label {
+  background-color: var(--accent-dim);
+  color: var(--text-primary);
+}
+
+/* Karten-Hover und Animationen */
+.card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-prediction {
+  animation: fadeSlideIn 150ms ease-out;
+}
+
+@keyframes staggerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.stagger-in {
+  animation: staggerFadeIn 320ms ease-out both;
+}
+
+/* Leaflet-Anpassungen: dunkles Tile-Layout, Tooltip neu */
+.leaflet-container {
+  background: var(--bg-base);
+}
+.leaflet-tooltip.station-tooltip {
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: 4px;
+  box-shadow: none;
+  padding: 10px 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+}
+.leaflet-tooltip.station-tooltip::before {
+  display: none;
+}
+
+/* Recharts-Tooltip */
+.chart-tooltip {
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+}
+.chart-tooltip .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.chart-tooltip .label {
+  color: var(--text-muted);
+}
