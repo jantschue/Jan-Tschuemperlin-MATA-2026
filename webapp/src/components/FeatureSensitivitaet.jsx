@@ -60,6 +60,19 @@ export default function FeatureSensitivitaet({ station }) {
   const [inputs, setInputs] = useState(DEFAULT_INPUTS)
   const [collapsed, setCollapsed] = useState(false)
 
+  // Globales Y-Maximum über alle Sweeps mit DEFAULT_INPUTS – bleibt bei Parameteränderung stabil
+  const fixedYMax = useMemo(() => {
+    if (!weights) return 2000
+    const allVals = SWEEPS.flatMap(sweep => {
+      const values = linspace(sweep.min, sweep.max, sweep.points)
+      return values.flatMap(v => {
+        const vec = buildFeatureVector({ ...DEFAULT_INPUTS, [sweep.key]: v })
+        return [mlpForward(vec, weights.mlp), linearForward(vec, weights.linear)]
+      })
+    })
+    return Math.ceil(Math.max(...allVals) / 100) * 100
+  }, [weights])
+
   const update = (key) => (e) => {
     const val = e.target ? e.target.value : e
     setInputs((s) => ({ ...s, [key]: typeof val === 'string' ? Number(val) : val }))
@@ -94,16 +107,18 @@ export default function FeatureSensitivitaet({ station }) {
 
   if (loading) {
     return (
-      <div className="card p-12 text-center text-sm text-[var(--text-muted)]">
-        Modell wird geladen...
+      <div className="card p-16 text-center text-sm text-[var(--text-muted)] inline-flex items-center justify-center w-full gap-3">
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+        Modell wird geladen
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="card p-8 max-w-md mx-auto text-center">
-        <h3 className="font-mono mb-2">Modell nicht verfügbar</h3>
+      <div className="card p-10 max-w-md mx-auto text-center">
+        <div className="eyebrow mb-2">Fehler</div>
+        <h3 className="mb-2">Modell nicht verfügbar</h3>
         <p className="text-sm text-[var(--text-muted)]">
           Gewichte für Station <span className="font-mono">{station.id}</span> noch nicht
           exportiert.
@@ -113,31 +128,39 @@ export default function FeatureSensitivitaet({ station }) {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="font-mono text-xl mb-1">Feature-Sensitivität</h2>
-        <p className="text-sm text-[var(--text-muted)]">
-          {station.name} · {station.direction} – Wie reagiert das MLP auf
-          Änderungen einzelner Features?
+    <div className="space-y-8">
+      <div className="stagger-in">
+        <h1 className="mb-2">
+          <span className="text-[var(--text-secondary)]">Worauf</span> reagiert das
+          MLP eigentlich?
+        </h1>
+        <p className="text-sm text-[var(--text-secondary)] max-w-prose">
+          {station.name} · {station.direction} — verändere ein Feature isoliert
+          und beobachte den Effekt auf die Vorhersage.
         </p>
       </div>
 
       {/* Basislinie (kollabierbar) */}
       <div className="card">
         <button
-          className="w-full flex items-center justify-between px-6 py-4 text-left"
+          className="w-full flex items-center justify-between px-6 py-5 text-left transition-colors hover:bg-[var(--bg-elevated)]"
           onClick={() => setCollapsed((c) => !c)}
         >
           <div>
-            <div className="font-mono text-sm uppercase tracking-wider text-[var(--text-muted)]">
-              Basislinie
-            </div>
-            <div className="text-xs text-[var(--text-muted)] mt-1">
+            <div className="eyebrow">Basislinie</div>
+            <div className="text-xs text-[var(--text-muted)] mt-1.5">
               Konstante Werte für alle nicht variierten Features
             </div>
           </div>
-          <span className="text-[var(--text-muted)] text-sm">
-            {collapsed ? '▾ Anzeigen' : '▴ Verbergen'}
+          <span className="text-[var(--text-secondary)] text-sm inline-flex items-center gap-1.5">
+            {collapsed ? 'Anzeigen' : 'Verbergen'}
+            <span
+              aria-hidden
+              className="inline-block transition-transform"
+              style={{ transform: collapsed ? 'rotate(0deg)' : 'rotate(180deg)' }}
+            >
+              ▾
+            </span>
           </span>
         </button>
 
@@ -229,12 +252,10 @@ export default function FeatureSensitivitaet({ station }) {
           const baseValue = inputs[sweep.key]
           return (
             <div key={sweep.key} className="card p-5">
-              <div className="flex items-baseline justify-between mb-2">
-                <h3 className="font-mono text-sm uppercase tracking-wider text-[var(--text-muted)]">
-                  {sweep.label}
-                </h3>
-                <span className="text-xs text-[var(--text-muted)]">
-                  Basis: {typeof baseValue === 'number' ? baseValue.toFixed(2) : baseValue}
+              <div className="flex items-baseline justify-between mb-3">
+                <h3 className="text-[0.95rem] tracking-tightish">{sweep.label}</h3>
+                <span className="text-xs text-[var(--text-muted)] font-mono">
+                  Basis {typeof baseValue === 'number' ? baseValue.toFixed(2) : baseValue}
                   {sweep.unit && ` ${sweep.unit}`}
                 </span>
               </div>
@@ -250,7 +271,7 @@ export default function FeatureSensitivitaet({ station }) {
                       tick={{ fontSize: 11 }}
                       tickFormatter={(v) => (sweep.step === 1 ? v.toFixed(0) : v.toFixed(1))}
                     />
-                    <YAxis stroke="var(--text-muted)" tick={{ fontSize: 11 }} />
+                    <YAxis domain={[0, fixedYMax]} stroke="var(--text-muted)" tick={{ fontSize: 11 }} />
                     <Tooltip content={<CustomTooltip sweep={sweep} />} />
                     <Line
                       type="monotone"
@@ -284,12 +305,11 @@ export default function FeatureSensitivitaet({ station }) {
 
       {/* Feature-Wichtigkeit */}
       <div className="card p-6">
-        <h3 className="font-mono text-sm uppercase tracking-wider text-[var(--text-muted)] mb-1">
-          Feature-Wichtigkeit
-        </h3>
-        <p className="text-xs text-[var(--text-muted)] mb-4">
-          Wie stark verändert sich die Vorhersage wenn das Feature über seinen
-          vollen Wertebereich variiert wird? (max - min)
+        <div className="eyebrow mb-2">Ranking</div>
+        <h3 className="mb-1.5">Feature-Wichtigkeit</h3>
+        <p className="text-xs text-[var(--text-muted)] mb-5 max-w-prose">
+          Wie stark verändert sich die Vorhersage, wenn das Feature über seinen
+          vollen Wertebereich variiert wird? (max − min)
         </p>
         <div style={{ width: '100%', height: 200 }}>
           <ResponsiveContainer>
@@ -327,19 +347,15 @@ export default function FeatureSensitivitaet({ station }) {
 }
 
 function Label({ children }) {
-  return (
-    <div className="text-xs uppercase tracking-wider text-[var(--text-muted)] mb-2">
-      {children}
-    </div>
-  )
+  return <div className="eyebrow mb-2">{children}</div>
 }
 
 function CompactSlider({ label, value, min, max, step = 1, onChange, display }) {
   return (
     <div>
-      <div className="flex items-baseline justify-between mb-1">
+      <div className="flex items-baseline justify-between mb-2">
         <Label>{label}</Label>
-        <span className="font-mono text-xs">{display}</span>
+        <span className="font-mono text-xs text-[var(--text-primary)]">{display}</span>
       </div>
       <input type="range" min={min} max={max} step={step} value={value} onChange={onChange} />
     </div>

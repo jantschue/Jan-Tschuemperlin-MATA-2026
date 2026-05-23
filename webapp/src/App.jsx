@@ -4,12 +4,14 @@ import StationsMap from './components/StationsMap.jsx'
 import LiveVorhersage from './components/LiveVorhersage.jsx'
 import DatumsAnalyse from './components/DatumsAnalyse.jsx'
 import FeatureSensitivitaet from './components/FeatureSensitivitaet.jsx'
+import AnomalieExplorer from './components/AnomalieExplorer.jsx'
 
 // Hauptkomponente: globaler Zustand (aktive Ansicht + gewählte Station)
 export default function App() {
   const [view, setView] = useState('karte')
   const [stations, setStations] = useState([])
   const [selectedStationId, setSelectedStationId] = useState(null)
+  const [datumInitialDate, setDatumInitialDate] = useState('')
   const [error, setError] = useState(null)
 
   // Stations-Liste einmalig laden
@@ -35,11 +37,19 @@ export default function App() {
     setView('vorhersage')
   }
 
+  // Wechselt zur Datums-Analyse mit vorausgewähltem Datum (aus Anomalie-Explorer)
+  const goToDatum = (stationId, dateStr) => {
+    setSelectedStationId(stationId)
+    setDatumInitialDate(dateStr)
+    setView('datum')
+  }
+
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-6">
-        <div className="card p-8 max-w-md text-center">
-          <h2 className="text-xl mb-2">Daten konnten nicht geladen werden</h2>
+      <div className="min-h-[100dvh] flex items-center justify-center px-6">
+        <div className="card p-10 max-w-md text-center">
+          <div className="eyebrow mb-3">Ladefehler</div>
+          <h2 className="mb-2">Daten konnten nicht geladen werden</h2>
           <p className="text-[var(--text-muted)] text-sm">{error}</p>
         </div>
       </div>
@@ -48,14 +58,17 @@ export default function App() {
 
   if (stations.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-[var(--text-muted)] text-sm">Stationen werden geladen...</p>
+      <div className="min-h-[100dvh] flex items-center justify-center">
+        <div className="flex items-center gap-3 text-[var(--text-muted)] text-sm">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+          Stationen werden geladen
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-[100dvh] flex flex-col">
       <Navbar
         view={view}
         onChangeView={setView}
@@ -64,7 +77,7 @@ export default function App() {
         onChangeStation={setSelectedStationId}
       />
 
-      <main className="flex-1 px-6 md:px-10 py-8 max-w-[1400px] w-full mx-auto">
+      <main className="flex-1 px-6 md:px-12 py-10 md:py-14 max-w-[1320px] w-full mx-auto">
         {view === 'karte' && (
           <StationsMap
             stations={stations}
@@ -79,16 +92,21 @@ export default function App() {
           />
         )}
         {view === 'datum' && selectedStation && (
-          <DatumsAnalyse station={selectedStation} />
+          <DatumsAnalyse station={selectedStation} initialDate={datumInitialDate} />
         )}
         {view === 'sensitivitaet' && selectedStation && (
           <FeatureSensitivitaet station={selectedStation} />
         )}
+        {view === 'anomalie' && (
+          <AnomalieExplorer stations={stations} onGoToDatum={goToDatum} />
+        )}
       </main>
 
-      <footer className="px-6 md:px-10 py-4 border-t border-[var(--border)] text-xs text-[var(--text-muted)] flex justify-between">
-        <span>Maturaarbeit 2026 · ASTRA-Verkehrsdaten Kanton Schwyz</span>
-        <span className="font-mono">v0.1</span>
+      <footer className="px-6 md:px-12 py-6 border-t border-[var(--border)] text-xs text-[var(--text-muted)] flex flex-col md:flex-row gap-2 md:gap-0 justify-between max-w-[1320px] w-full mx-auto">
+        <span>
+          Maturaarbeit 2026 · ASTRA-Verkehrsdaten Kanton Schwyz
+        </span>
+        <span className="font-mono text-[var(--text-faint)]">v0.1</span>
       </footer>
     </div>
   )

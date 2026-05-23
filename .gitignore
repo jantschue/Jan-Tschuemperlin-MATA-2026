@@ -18,7 +18,12 @@ Thumbs.db
 
 # Claude Code
 .claude/
+.agents/
+skills-lock.json
 CLAUDE.md
+
+# Optuna Datenbank
+*.db
 
 # Modell-Weights
 results/model_results/**/model_weights/

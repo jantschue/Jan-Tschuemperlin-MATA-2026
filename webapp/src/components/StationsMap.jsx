@@ -28,9 +28,9 @@ function r2Color(r2) {
 }
 
 function r2Hex(r2) {
-  if (r2 >= 0.7) return '#22c55e'
-  if (r2 >= 0.6) return '#f59e0b'
-  return '#ef4444'
+  if (r2 >= 0.7) return '#5fa776'
+  if (r2 >= 0.6) return '#d9a24a'
+  return '#d96a5c'
 }
 
 // Verbesserung in % MAE-Reduktion (positiv = MLP besser)
@@ -79,28 +79,42 @@ export default function StationsMap({ stations, selectedStationId, onSelectStati
   const Header = ({ k, children, right }) => (
     <th
       onClick={() => onHeaderClick(k)}
-      className={`px-3 py-2 text-xs uppercase tracking-wider text-[var(--text-muted)] cursor-pointer select-none hover:text-[var(--text-primary)] ${
+      className={`px-4 py-3 eyebrow cursor-pointer select-none hover:text-[var(--text-primary)] transition-colors ${
         right ? 'text-right' : 'text-left'
       }`}
     >
-      {children}
-      {sortKey === k && (
-        <span className="ml-1 text-[var(--accent)]">{sortDir === 'asc' ? '▲' : '▼'}</span>
-      )}
+      <span className="inline-flex items-center gap-1.5">
+        {children}
+        {sortKey === k && (
+          <span className="text-[var(--accent)] text-[0.7rem]">
+            {sortDir === 'asc' ? '↑' : '↓'}
+          </span>
+        )}
+      </span>
     </th>
   )
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       <section className="stagger-in">
-        <h2 className="font-mono text-xl mb-1">Stationskarte</h2>
-        <p className="text-sm text-[var(--text-muted)] mb-4">
-          Kanton Schwyz · 10 Messstellen · Farbe nach MLP-R²
-        </p>
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="mb-2">Stationskarte</h1>
+            <p className="text-sm text-[var(--text-secondary)] max-w-prose">
+              Zehn ASTRA-Messstellen im Kanton Schwyz. Markierungsfarbe codiert die
+              MLP-Vorhersagegüte (R²) je Station.
+            </p>
+          </div>
+          <div className="flex items-center gap-5 text-xs text-[var(--text-muted)]">
+            <LegendDot color="var(--success)" label="R² ≥ 0.70" />
+            <LegendDot color="var(--warning)" label="0.60–0.69" />
+            <LegendDot color="var(--danger)" label="&lt; 0.60" />
+          </div>
+        </div>
 
         <div
           className="card overflow-hidden"
-          style={{ height: '60vh', minHeight: 380 }}
+          style={{ height: 'min(60vh, 540px)', minHeight: 380 }}
         >
           <MapContainer
             bounds={bounds || undefined}
@@ -137,23 +151,33 @@ export default function StationsMap({ stations, selectedStationId, onSelectStati
                     opacity={1}
                     className="station-tooltip"
                   >
-                    <div className="font-mono text-sm mb-1">{s.name}</div>
-                    <div className="text-xs text-[var(--text-muted)] mb-2">
-                      Richtung {s.direction}
-                    </div>
-                    <div className="grid grid-cols-3 gap-x-3 text-xs">
-                      <div></div>
-                      <div className="text-[var(--text-muted)]">LR</div>
-                      <div className="text-[var(--accent)]">MLP</div>
-                      <div className="text-[var(--text-muted)]">MAE</div>
-                      <div>{s.metrics.linear.mae.toFixed(1)}</div>
-                      <div className="text-[var(--text-primary)]">{s.metrics.mlp.mae.toFixed(1)}</div>
-                      <div className="text-[var(--text-muted)]">RMSE</div>
-                      <div>{s.metrics.linear.rmse.toFixed(1)}</div>
-                      <div className="text-[var(--text-primary)]">{s.metrics.mlp.rmse.toFixed(1)}</div>
-                      <div className="text-[var(--text-muted)]">R²</div>
-                      <div>{s.metrics.linear.r2.toFixed(2)}</div>
-                      <div className="text-[var(--text-primary)]">{s.metrics.mlp.r2.toFixed(2)}</div>
+                    <div style={{ minWidth: 200 }}>
+                      <div className="font-medium text-sm mb-0.5 whitespace-nowrap">{s.name}</div>
+                      <div className="text-xs text-[var(--text-muted)] mb-3 whitespace-nowrap">
+                        Richtung {s.direction}
+                      </div>
+                      <table className="text-xs w-full border-collapse">
+                        <thead>
+                          <tr>
+                            <th className="font-normal text-left pb-1.5 text-[var(--text-faint)] pr-5" />
+                            <th className="font-normal text-right pb-1.5 text-[var(--lr-color)] pr-4">LR</th>
+                            <th className="font-normal text-right pb-1.5 text-[var(--accent)]">MLP</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            { label: 'MAE',  lr: s.metrics.linear.mae.toFixed(1),  mlp: s.metrics.mlp.mae.toFixed(1) },
+                            { label: 'RMSE', lr: s.metrics.linear.rmse.toFixed(1), mlp: s.metrics.mlp.rmse.toFixed(1) },
+                            { label: 'R²',   lr: s.metrics.linear.r2.toFixed(2),   mlp: s.metrics.mlp.r2.toFixed(2) }
+                          ].map(row => (
+                            <tr key={row.label}>
+                              <td className="text-[var(--text-muted)] py-0.5 pr-5">{row.label}</td>
+                              <td className="font-mono text-right whitespace-nowrap pr-4 text-[var(--text-secondary)]">{row.lr}</td>
+                              <td className="font-mono text-right whitespace-nowrap text-[var(--text-primary)]">{row.mlp}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </Tooltip>
                 </CircleMarker>
@@ -164,13 +188,18 @@ export default function StationsMap({ stations, selectedStationId, onSelectStati
       </section>
 
       <section className="stagger-in" style={{ animationDelay: '80ms' }}>
-        <h3 className="font-mono text-sm uppercase tracking-wider text-[var(--text-muted)] mb-3">
-          Übersicht aller Stationen
-        </h3>
-        <div className="card overflow-x-auto">
+        <div className="flex items-baseline justify-between mb-4">
+          <div>
+            <h2>Übersicht aller Stationen</h2>
+          </div>
+          <span className="text-xs text-[var(--text-muted)] hidden sm:inline">
+            Klick: zur Live-Vorhersage
+          </span>
+        </div>
+        <div className="card-quiet overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="border-b border-[var(--border)]">
-              <tr>
+            <thead>
+              <tr className="border-b border-[var(--border)]">
                 <Header k="name">Station</Header>
                 <Header k="direction">Richtung</Header>
                 <Header k="lrMae" right>LR MAE</Header>
@@ -188,21 +217,42 @@ export default function StationsMap({ stations, selectedStationId, onSelectStati
                   <tr
                     key={s.id}
                     onClick={() => onSelectStation(s.id)}
-                    className={`border-b border-[var(--border)] last:border-b-0 cursor-pointer hover:bg-[var(--bg-elevated)] ${
+                    className={`border-b border-[var(--border)] last:border-b-0 cursor-pointer transition-colors hover:bg-[var(--bg-elevated)] ${
                       active ? 'bg-[var(--bg-elevated)]' : ''
                     }`}
                   >
-                    <td className="px-3 py-2">{s.name}</td>
-                    <td className="px-3 py-2 text-[var(--text-muted)]">{s.direction}</td>
-                    <td className="px-3 py-2 text-right font-mono">{s.metrics.linear.mae.toFixed(1)}</td>
-                    <td className="px-3 py-2 text-right font-mono" style={{ color: r2Color(s.metrics.linear.r2) }}>
+                    <td className="px-4 py-3 text-[var(--text-primary)]">
+                      <span className="flex items-center gap-2.5">
+                        <span
+                          className="inline-block w-1.5 h-1.5 rounded-full"
+                          style={{ background: r2Hex(s.metrics.mlp.r2) }}
+                        />
+                        {s.name}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-[var(--text-muted)]">{s.direction}</td>
+                    <td className="px-4 py-3 text-right font-mono text-[var(--text-secondary)]">
+                      {s.metrics.linear.mae.toFixed(1)}
+                    </td>
+                    <td
+                      className="px-4 py-3 text-right font-mono"
+                      style={{ color: r2Color(s.metrics.linear.r2) }}
+                    >
                       {s.metrics.linear.r2.toFixed(2)}
                     </td>
-                    <td className="px-3 py-2 text-right font-mono">{s.metrics.mlp.mae.toFixed(1)}</td>
-                    <td className="px-3 py-2 text-right font-mono" style={{ color: r2Color(s.metrics.mlp.r2) }}>
+                    <td className="px-4 py-3 text-right font-mono">
+                      {s.metrics.mlp.mae.toFixed(1)}
+                    </td>
+                    <td
+                      className="px-4 py-3 text-right font-mono"
+                      style={{ color: r2Color(s.metrics.mlp.r2) }}
+                    >
                       {s.metrics.mlp.r2.toFixed(2)}
                     </td>
-                    <td className="px-3 py-2 text-right font-mono" style={{ color: imp >= 0 ? 'var(--success)' : 'var(--danger)' }}>
+                    <td
+                      className="px-4 py-3 text-right font-mono"
+                      style={{ color: imp >= 0 ? 'var(--success)' : 'var(--danger)' }}
+                    >
                       {imp >= 0 ? '+' : ''}
                       {imp.toFixed(1)}%
                     </td>
@@ -214,5 +264,17 @@ export default function StationsMap({ stations, selectedStationId, onSelectStati
         </div>
       </section>
     </div>
+  )
+}
+
+function LegendDot({ color, label }) {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span
+        className="inline-block w-2 h-2 rounded-full"
+        style={{ background: color }}
+      />
+      {label}
+    </span>
   )
 }

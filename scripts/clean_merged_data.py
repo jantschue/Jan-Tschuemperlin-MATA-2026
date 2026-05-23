@@ -1,5 +1,7 @@
 """
-"Entfernt alle Zeilen mit fehlenden Messwerten (NaN) in der Spalte 'volume' aus den zusammengeführten Datensätzen ('merged'). Die lückenlosen Datensätze werden anschliessend im Ordner 'merged_gapless' gespeichert."
+Entfernt alle Zeilen mit fehlenden Messwerten (NaN) in der Spalte 'volume' aus den
+zusammengeführten Datensätzen. Die bereinigten Datensätze werden im Ordner
+'data/v4_cleaned' gespeichert.
 """
 
 import pandas as pd

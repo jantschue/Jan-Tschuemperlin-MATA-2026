@@ -43,22 +43,41 @@ function CustomTooltip({ active, payload, label }) {
   )
 }
 
-function MetricCard({ label, value, unit }) {
+function MetricCard({ label, value, unit, accent }) {
   return (
-    <div className="card p-4">
-      <div className="text-xs uppercase tracking-wider text-[var(--text-muted)] mb-2">
-        {label}
-      </div>
-      <div className="font-mono text-2xl">{value}</div>
-      {unit && <div className="text-xs text-[var(--text-muted)] mt-1">{unit}</div>}
+    <div className="card p-5 relative overflow-hidden">
+      {accent && (
+        <span
+          aria-hidden
+          className="absolute inset-y-0 left-0 w-px"
+          style={{ background: accent }}
+        />
+      )}
+      <div className="eyebrow mb-3">{label}</div>
+      <div className="metric-display text-[1.7rem] leading-none">{value}</div>
+      {unit && (
+        <div className="text-xs text-[var(--text-muted)] mt-2">{unit}</div>
+      )}
     </div>
   )
 }
 
-export default function DatumsAnalyse({ station }) {
+export default function DatumsAnalyse({ station, initialDate = '' }) {
   const { loading, data, error } = useDailyResults(station.id)
-  const [selectedDate, setSelectedDate] = useState('')
+  const [selectedDate, setSelectedDate] = useState(initialDate)
+
+  // Synchronisiert wenn der Anomalie-Explorer ein neues Datum übergibt
+  useEffect(() => {
+    if (initialDate) setSelectedDate(initialDate)
+  }, [initialDate])
   const [showWeekAvg, setShowWeekAvg] = useState(false)
+
+  // Globales Y-Maximum über den gesamten Datensatz – bleibt bei Datumswechsel stabil
+  const globalYMax = useMemo(() => {
+    if (!data || !data.length) return 2000
+    const all = data.flatMap(r => [r.actual, r.pred_mlp, r.pred_linear])
+    return Math.ceil(Math.max(...all) / 100) * 100
+  }, [data])
 
   // Beim ersten Laden ein Standarddatum aus dem Datensatz wählen
   useEffect(() => {
@@ -118,16 +137,18 @@ export default function DatumsAnalyse({ station }) {
 
   if (loading) {
     return (
-      <div className="card p-12 text-center text-sm text-[var(--text-muted)]">
-        Tagesdaten werden geladen...
+      <div className="card p-16 text-center text-sm text-[var(--text-muted)] inline-flex items-center justify-center w-full gap-3">
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+        Tagesdaten werden geladen
       </div>
     )
   }
 
   if (error || !data || data.length === 0) {
     return (
-      <div className="card p-8 max-w-md mx-auto text-center">
-        <h3 className="font-mono mb-2">Daten fehlen</h3>
+      <div className="card p-10 max-w-md mx-auto text-center">
+        <div className="eyebrow mb-2">Hinweis</div>
+        <h3 className="mb-2">Daten fehlen</h3>
         <p className="text-sm text-[var(--text-muted)]">
           Tagesergebnisse für Station <span className="font-mono">{station.id}</span> noch
           nicht exportiert.
@@ -137,20 +158,21 @@ export default function DatumsAnalyse({ station }) {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="space-y-8">
+      <div className="flex flex-wrap items-end justify-between gap-6 stagger-in">
         <div>
-          <h2 className="font-mono text-xl mb-1">Datums-Analyse</h2>
-          <p className="text-sm text-[var(--text-muted)]">
+          <h1 className="mb-2">
+            <span className="text-[var(--text-secondary)]">Wo</span> liegt das Modell
+            an einem konkreten Tag?
+          </h1>
+          <p className="text-sm text-[var(--text-secondary)]">
             {station.name} · {station.direction}
           </p>
         </div>
 
-        <div className="flex items-end gap-6">
+        <div className="flex flex-wrap items-end gap-6">
           <div>
-            <label className="block text-xs uppercase tracking-wider text-[var(--text-muted)] mb-1">
-              Datum
-            </label>
+            <label className="eyebrow block mb-1.5">Datum</label>
             <input
               type="date"
               value={selectedDate}
@@ -158,7 +180,7 @@ export default function DatumsAnalyse({ station }) {
             />
           </div>
 
-          <label className="flex items-center gap-3 text-sm text-[var(--text-muted)] mb-2">
+          <label className="flex items-center gap-3 text-sm text-[var(--text-secondary)] mb-1.5 cursor-pointer">
             <span>Wochendurchschnitt</span>
             <span className="toggle">
               <input
@@ -183,7 +205,7 @@ export default function DatumsAnalyse({ station }) {
               <ComposedChart data={chartData} margin={{ top: 16, right: 16, bottom: 0, left: -16 }}>
                 <CartesianGrid stroke="var(--border)" strokeDasharray="2 3" />
                 <XAxis dataKey="hour" stroke="var(--text-muted)" tick={{ fontSize: 11 }} />
-                <YAxis stroke="var(--text-muted)" tick={{ fontSize: 11 }} />
+                <YAxis domain={[0, globalYMax]} stroke="var(--text-muted)" tick={{ fontSize: 11 }} />
                 <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'var(--border)' }} />
 
                 {showWeekAvg && (
@@ -245,8 +267,18 @@ export default function DatumsAnalyse({ station }) {
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard label="MLP MAE" value={mlpMae.toFixed(1)} unit="Fahrzeuge/h" />
-        <MetricCard label="LR MAE" value={lrMae.toFixed(1)} unit="Fahrzeuge/h" />
+        <MetricCard
+          label="MLP MAE"
+          value={mlpMae.toFixed(1)}
+          unit="Fahrzeuge/h"
+          accent="var(--accent)"
+        />
+        <MetricCard
+          label="LR MAE"
+          value={lrMae.toFixed(1)}
+          unit="Fahrzeuge/h"
+          accent="var(--lr-color)"
+        />
         <MetricCard
           label="Schlechteste Stunde (MLP)"
           value={worst ? `${String(worst.hour).padStart(2, '0')}:00` : '–'}
@@ -260,20 +292,22 @@ export default function DatumsAnalyse({ station }) {
       </div>
 
       {worst && (
-        <div className="card p-4 text-sm text-[var(--text-muted)]">
+        <div className="card-quiet p-5 text-sm text-[var(--text-secondary)] leading-relaxed">
           {(() => {
             const over = worst.err > 0
             const absErr = Math.abs(worst.err)
             const pct = worst.actual > 0 ? (absErr / worst.actual) * 100 : 0
             return (
               <>
-                Um <span className="font-mono text-[var(--text-primary)]">
+                <span className="eyebrow mr-2">Auffällig</span>
+                Um{' '}
+                <span className="font-mono text-[var(--text-primary)]">
                   {String(worst.hour).padStart(2, '0')}:00 Uhr
                 </span>{' '}
                 {over ? 'überschätzt' : 'unterschätzt'} das Modell den Peak um{' '}
                 <span className="font-mono text-[var(--text-primary)]">{absErr}</span>{' '}
-                Fahrzeuge ({over ? '+' : '-'}
-                {pct.toFixed(1)}%).
+                Fahrzeuge ({over ? '+' : '−'}
+                {pct.toFixed(1)} %).
               </>
             )
           })()}

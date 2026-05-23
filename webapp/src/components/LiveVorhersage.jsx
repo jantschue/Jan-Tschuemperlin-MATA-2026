@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import {
   Bar,
   BarChart,
@@ -19,32 +19,101 @@ import {
   WEATHER_OPTIONS
 } from '../utils/featureBuilder.js'
 
+// Ostersonntag nach Butcher's Algorithm
+function easterSunday(year) {
+  const a = year % 19
+  const b = Math.floor(year / 100)
+  const c = year % 100
+  const d = Math.floor(b / 4)
+  const e = b % 4
+  const f = Math.floor((b + 8) / 25)
+  const g = Math.floor((b - f + 1) / 3)
+  const h = (19 * a + b - d - g + 15) % 30
+  const i = Math.floor(c / 4)
+  const k = c % 4
+  const l = (32 + 2 * e + 2 * i - h - k) % 7
+  const m = Math.floor((a + 11 * h + 22 * l) / 451)
+  const month = Math.floor((h + l - 7 * m + 114) / 31)
+  const day = ((h + l - 7 * m + 114) % 31) + 1
+  return new Date(year, month - 1, day)
+}
+
+// Prüft ob ein Datum ein Schweizer Feiertag ist
+function isSwissHoliday(date) {
+  const y = date.getFullYear()
+  const m = date.getMonth() + 1
+  const d = date.getDate()
+  if ((m === 1 && d === 1) || (m === 8 && d === 1) ||
+      (m === 12 && d === 25) || (m === 12 && d === 26)) return true
+  const easter = easterSunday(y)
+  const diff = Math.round((new Date(y, m - 1, d) - easter) / 86400000)
+  return diff === -2 || diff === 1 || diff === 39 || diff === 50
+}
+
+// WMO-Wettercodes → weather_cat (0=Clear, 1=Cloudy, 3=Rain, 4=Snow)
+function wmoCat(code) {
+  if (code === 0 || code === 1) return 0
+  if (code <= 3 || code === 45 || code === 48) return 1
+  if ((code >= 71 && code <= 77) || code === 85 || code === 86) return 4
+  return 3
+}
+
+// Heutige Datums-Eingaben (ohne Wetter – wird separat geladen)
+function todayInputs() {
+  const now = new Date()
+  const jsDay = now.getDay()
+  return {
+    ...DEFAULT_INPUTS,
+    year: now.getFullYear(),
+    hour: now.getHours(),
+    dayOfWeek: jsDay === 0 ? 6 : jsDay - 1,
+    month: now.getMonth() + 1,
+    day: now.getDate(),
+    isHoliday: isSwissHoliday(now)
+  }
+}
+
 // Animations-Wrapper: rendert die Zahl bei Wert-Wechsel mit fade+slide-in
 function AnimatedNumber({ value }) {
   return (
-    <div key={value} className="animate-prediction font-mono text-[3.5rem] leading-none">
+    <div
+      key={value}
+      className="animate-prediction metric-display text-[3.4rem] sm:text-[3.8rem] leading-[0.95]"
+    >
       {value}
     </div>
   )
 }
 
-function PredictionCard({ title, value, r2, color }) {
+function PredictionCard({ title, value, r2, color, accent }) {
   return (
-    <div className="card p-6 flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-mono text-sm tracking-wider uppercase text-[var(--text-muted)]">
-          {title}
-        </h3>
+    <div className="card p-6 flex flex-col relative overflow-hidden">
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-px"
+        style={{ background: color, opacity: 0.5 }}
+      />
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-2.5">
+          <span
+            className="inline-block w-1.5 h-1.5 rounded-full"
+            style={{ background: color }}
+          />
+          <h3 className="text-[0.95rem] tracking-tightish">{title}</h3>
+          {accent && (
+            <span className="text-[10px] eyebrow text-[var(--accent)]">primär</span>
+          )}
+        </div>
         <span
-          className="text-xs font-mono px-2 py-1 rounded-sm"
-          style={{ color, border: `1px solid ${color}` }}
+          className="text-[11px] font-mono px-2 py-0.5 rounded-full text-[var(--text-secondary)]"
+          style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}
         >
-          R² = {r2.toFixed(2)}
+          R² <span style={{ color }}>{r2.toFixed(2)}</span>
         </span>
       </div>
       <AnimatedNumber value={value} />
-      <div className="text-xs text-[var(--text-muted)] mt-2 tracking-wider uppercase">
-        Fahrzeuge/h
+      <div className="text-xs text-[var(--text-muted)] mt-3">
+        Fahrzeuge pro Stunde
       </div>
     </div>
   )
@@ -69,7 +138,40 @@ function CustomTooltip({ active, payload, label }) {
 
 export default function LiveVorhersage({ station, onGoToMap }) {
   const { loading, weights, error } = useModelWeights(station.id)
-  const [inputs, setInputs] = useState(DEFAULT_INPUTS)
+  const [inputs, setInputs] = useState(todayInputs)
+
+  // Aktuelles Wetter für Kanton Schwyz (47.02°N, 8.65°E) von Open-Meteo laden
+  useEffect(() => {
+    fetch(
+      'https://api.open-meteo.com/v1/forecast?latitude=47.02&longitude=8.65' +
+      '&current=temperature_2m,precipitation,snowfall,weathercode,cloud_cover&timezone=Europe%2FZurich'
+    )
+      .then(r => r.json())
+      .then(data => {
+        const cur = data.current
+        if (!cur) return
+        const sun = Math.max(0, 1 - (cur.cloud_cover ?? 50) / 100)
+        setInputs(s => ({
+          ...s,
+          temp: Math.round(cur.temperature_2m ?? s.temp),
+          rain: Math.min(20, parseFloat((cur.precipitation ?? 0).toFixed(1))),
+          snow: Math.min(10, parseFloat(((cur.snowfall ?? 0) * 10).toFixed(1))),
+          sun: parseFloat(sun.toFixed(2)),
+          weatherCat: wmoCat(cur.weathercode ?? cur.weather_code ?? 0)
+        }))
+      })
+      .catch(() => {})
+  }, [])
+
+  // Festes Y-Maximum über alle 24 Stunden mit DEFAULT_INPUTS – unabhängig von Eingaben
+  const fixedYMax = useMemo(() => {
+    if (!weights) return 2000
+    const maxVal = Math.max(...Array.from({ length: 24 }, (_, h) => {
+      const v = buildFeatureVector({ ...DEFAULT_INPUTS, hour: h })
+      return Math.max(mlpForward(v, weights.mlp), linearForward(v, weights.linear))
+    }))
+    return Math.ceil(maxVal / 100) * 100
+  }, [weights])
 
   const update = (key) => (e) => {
     const val = e.target ? e.target.value : e
@@ -101,9 +203,10 @@ export default function LiveVorhersage({ station, onGoToMap }) {
 
   if (loading) {
     return (
-      <div className="card p-12 text-center">
-        <div className="inline-block animate-pulse text-[var(--text-muted)] text-sm">
-          Modell wird geladen...
+      <div className="card p-16 text-center">
+        <div className="inline-flex items-center gap-3 text-[var(--text-muted)] text-sm">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+          Modell wird geladen
         </div>
       </div>
     )
@@ -111,8 +214,9 @@ export default function LiveVorhersage({ station, onGoToMap }) {
 
   if (error) {
     return (
-      <div className="card p-8 max-w-md mx-auto text-center">
-        <h3 className="font-mono mb-2">Modell nicht verfügbar</h3>
+      <div className="card p-10 max-w-md mx-auto text-center">
+        <div className="eyebrow mb-2">Fehler</div>
+        <h3 className="mb-2">Modell nicht verfügbar</h3>
         <p className="text-sm text-[var(--text-muted)]">
           Gewichte für Station <span className="font-mono">{station.id}</span> noch nicht
           exportiert.
@@ -125,29 +229,37 @@ export default function LiveVorhersage({ station, onGoToMap }) {
   const lrR2 = station.metrics.linear.r2
 
   return (
-    <div className="grid lg:grid-cols-5 gap-6">
-      {/* Linkes Panel: Eingabeformular */}
-      <aside className="lg:col-span-2 card p-6 stagger-in">
-        <div className="flex items-center justify-between mb-1">
-          <h2 className="font-mono text-lg">Eingaben</h2>
-        </div>
+    <div className="space-y-8">
+      <div className="stagger-in">
+        <h1 className="mb-2">
+          <span className="text-[var(--text-secondary)]">Was sagt das Modell</span>{' '}
+          – für diese Bedingungen?
+        </h1>
+        <p className="text-sm text-[var(--text-secondary)] max-w-prose">
+          Stelle Uhrzeit, Wetter und Kalender frei ein. MLP und lineare Regression
+          rechnen die Prognose live im Browser.
+        </p>
+      </div>
 
-        <div className="mb-6 pb-4 border-b border-[var(--border)]">
-          <div className="text-xs uppercase tracking-wider text-[var(--text-muted)] mb-1">
-            Station
+      <div className="grid lg:grid-cols-5 gap-6">
+        {/* Linkes Panel: Eingabeformular */}
+        <aside className="lg:col-span-2 card p-6 stagger-in">
+          <div className="flex items-baseline justify-between mb-5">
+            <h2>Eingaben</h2>
+            <span className="eyebrow">Parameter</span>
           </div>
-          <div className="flex items-center justify-between">
-            <div className="font-mono text-sm">
-              {station.name} · {station.direction}
+
+          <div className="mb-6 pb-5 border-b border-[var(--border)]">
+            <div className="eyebrow mb-1.5">Station</div>
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-sm text-[var(--text-primary)] truncate">
+                {station.name} <span className="text-[var(--text-muted)]">· {station.direction}</span>
+              </div>
+              <button onClick={onGoToMap} className="btn-link shrink-0">
+                Ändern
+              </button>
             </div>
-            <button
-              onClick={onGoToMap}
-              className="text-xs text-[var(--accent)] hover:underline"
-            >
-              Ändern
-            </button>
           </div>
-        </div>
 
         <div className="space-y-5">
           <Slider
@@ -251,68 +363,84 @@ export default function LiveVorhersage({ station, onGoToMap }) {
         </div>
       </aside>
 
-      {/* Rechtes Panel: Ergebnisse */}
-      <section className="lg:col-span-3 space-y-6 stagger-in" style={{ animationDelay: '80ms' }}>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <PredictionCard
-            title="MLP"
-            value={prediction.mlp}
-            r2={mlpR2}
-            color="var(--accent)"
-          />
-          <PredictionCard
-            title="Lineare Regression"
-            value={prediction.linear}
-            r2={lrR2}
-            color="var(--lr-color)"
-          />
-        </div>
+        {/* Rechtes Panel: Ergebnisse */}
+        <section className="lg:col-span-3 space-y-6 stagger-in" style={{ animationDelay: '80ms' }}>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <PredictionCard
+              title="MLP"
+              value={prediction.mlp}
+              r2={mlpR2}
+              color="var(--accent)"
+              accent
+            />
+            <PredictionCard
+              title="Lineare Regression"
+              value={prediction.linear}
+              r2={lrR2}
+              color="var(--lr-color)"
+            />
+          </div>
 
-        <div className="card p-6">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-mono text-sm uppercase tracking-wider text-[var(--text-muted)]">
-              24-Stunden Verlauf
-            </h3>
-            <span className="text-xs text-[var(--text-muted)]">
-              Aktuelle Stunde hervorgehoben
-            </span>
+          <div className="card p-6">
+            <div className="flex items-baseline justify-between mb-4">
+              <h3>24-Stunden Verlauf</h3>
+              <span className="text-xs text-[var(--text-muted)]">
+                Aktuelle Stunde hervorgehoben
+              </span>
+            </div>
+            <div style={{ width: '100%', height: 280 }}>
+              <ResponsiveContainer>
+                <BarChart data={dayPredictions} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
+                  <CartesianGrid stroke="var(--border)" strokeDasharray="2 3" />
+                  <XAxis
+                    dataKey="hour"
+                    stroke="var(--text-muted)"
+                    tick={{ fontSize: 11 }}
+                  />
+                  <YAxis domain={[0, fixedYMax]} stroke="var(--text-muted)" tick={{ fontSize: 11 }} />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                    content={<CustomTooltip />}
+                  />
+                  <Bar dataKey="MLP" name="MLP" animationDuration={400} radius={[2, 2, 0, 0]}>
+                    {dayPredictions.map((entry, i) => (
+                      <Cell
+                        key={`mlp-${i}`}
+                        fill={entry.hour === inputs.hour ? '#6c8ff5' : 'rgba(108,143,245,0.32)'}
+                      />
+                    ))}
+                  </Bar>
+                  <Bar dataKey="LR" name="LR" animationDuration={400} radius={[2, 2, 0, 0]}>
+                    {dayPredictions.map((entry, i) => (
+                      <Cell
+                        key={`lr-${i}`}
+                        fill={entry.hour === inputs.hour ? '#d4a86a' : 'rgba(212,168,106,0.32)'}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex items-center gap-5 mt-3 text-xs text-[var(--text-muted)]">
+              <LegendDot color="var(--accent)" label="MLP" />
+              <LegendDot color="var(--lr-color)" label="Lineare Regression" />
+            </div>
           </div>
-          <div style={{ width: '100%', height: 280 }}>
-            <ResponsiveContainer>
-              <BarChart data={dayPredictions} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
-                <CartesianGrid stroke="var(--border)" strokeDasharray="2 3" />
-                <XAxis
-                  dataKey="hour"
-                  stroke="var(--text-muted)"
-                  tick={{ fontSize: 11 }}
-                />
-                <YAxis stroke="var(--text-muted)" tick={{ fontSize: 11 }} />
-                <Tooltip
-                  cursor={{ fill: 'rgba(255,255,255,0.03)' }}
-                  content={<CustomTooltip />}
-                />
-                <Bar dataKey="MLP" name="MLP" animationDuration={400}>
-                  {dayPredictions.map((entry, i) => (
-                    <Cell
-                      key={`mlp-${i}`}
-                      fill={entry.hour === inputs.hour ? '#4f8ef7' : 'rgba(79,142,247,0.35)'}
-                    />
-                  ))}
-                </Bar>
-                <Bar dataKey="LR" name="LR" animationDuration={400}>
-                  {dayPredictions.map((entry, i) => (
-                    <Cell
-                      key={`lr-${i}`}
-                      fill={entry.hour === inputs.hour ? '#a78bfa' : 'rgba(167,139,250,0.3)'}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
+  )
+}
+
+function LegendDot({ color, label }) {
+  return (
+    <span className="inline-flex items-center gap-2">
+      <span
+        className="inline-block w-2 h-2 rounded-full"
+        style={{ background: color }}
+      />
+      {label}
+    </span>
   )
 }
 
@@ -320,11 +448,9 @@ export default function LiveVorhersage({ station, onGoToMap }) {
 function Slider({ label, value, min, max, step = 1, onChange, display }) {
   return (
     <div>
-      <div className="flex items-baseline justify-between mb-2">
-        <label className="text-xs uppercase tracking-wider text-[var(--text-muted)]">
-          {label}
-        </label>
-        <span className="font-mono text-sm">{display}</span>
+      <div className="flex items-baseline justify-between mb-2.5">
+        <label className="eyebrow">{label}</label>
+        <span className="font-mono text-sm text-[var(--text-primary)]">{display}</span>
       </div>
       <input
         type="range"
@@ -341,9 +467,7 @@ function Slider({ label, value, min, max, step = 1, onChange, display }) {
 function Field({ label, children }) {
   return (
     <div>
-      <div className="text-xs uppercase tracking-wider text-[var(--text-muted)] mb-2">
-        {label}
-      </div>
+      <div className="eyebrow mb-2.5">{label}</div>
       {children}
     </div>
   )

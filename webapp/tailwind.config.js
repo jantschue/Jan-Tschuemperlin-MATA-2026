@@ -4,26 +4,38 @@ export default {
   theme: {
     extend: {
       colors: {
-        'bg-base': '#0a0a0f',
-        'bg-surface': '#13131a',
-        'bg-elevated': '#1c1c27',
-        border: '#2a2a3a',
-        'text-primary': '#f0f0f5',
-        'text-muted': '#6b6b80',
-        accent: '#4f8ef7',
-        'accent-dim': '#1e3a6e',
-        success: '#22c55e',
-        warning: '#f59e0b',
-        danger: '#ef4444'
+        'bg-base': '#0c0c0d',
+        'bg-surface': '#131315',
+        'bg-elevated': '#1a1a1d',
+        'bg-sunken': '#08080a',
+        border: '#25262a',
+        'border-strong': '#34353a',
+        'text-primary': '#ececea',
+        'text-secondary': '#b6b6b2',
+        'text-muted': '#7a7a78',
+        'text-faint': '#4d4d4b',
+        accent: '#6c8ff5',
+        'accent-strong': '#88a4f7',
+        'accent-dim': '#2a3a66',
+        'lr-color': '#d4a86a',
+        success: '#5fa776',
+        warning: '#d9a24a',
+        danger: '#d96a5c'
       },
       fontFamily: {
-        mono: ['"DM Mono"', '"Space Mono"', 'ui-monospace', 'monospace'],
-        sans: ['Inter', 'system-ui', 'sans-serif']
+        sans: ['Geist', 'system-ui', 'sans-serif'],
+        mono: ['"Geist Mono"', 'ui-monospace', 'monospace'],
+        serif: ['"Instrument Serif"', 'Iowan Old Style', 'serif']
       },
       borderRadius: {
-        DEFAULT: '4px',
-        sm: '2px',
-        md: '4px'
+        DEFAULT: '6px',
+        sm: '3px',
+        md: '6px',
+        lg: '10px'
+      },
+      letterSpacing: {
+        tightish: '-0.015em',
+        tighter2: '-0.025em'
       }
     }
   },

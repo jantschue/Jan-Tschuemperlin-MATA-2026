@@ -6,6 +6,21 @@ In meiner Maturaarbeit untersuche ich, ob sich das stündliche Verkehrsvolumen a
 
 Um den Einfluss der Corona-Anomalie auf die Modellgüte zu testen, werden beide Modelle zusätzlich auf einem Corona-bereinigten Datensatz (v6_withoutcorona) trainiert und mit den Original-Resultaten verglichen.
 
+## Interaktive Webapp
+
+Die Ergebnisse sind als interaktive Web-Applikation verfügbar:
+
+**[tschue.ch](https://tschue.ch)**
+
+Die Webapp ermöglicht:
+- **Stationskarte** – Übersicht aller 5 Messstationen mit MLP-Vorhersagegüte (R²) farbcodiert
+- **Live-Vorhersage** – MLP und lineare Regression rechnen Prognosen live im Browser (aktuelle Wetterdaten via Open-Meteo, automatische Feiertagserkennung)
+- **Datums-Analyse** – Tagesverlauf eines beliebigen Datums: Ist-Werte vs. Modellvorhersagen
+- **Feature-Sensitivität** – Zeigt, wie stark Uhrzeit, Temperatur, Niederschlag und Sonnenstunden die Vorhersage beeinflussen
+- **Anomalie-Explorer** – Durchsucht alle stündlichen Ergebnisse nach grossen Fehlern, Peak-Versagen und Wochentag-Mustern; Export als CSV
+
+Der Quellcode der Webapp liegt unter `webapp/`.
+
 ## Datenquellen & Danksagung
 
 Die verwendeten Rohdaten stammen aus folgenden offiziellen Quellen:
@@ -39,6 +54,7 @@ Die Rohdaten durchlaufen sechs Verarbeitungsstufen, bevor sie für das Modelltra
 | `models/` | Trainings-Skripte für die ML-Modelle (jeweils Variante für v5 und v6) |
 | `results/model_results/` | Metriken, Plots und Vorhersage-Vergleiche pro Modell (separat für v5- und v6-Varianten) |
 | `results/analysis/` | Output der explorativen Analyse-Skripte (Datensatz-Übersicht, COVID-Anomalie) |
+| `webapp/` | Interaktive React-Webapp (Vite + Tailwind); live unter [tschue.ch](https://tschue.ch) |
 | `Tutorials/` | Lernmaterialien, die ich während der Einarbeitung in Python, NumPy, Pandas und PyTorch erstellt habe |
 
 ### Modell-Skripte
