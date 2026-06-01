@@ -470,7 +470,7 @@ export default function AnomalieExplorer({ stations, onGoToDatum }) {
   return (
     <div className="space-y-8">
       <div className="stagger-in">
-        <h1 className="mb-2">Anomalie-Explorer</h1>
+        <h1 className="mb-2">Ausreisseranalyse</h1>
         <p className="text-sm text-[var(--text-secondary)] max-w-prose">
           Durchsuche alle stündlichen Vorhersageergebnisse nach grossen Fehlern,
           systematischen Mustern und auffälligen Ausreissern.

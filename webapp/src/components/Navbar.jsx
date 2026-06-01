@@ -4,7 +4,7 @@ const VIEWS = [
   { id: 'vorhersage', label: 'Live-Vorhersage' },
   { id: 'datum', label: 'Datums-Analyse' },
   { id: 'sensitivitaet', label: 'Feature-Sensitivität' },
-  { id: 'anomalie', label: 'Anomalie-Explorer' }
+  { id: 'anomalie', label: 'Ausreisseranalyse' }
 ]
 
 export default function Navbar({
@@ -26,7 +26,6 @@ export default function Navbar({
           }}
           className="flex items-center gap-2.5 group shrink-0"
         >
-          <span className="inline-block w-2 h-2 rounded-full bg-[var(--accent)] group-hover:scale-110 transition-transform" />
           <span className="text-[0.92rem] tracking-tightish">
             Jan MATA
             <span className="text-[var(--text-muted)]"> · 2026</span>
