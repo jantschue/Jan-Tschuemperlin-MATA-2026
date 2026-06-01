@@ -17,7 +17,7 @@ Die Webapp ermöglicht:
 - **Live-Vorhersage** – MLP und lineare Regression rechnen Prognosen live im Browser (aktuelle Wetterdaten via Open-Meteo, automatische Feiertagserkennung)
 - **Datums-Analyse** – Tagesverlauf eines beliebigen Datums: Ist-Werte vs. Modellvorhersagen
 - **Feature-Sensitivität** – Zeigt, wie stark Uhrzeit, Temperatur, Niederschlag und Sonnenstunden die Vorhersage beeinflussen
-- **Anomalie-Explorer** – Durchsucht alle stündlichen Ergebnisse nach grossen Fehlern, Peak-Versagen und Wochentag-Mustern; Export als CSV
+- **Ausreisseranalyse** – Durchsucht alle stündlichen Ergebnisse nach grossen Fehlern, Peak-Versagen und Wochentag-Mustern; Export als CSV
 
 Der Quellcode der Webapp liegt unter `webapp/`.
 
@@ -54,6 +54,7 @@ Die Rohdaten durchlaufen sechs Verarbeitungsstufen, bevor sie für das Modelltra
 | `models/` | Trainings-Skripte für die ML-Modelle (jeweils Variante für v5 und v6) |
 | `results/model_results/` | Metriken, Plots und Vorhersage-Vergleiche pro Modell (separat für v5- und v6-Varianten) |
 | `results/analysis/` | Output der explorativen Analyse-Skripte (Datensatz-Übersicht, COVID-Anomalie) |
+| `results/data_visualizations/` | Diagnostik der Datenpipeline: Korrelationsmatrizen, Tagesverlaufs-Plots und Lücken-Übersicht (`gaps.txt`) |
 | `webapp/` | Interaktive React-Webapp (Vite + Tailwind); live unter [tschue.ch](https://tschue.ch) |
 | `Tutorials/` | Lernmaterialien, die ich während der Einarbeitung in Python, NumPy, Pandas und PyTorch erstellt habe |
 
