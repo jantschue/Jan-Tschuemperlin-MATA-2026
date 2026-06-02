@@ -8,7 +8,7 @@ import os
 def main():
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     base_path_in = os.path.join(base_dir, "data", "v1_raw", "weather", "Luzern")
-    base_path_out = os.path.join(base_dir, "data", "v2_intermediate", "weather", "Luzern")
+    base_path_out = os.path.join(base_dir, "data", "external", "weather", "Luzern")
     file1 = os.path.join(base_path_in, "wetter_luzern_2010-2019.csv")
     file2 = os.path.join(base_path_in, "wetter_luzern_2020-2026.csv")
     output_file = os.path.join(base_path_out, "wetter_luzern_2010-2026_filtered.csv")

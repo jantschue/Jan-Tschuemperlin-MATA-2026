@@ -8,6 +8,7 @@ Lokal ausführen mit:  python export_weights.py
 
 import json
 import sys
+from datetime import date, timedelta
 from pathlib import Path
 
 import numpy as np
@@ -24,12 +25,14 @@ LR_WEIGHTS_DIR  = PROJECT_ROOT / "results" / "model_results" / "linear_regressio
 MLP_PREDS_DIR   = PROJECT_ROOT / "results" / "model_results" / "mlp"     / "predictions"
 LR_PREDS_DIR    = PROJECT_ROOT / "results" / "model_results" / "linear_regression" / "predictions"
 
-OUT_DATA    = PROJECT_ROOT / "webapp" / "public" / "data"
-OUT_WEIGHTS = OUT_DATA / "weights"
-OUT_RESULTS = OUT_DATA / "results"
+OUT_DATA     = PROJECT_ROOT / "webapp" / "public" / "data"
+OUT_WEIGHTS  = OUT_DATA / "weights"
+OUT_RESULTS  = OUT_DATA / "results"
+OUT_FEATURES = OUT_DATA / "features"
 OUT_DATA.mkdir(parents=True, exist_ok=True)
 OUT_WEIGHTS.mkdir(parents=True, exist_ok=True)
 OUT_RESULTS.mkdir(parents=True, exist_ok=True)
+OUT_FEATURES.mkdir(parents=True, exist_ok=True)
 
 # ── Modellklassen aus den vorhandenen Python-Files importieren ──────────────
 sys.path.insert(0, str(PROJECT_ROOT / "models"))
@@ -232,6 +235,89 @@ def export_mlp(station_id: str) -> dict | None:
     return payload
 
 
+def easter_sunday(year: int) -> date:
+    """Ostersonntag nach dem Butcher-Algorithmus (Gauss-Osterformel)."""
+    a = year % 19
+    b = year // 100
+    c = year % 100
+    d = b // 4
+    e = b % 4
+    f = (b + 8) // 25
+    g = (b - f + 1) // 3
+    h = (19 * a + b - d - g + 15) % 30
+    i = c // 4
+    k = c % 4
+    l = (32 + 2 * e + 2 * i - h - k) % 7
+    m = (a + 11 * h + 22 * l) // 451
+    month = (h + l - 7 * m + 114) // 31
+    day = ((h + l - 7 * m + 114) % 31) + 1
+    return date(year, month, day)
+
+
+def swiss_holiday_dates(year: int) -> set[date]:
+    """
+    Alle für den Kanton Schwyz verkehrsrelevanten Feiertage eines Jahres.
+    Enthält die 12 gesetzlichen Feiertage plus Berchtoldstag (2.1.), damit
+    die Webapp auch dessen Counterfactual zeigen kann. Die identische Logik
+    liegt clientseitig in webapp/src/utils/swissHolidays.js.
+    """
+    es = easter_sunday(year)
+    fixed = [
+        date(year, 1, 1),    # Neujahr
+        date(year, 1, 2),    # Berchtoldstag (optional, nicht gesetzlich)
+        date(year, 8, 1),    # Bundesfeier
+        date(year, 8, 15),   # Mariä Himmelfahrt
+        date(year, 11, 1),   # Allerheiligen
+        date(year, 12, 8),   # Mariä Empfängnis
+        date(year, 12, 25),  # Weihnachten
+        date(year, 12, 26),  # Stephanstag
+    ]
+    movable = [
+        es + timedelta(days=-2),  # Karfreitag
+        es + timedelta(days=1),   # Ostermontag
+        es + timedelta(days=39),  # Auffahrt
+        es + timedelta(days=50),  # Pfingstmontag
+        es + timedelta(days=60),  # Fronleichnam
+    ]
+    return set(fixed) | set(movable)
+
+
+def export_holiday_features(station_id: str) -> int:
+    """
+    Exportiert die rohen (unskalierten) 16-Feature-Vektoren aller Test-Set-
+    Stunden, die auf einen Schwyzer Feiertag fallen. Die Webapp nutzt diese
+    Vektoren für das Counterfactual (is_holiday auf 0 setzen und erneut durch
+    das Modell schicken). Der Test-Split ist identisch mit jenem des MLP, damit
+    die Datetimes mit den daily-results übereinstimmen.
+    """
+    csv_path = DATA_DIR / f"{station_id}_engineered.csv"
+    if not csv_path.exists():
+        print(f"  !Holiday-Features {station_id}: CSV fehlt – übersprungen")
+        return 0
+
+    feature_cols, _, _, X_test, _, test_index = load_csv_with_split(
+        csv_path, MLP_TRAIN_RATIO, MLP_VAL_RATIO
+    )
+
+    # Feiertags-Datumsmenge über alle im Test-Set vorkommenden Jahre
+    years = sorted({ts.year for ts in test_index})
+    holiday_dates: set[date] = set()
+    for y in years:
+        holiday_dates |= swiss_holiday_dates(y)
+
+    records = []
+    for i, ts in enumerate(test_index):
+        if ts.date() in holiday_dates:
+            records.append({
+                "datetime": ts.strftime("%Y-%m-%dT%H:%M:%S"),
+                "f": [float(v) for v in X_test[i]],
+            })
+
+    out = OUT_FEATURES / f"{station_id}_holidays.json"
+    out.write_text(json.dumps(records), encoding="utf-8")
+    return len(records)
+
+
 def export_daily_results(station_id: str) -> list[dict]:
     """Merged stündliche Test-Vorhersagen MLP + Linear → daily-results JSON."""
     mlp_csv = MLP_PREDS_DIR / f"predictions_{station_id}_engineered.csv"
@@ -314,6 +400,8 @@ def main():
         export_mlp(sid)
         export_linear(sid)
         export_daily_results(sid)
+        n_holiday = export_holiday_features(sid)
+        print(f"   Feiertags-Stunden exportiert: {n_holiday}")
 
         lat, lng = lv95_to_wgs84(meta["E"], meta["N"])
         # R1/R2 minimal versetzen, damit beide Marker auf der Karte sichtbar sind
@@ -339,8 +427,9 @@ def main():
         encoding="utf-8",
     )
     print(f"\nOK Export abgeschlossen: {len(stations_out)} Stationen in stations.json")
-    print(f"  Weights:        {OUT_WEIGHTS}")
-    print(f"  Daily Results:  {OUT_RESULTS}")
+    print(f"  Weights:          {OUT_WEIGHTS}")
+    print(f"  Daily Results:    {OUT_RESULTS}")
+    print(f"  Holiday Features: {OUT_FEATURES}")
 
 
 if __name__ == "__main__":

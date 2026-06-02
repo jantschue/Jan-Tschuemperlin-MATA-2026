@@ -9,11 +9,11 @@ import glob
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # --- Quell-Dateien ---
-weather_file = os.path.join(base_dir, "data", "v2_intermediate", "weather", "Waedenswil",
+weather_file = os.path.join(base_dir, "data", "external", "weather", "Waedenswil",
                             "wetter_waedenswil_2010-2026_categorized.csv")
-holiday_file = os.path.join(base_dir, "data", "v2_intermediate", "holidays",
+holiday_file = os.path.join(base_dir, "data", "external", "holidays",
                             "feiertage_SZ_2015_2026_hourly.csv")
-traffic_dir = os.path.join(base_dir, "data", "v2_intermediate", "traffic")
+traffic_dir = os.path.join(base_dir, "data", "v2_intermediate")
 
 # --- Ausgabe-Ordner ---
 output_dir = os.path.join(base_dir, "data", "v3_merged")

@@ -4,6 +4,7 @@ import StationsMap from './components/StationsMap.jsx'
 import LiveVorhersage from './components/LiveVorhersage.jsx'
 import DatumsAnalyse from './components/DatumsAnalyse.jsx'
 import FeatureSensitivitaet from './components/FeatureSensitivitaet.jsx'
+import FeiertagsAnalyse from './components/FeiertagsAnalyse.jsx'
 import AnomalieExplorer from './components/AnomalieExplorer.jsx'
 
 // Hauptkomponente: globaler Zustand (aktive Ansicht + gewählte Station)
@@ -93,6 +94,9 @@ export default function App() {
         )}
         {view === 'datum' && selectedStation && (
           <DatumsAnalyse station={selectedStation} initialDate={datumInitialDate} />
+        )}
+        {view === 'feiertage' && selectedStation && (
+          <FeiertagsAnalyse station={selectedStation} stations={stations} />
         )}
         {view === 'sensitivitaet' && selectedStation && (
           <FeatureSensitivitaet station={selectedStation} />
