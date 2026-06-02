@@ -27,3 +27,6 @@ CLAUDE.md
 
 # Modell-Weights
 results/model_results/**/model_weights/
+
+# Theorie-Ordner (lokale Erklärungsdateien, nicht im Repo)
+Theorie/
