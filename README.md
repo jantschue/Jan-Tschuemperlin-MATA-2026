@@ -40,15 +40,16 @@ Die Rohdaten durchlaufen mehrere Verarbeitungsstufen, bevor sie für das Modellt
 
 | Ordner | Inhalt |
 |---|---|
-| `data/v1_raw/` | Unveränderte Originaldaten (ASTRA-Verkehrsdaten, MeteoSchweiz-Rohdaten, Feiertags-CSV) |
+| `data/v1_raw/` | Unveränderte ASTRA-Verkehrsrohdaten (`traffic/`) |
 | `data/v2_intermediate/` | Verarbeitete Verkehrsdaten direkt im Ordner: Richtungsaufspaltung (R1/R2) und Stundenaggregation (10 `*_hourly.csv`-Dateien) |
-| `data/external/` | Aufbereitete externe Daten: gefilterte und kategorisierte Wetterdaten (MeteoSchweiz) sowie stündliche Feiertags-Flags (Kt. Schwyz) |
+| `data/weather/` | Externe Wetterdaten (MeteoSchweiz): `raw/` mit den Stations-Rohdateien (Luzern, Wädenswil), `processed/` mit den gefilterten und kategorisierten Datensätzen |
+| `data/holidays/` | Externe Feiertagsdaten (Kt. Schwyz): `raw/` mit der Feiertags-CSV, `processed/` mit den stündlichen Feiertags-Flags |
 | `data/v3_merged/` | Verkehr + Wetter + Feiertage zusammengeführt (10 Dateien, je Station × Richtung) |
 | `data/v4_cleaned/` | NaN-Zeilen entfernt |
 | `data/v5_engineered/` | Fertige ML-Features: zyklische Zeitkodierung, Wetterklassen, alle 16 Feature-Spalten |
 | `data/v6_withoutcorona/` | `v5_engineered` ohne den Corona-Anomaliebereich (2020-03-16 bis 2021-02-28) |
 
-**Warum `data/external/` separat?** Wetter- und Feiertagsdaten stammen aus externen Quellen (MeteoSchweiz, Python-`holidays`-Modul) und sind unabhängig von der Verkehrs-Verarbeitungskette. Die Trennung macht den Datenfluss klarer: `v2_intermediate` enthält ausschliesslich ASTRA-Verkehrsdaten, `external` die externen Datenquellen.
+**Warum `data/weather/` und `data/holidays/` separat?** Wetter- und Feiertagsdaten stammen aus externen Quellen (MeteoSchweiz, Python-`holidays`-Modul) und sind unabhängig von der ASTRA-Verkehrs-Verarbeitungskette. Sie liegen daher in je einem eigenen Ordner mit `raw/`- und `processed/`-Unterordner. Die Trennung macht den Datenfluss klarer: Das `v1_raw → … → v6`-Schema enthält ausschliesslich ASTRA-Verkehrsdaten, `weather/` und `holidays/` die externen Datenquellen.
 
 ### Ordnerübersicht
 
@@ -151,14 +152,14 @@ Das Skript läuft in drei Phasen ab:
 |---|---|---|
 | 1 | `split_directions.py` | `v1_raw/traffic/` → `v2_intermediate/` (R1/R2 trennen) |
 | 2 | `transform_hourly.py` | `v2_intermediate/` → `v2_intermediate/` (Stundenaggregation, ersetzt R1/R2 durch `*_hourly.csv`) |
-| 3 | `export_feiertage.py` | erzeugt `v1_raw/holidays/feiertage_SZ_2015_2026.csv` |
-| 4 | `generate_holidays_hourly.py` | `v1_raw/holidays/` → `external/holidays/` (stündliche Flags) |
-| 5 | `filter_weather_luzern_2010_2026.py` | `v1_raw/weather/Luzern/` → `external/weather/Luzern/` (Spaltenfilter) |
-| 6 | `filter_weather_waedenswil_2010_2026.py` | `v1_raw/weather/Waedenswil/` → `external/weather/Waedenswil/` |
-| 7 | `add_snow_1h.py` | `external/weather/` (snow_1h-Spalte hinzufügen, in-place) |
-| 8 | `categorize_weather.py` | `external/weather/` (weather_cat-Spalte, erstellt `_categorized.csv`) |
-| 9 | `drop_snowheight.py` | `external/weather/` (snowheight-Spalte entfernen) |
-| 10 | `merge_datasets.py` | `v2_intermediate/traffic/` + `external/` → `v3_merged/` |
+| 3 | `export_feiertage.py` | erzeugt `holidays/raw/feiertage_SZ_2015_2026.csv` |
+| 4 | `generate_holidays_hourly.py` | `holidays/raw/` → `holidays/processed/` (stündliche Flags) |
+| 5 | `filter_weather_luzern_2010_2026.py` | `weather/raw/Luzern/` → `weather/processed/` (Spaltenfilter) |
+| 6 | `filter_weather_waedenswil_2010_2026.py` | `weather/raw/Waedenswil/` → `weather/processed/` |
+| 7 | `add_snow_1h.py` | `weather/processed/` (snow_1h-Spalte hinzufügen, in-place) |
+| 8 | `categorize_weather.py` | `weather/processed/` (weather_cat-Spalte, erstellt `_categorized.csv`) |
+| 9 | `drop_snowheight.py` | `weather/processed/` (snowheight-Spalte entfernen) |
+| 10 | `merge_datasets.py` | `v2_intermediate/` + `weather/processed/` + `holidays/processed/` → `v3_merged/` |
 | 11 | `show_gaps.py` | `v3_merged/` → `results/data_visualizations/gaps.txt` |
 | 12 | `clean_merged_data.py` | `v3_merged/` → `v4_cleaned/` |
 | 13 | `add_time_features.py` | `v4_cleaned/` (zyklische Zeitfeatures, in-place) |

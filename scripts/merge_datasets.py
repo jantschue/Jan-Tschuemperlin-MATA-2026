@@ -9,9 +9,9 @@ import glob
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # --- Quell-Dateien ---
-weather_file = os.path.join(base_dir, "data", "external", "weather", "Waedenswil",
+weather_file = os.path.join(base_dir, "data", "weather", "processed",
                             "wetter_waedenswil_2010-2026_categorized.csv")
-holiday_file = os.path.join(base_dir, "data", "external", "holidays",
+holiday_file = os.path.join(base_dir, "data", "holidays", "processed",
                             "feiertage_SZ_2015_2026_hourly.csv")
 traffic_dir = os.path.join(base_dir, "data", "v2_intermediate")
 

@@ -1,5 +1,5 @@
 """
-"Lädt die gesetzlichen Feiertage für den Kanton Schwyz (SZ) für die Jahre 2015 bis 2026 herunter und speichert sie als CSV-Datei im Verzeichnis 'data/holidays'."
+"Lädt die gesetzlichen Feiertage für den Kanton Schwyz (SZ) für die Jahre 2015 bis 2026 herunter und speichert sie als CSV-Datei im Verzeichnis 'data/holidays/raw'."
 """
 
 import holidays
@@ -10,9 +10,10 @@ import os
 kanton = 'SZ'
 jahre = range(2015, 2027)  # 2015 bis 2026 inkl.
 
-# CSV-Datei im data/holiday Ordner erstellen
+# CSV-Datei im data/holidays/raw Ordner erstellen
 basis = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ordner = os.path.join(basis, "data", "v1_raw", "holidays")
+ordner = os.path.join(basis, "data", "holidays", "raw")
+os.makedirs(ordner, exist_ok=True)
 csv_datei = os.path.join(ordner, f"feiertage_{kanton}_2015_2026.csv")
 
 alle_eintraege = []

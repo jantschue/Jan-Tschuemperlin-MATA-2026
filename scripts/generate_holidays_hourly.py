@@ -6,8 +6,9 @@ import pandas as pd
 import os
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-holiday_dir_in = os.path.join(base_dir, "data", "v1_raw", "holidays")
-holiday_dir_out = os.path.join(base_dir, "data", "external", "holidays")
+holiday_dir_in = os.path.join(base_dir, "data", "holidays", "raw")
+holiday_dir_out = os.path.join(base_dir, "data", "holidays", "processed")
+os.makedirs(holiday_dir_out, exist_ok=True)
 
 # Feiertags-CSV laden
 input_file = os.path.join(holiday_dir_in, "feiertage_SZ_2015_2026.csv")
