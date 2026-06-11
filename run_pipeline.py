@@ -1,9 +1,9 @@
 """
 Master-Skript, um das gesamte Projekt vollstaendig reproduzieren zu koennen.
-Die Pipeline laeuft in vier Phasen:
+Die Pipeline laeuft in drei Phasen:
     Phase 1: Datenverarbeitung (Rohdaten -> v5_engineered)
     Phase 2: Analyse + v6_withoutcorona (Corona-bereinigter Datensatz) + v7
-    Phase 3: Modelltraining (Lineare Regression & MLP, jeweils auf v5 und v6)
+    Phase 3: Modelltraining (Lineare Regression & MLP auf v5 und v6, MLP auf v7)
 Alle Schritte werden in der korrekten Reihenfolge ausgefuehrt.
 
 Zentrale Feiertags-Datenbank: data/holidays/swiss_holidays_2015_2025.csv
@@ -50,12 +50,15 @@ def main():
         "build_v7.py",                   # v6 + 26 Feiertagsspalten -> v7
     ]
 
-    # Phase 3: Modelltraining (v5 + v6)
+    # Phase 3: Modelltraining (v5 + v6 + v7)
+    # v7 hat nur ein MLP (die kantonsspezifische Feiertagskodierung ist eine
+    # Verfeinerung des MLP-Hauptmodells; keine eigene lineare Baseline).
     training_scripts = [
         "linear_regression.py",
         "mlp.py",
         "linear_regression_v6.py",
         "mlp_v6.py",
+        "mlp_v7.py",
     ]
 
     total_steps = len(data_scripts) + len(analysis_scripts) + len(training_scripts)
@@ -86,13 +89,13 @@ def main():
     for name in data_scripts:
         run_step(os.path.join(scripts_dir, name), name)
 
-    # --- Phase 2: Analyse + v6_withoutcorona ---
-    print("\n--- Phase 2: Analyse + Corona-Bereinigung (v6_withoutcorona) ---")
+    # --- Phase 2: Analyse + v6_withoutcorona + v7 ---
+    print("\n--- Phase 2: Analyse + Corona-Bereinigung (v6_withoutcorona) + v7-Aufbau ---")
     for name in analysis_scripts:
         run_step(os.path.join(scripts_dir, name), name)
 
-    # --- Phase 3: Modelltraining (v5 + v6) ---
-    print("\n--- Phase 3: Modelltraining (Lineare Regression & MLP, jeweils v5 und v6) ---")
+    # --- Phase 3: Modelltraining (v5 + v6 + v7) ---
+    print("\n--- Phase 3: Modelltraining (Lineare Regression & MLP auf v5/v6, MLP auf v7) ---")
     for name in training_scripts:
         run_step(os.path.join(models_dir, name), f"models/{name}")
 
