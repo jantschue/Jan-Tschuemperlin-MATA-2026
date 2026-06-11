@@ -1,0 +1,22 @@
+{
+    "total_samples": 56998,
+    "train_samples": 39898,
+    "train_pct": 70.0,
+    "val_samples": 5700,
+    "val_pct": 10.0,
+    "test_samples": 11400,
+    "test_pct": 20.0,
+    "split_type": "chronological 70/15/15",
+    "date_range_train": {
+        "start": "2015-01-01 00:00:00",
+        "end": "2024-01-18 11:00:00"
+    },
+    "date_range_val": {
+        "start": "2024-01-18 12:00:00",
+        "end": "2024-09-12 23:00:00"
+    },
+    "date_range_test": {
+        "start": "2024-09-13 00:00:00",
+        "end": "2025-12-31 23:00:00"
+    }
+}
