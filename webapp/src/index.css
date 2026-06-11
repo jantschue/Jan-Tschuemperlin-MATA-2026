@@ -557,6 +557,16 @@ a:focus-visible {
   font-size: 10px !important;
   border-radius: var(--radius-sm) 0 0 0;
 }
+/* Im Light-Mode passt eine helle Box zur hellen Karte (Dark-Mode bleibt dunkel) */
+:root[data-theme='light'] .leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.78) !important;
+}
+/* Die hellen CartoDB-Kacheln (Positron) sind sehr blass – nur die Kachel-Ebene
+   leicht abdunkeln und im Kontrast anheben, damit Strassen/Beschriftungen besser
+   lesbar sind. Marker und Tooltips (andere Panes) bleiben davon unberuehrt. */
+:root[data-theme='light'] .leaflet-tile-pane {
+  filter: brightness(0.9) contrast(1.32) saturate(1.12);
+}
 .leaflet-control-attribution a {
   color: var(--text-secondary) !important;
 }

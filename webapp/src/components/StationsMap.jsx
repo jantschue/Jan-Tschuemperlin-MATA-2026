@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { MapContainer, TileLayer, CircleMarker, Tooltip } from 'react-leaflet'
+import { useTheme } from '../hooks/useTheme.js'
 
 // Bounding-Box aller Stationen mit etwas Polsterung – sorgt dafür, dass beim
 // Öffnen der Karte alle Marker komfortabel sichtbar sind.
@@ -44,6 +45,15 @@ function improvement(metrics) {
 export default function StationsMap({ stations, selectedStationId, onSelectStation }) {
   const [sortKey, setSortKey] = useState('name')
   const [sortDir, setSortDir] = useState('asc')
+  const [theme] = useTheme()
+  const isLight = theme === 'light'
+
+  // Kachel-Layer passend zum Theme: helle CartoDB-Kacheln im Light-Mode,
+  // dunkle im Dark-Mode. Der aktive Marker-Ring wird entsprechend kontrastiert.
+  const tileUrl = isLight
+    ? 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+    : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+  const activeRing = isLight ? '#1b1b18' : '#f0f0f5'
 
   const bounds = useMemo(() => stationsBounds(stations), [stations])
 
@@ -125,7 +135,7 @@ export default function StationsMap({ stations, selectedStationId, onSelectStati
           >
             <TileLayer
               attribution='&copy; <a href="https://carto.com/">CartoDB</a>'
-              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              url={tileUrl}
               subdomains="abcd"
             />
             {stations.map((s) => {
@@ -138,7 +148,7 @@ export default function StationsMap({ stations, selectedStationId, onSelectStati
                   pathOptions={{
                     fillColor: r2Hex(s.metrics.mlp.r2),
                     fillOpacity: 0.95,
-                    color: active ? '#f0f0f5' : r2Hex(s.metrics.mlp.r2),
+                    color: active ? activeRing : r2Hex(s.metrics.mlp.r2),
                     weight: active ? 2 : 1
                   }}
                   eventHandlers={{

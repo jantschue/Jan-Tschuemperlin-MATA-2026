@@ -26,10 +26,21 @@ function readTheme() {
 export function useTheme() {
   const [theme, setTheme] = useState(readTheme)
 
-  // Falls das Attribut (z.B. via System-Preference) anders ist als der State
+  // Theme mit dem <html>-Attribut synchron halten: Ein MutationObserver sorgt
+  // dafuer, dass *alle* Komponenten, die diesen Hook nutzen (z.B. die
+  // Stationskarte), auf einen Umschalter an anderer Stelle reagieren – nicht
+  // nur jene Komponente, die toggleTheme tatsaechlich aufruft.
   useEffect(() => {
-    const current = readTheme()
-    setTheme((prev) => (prev === current ? prev : current))
+    const root = document.documentElement
+    const sync = () =>
+      setTheme((prev) => {
+        const current = readTheme()
+        return prev === current ? prev : current
+      })
+    sync() // Initialwert (z.B. System-Preference) angleichen
+    const observer = new MutationObserver(sync)
+    observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => observer.disconnect()
   }, [])
 
   const toggleTheme = useCallback(() => {
