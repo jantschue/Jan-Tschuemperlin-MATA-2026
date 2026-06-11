@@ -1,7 +1,8 @@
 """
-Hyperparameter-Tuning für das MLP-Modell mittels Optuna.
-Tuning läuft ausschliesslich auf 050_Brunnen_Mositunnel_R1.
-Die besten Hyperparameter werden in results/model_results/mlp/best_params.json gespeichert.
+Hyperparameter-Tuning für das MLP-v7-Modell mittels Optuna.
+Tuning läuft ausschliesslich auf 050_Brunnen_Mositunnel_R1 (v7-Daten mit den
+26 kantonsspezifischen Feiertagsspalten statt is_holiday).
+Die besten Hyperparameter werden in results/model_results/mlp_v7/best_params_v7.json gespeichert.
 
 GPU-Preload: Der gesamte (kleine) Datensatz wird einmalig auf die GPU geladen,
 statt jeden Batch pro Epoche einzeln von der CPU zu transferieren. Das spart den
@@ -26,10 +27,10 @@ np.random.seed(42)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ── Konfiguration ────────────────────────────────────────────────────────────
-DATA_DIR    = Path("data/v5_engineered")
-RESULTS_DIR = Path("results/model_results/mlp")
+DATA_DIR    = Path("data/v7")
+RESULTS_DIR = Path("results/model_results/mlp_v7")
 
-TUNING_DATASET = "050_Brunnen_Mositunnel_R1_engineered.csv"
+TUNING_DATASET = "050_Brunnen_Mositunnel_R1_v7.csv"
 N_TRIALS       = 150
 TUNING_EPOCHS  = 150  # Reduziert gegenüber Final-Training für schnellere Trials
 ES_PATIENCE    = 25
@@ -40,7 +41,13 @@ VAL_RATIO   = 0.10
 FEATURES = [
     "Year", "Hour_sin", "Hour_cos", "DayOfWeek_sin", "DayOfWeek_cos",
     "Month_sin", "Month_cos", "DayOfYear_sin", "DayOfYear_cos",
-    "is_weekend", "is_holiday", "temp", "rain_1h", "sun_1h", "snow_1h", "weather_cat",
+    "is_weekend",
+    "holiday_AG", "holiday_AI", "holiday_AR", "holiday_BE", "holiday_BL", "holiday_BS",
+    "holiday_FR", "holiday_GE", "holiday_GL", "holiday_GR", "holiday_JU", "holiday_LU",
+    "holiday_NE", "holiday_NW", "holiday_OW", "holiday_SG", "holiday_SH", "holiday_SO",
+    "holiday_SZ", "holiday_TG", "holiday_TI", "holiday_UR", "holiday_VD", "holiday_VS",
+    "holiday_ZG", "holiday_ZH",
+    "temp", "rain_1h", "sun_1h", "snow_1h", "weather_cat",
 ]
 
 
@@ -174,8 +181,8 @@ def main():
     optuna.logging.set_verbosity(optuna.logging.WARNING)
 
     study = optuna.create_study(
-        study_name="mlp_tuning",
-        storage="sqlite:///optuna_mlp.db",
+        study_name="mlp_v7_tuning",
+        storage="sqlite:///optuna_mlp_v7.db",
         load_if_exists=True,
         direction="minimize",
         sampler=optuna.samplers.TPESampler(seed=None),
@@ -207,7 +214,7 @@ def main():
 
     sep = "-" * 48
     print(f"\n{sep}")
-    print("Beste Hyperparameter – manuell in mlp.py eintragen:\n")
+    print("Beste Hyperparameter – manuell in models/mlp_v7.py eintragen:\n")
     print(f"  HIDDEN_DIMS   = {hidden_dims}")
     print(f"  DROPOUT       = {dropout:.2f}")
     print(f"  LEARNING_RATE = {learning_rate:.4f}")
@@ -229,7 +236,7 @@ def main():
         "n_trials_pruned":    len(pruned),
         "raw_params":    best.params,
     }
-    best_params_path = RESULTS_DIR / "best_params.json"
+    best_params_path = RESULTS_DIR / "best_params_v7.json"
     with open(best_params_path, "w") as f:
         json.dump(best_params, f, indent=4)
     print(f"\nGespeichert: {best_params_path}")

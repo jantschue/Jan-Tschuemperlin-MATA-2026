@@ -27,12 +27,12 @@ np.random.seed(42)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ── Hyperparameter ──────────────────────────────────────────────────────────
-HIDDEN_DIMS   = [256, 128, 128, 64]        # Grösse der Hidden Layers
-DROPOUT       = 0.2582               # Dropout-Rate (nicht nach letzter Hidden Layer)
-BATCH_SIZE    = 128
+HIDDEN_DIMS   = [128, 512, 128, 64]        # Grösse der Hidden Layers
+DROPOUT       = 0.2577932425380257               # Dropout-Rate (nicht nach letzter Hidden Layer)
+BATCH_SIZE    = 512
 MAX_EPOCHS    = 500
-LEARNING_RATE = 0.0003352
-WEIGHT_DECAY  = 0.0016735
+LEARNING_RATE = 0.00024802759479437136
+WEIGHT_DECAY  = 0.009960014118239305
 LR_PATIENCE   = 15    # ReduceLROnPlateau: Epochen ohne Verbesserung bis LR sinkt
 LR_FACTOR     = 0.5   # ReduceLROnPlateau: Faktor um den LR reduziert wird
 ES_PATIENCE   = 10    # Early Stopping: Epochen ohne Verbesserung bis Abbruch
