@@ -1,5 +1,10 @@
 """
-"Lädt die gesetzlichen Feiertage für den Kanton Schwyz (SZ) für die Jahre 2015 bis 2026 herunter und speichert sie als CSV-Datei im Verzeichnis 'data/holidays/raw'."
+VERALTET – nicht mehr Teil der Pipeline.
+
+Die zentrale Feiertags-Datenbank wird jetzt von scripts/generate_holidays.py
+erzeugt (data/holidays/swiss_holidays_2015_2025.csv, alle 26 Kantone).
+Dieses Skript erzeugte nur die SZ-spezifische Rohversion und wird nicht mehr
+aufgerufen.
 """
 
 import holidays

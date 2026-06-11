@@ -1,5 +1,12 @@
 """
-"Erstellt 10 zusammengeführte Datensets (5 Zählstellen × 2 Richtungen). Für jede stündliche Verkehrsdatei wird: 1. Das Verkehrsvolumen geladen, 2. Die Feiertags-Daten angehängt, 3. Die kategorisierten Wetterdaten angehängt. Die Dateien werden im Ordner 'data/v3_merged' gespeichert."
+Erstellt 10 zusammengefuehrte Datensets (5 Zaehlstellen x 2 Richtungen). Fuer jede
+stundliche Verkehrsdatei wird: 1. Das Verkehrsvolumen geladen, 2. Die is_holiday-Spalte
+aus der zentralen Feiertags-Datenbank (Kanton SZ) angehaengt, 3. Die kategorisierten
+Wetterdaten angehaengt. Die Dateien werden im Ordner 'data/v3_merged' gespeichert.
+
+Feiertags-Quelle: data/holidays/swiss_holidays_2015_2025.csv (zentrale Datenbank,
+generiert von scripts/generate_holidays.py). Es wird die SZ-Spalte als is_holiday
+verwendet, da das Projektgebiet im Kanton Schwyz liegt.
 """
 
 import pandas as pd
@@ -11,8 +18,9 @@ base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # --- Quell-Dateien ---
 weather_file = os.path.join(base_dir, "data", "weather", "processed",
                             "wetter_waedenswil_2010-2026_categorized.csv")
-holiday_file = os.path.join(base_dir, "data", "holidays", "processed",
-                            "feiertage_SZ_2015_2026_hourly.csv")
+# Zentrale Feiertags-Datenbank (alle 26 Kantone, Datumsebene)
+holiday_file = os.path.join(base_dir, "data", "holidays",
+                            "swiss_holidays_2015_2025.csv")
 traffic_dir = os.path.join(base_dir, "data", "v2_intermediate")
 
 # --- Ausgabe-Ordner ---
@@ -24,9 +32,12 @@ print(f"Lade Wetterdaten: {os.path.basename(weather_file)}")
 df_weather = pd.read_csv(weather_file)
 df_weather.rename(columns={'time': 'datetime'}, inplace=True)
 
-# --- Feiertage laden ---
+# --- Feiertage laden (SZ-Spalte als is_holiday) ---
+# Die zentrale CSV arbeitet auf Datumsebene. Das is_holiday-Flag wird durch
+# Abgleich des Datumsteils der datetime-Spalte mit der SZ-Spalte gesetzt.
 print(f"Lade Feiertagsdaten: {os.path.basename(holiday_file)}")
-df_holidays = pd.read_csv(holiday_file)
+df_hol = pd.read_csv(holiday_file, parse_dates=["date"])
+sz_holiday_dates = set(df_hol.loc[df_hol["SZ"] == 1, "date"].dt.date)
 
 # --- Alle stündlichen Verkehrsdateien finden ---
 traffic_files = sorted(glob.glob(
@@ -42,10 +53,14 @@ for traffic_file in traffic_files:
     # Verkehrsdaten laden
     df_traffic = pd.read_csv(traffic_file)
 
-    # 1. Feiertage anhängen (inner join auf datetime)
-    df_merged = df_traffic.merge(df_holidays, on='datetime', how='left')
+    # 1. Feiertage anhängen: Datumsteil extrahieren, mit SZ-Feiertagen abgleichen
+    df_traffic['is_holiday'] = (
+        pd.to_datetime(df_traffic['datetime']).dt.date
+        .isin(sz_holiday_dates).astype(int)
+    )
+    df_merged = df_traffic
 
-    # 2. Wetter anhängen (inner join auf datetime)
+    # 2. Wetter anhängen (left join auf datetime)
     df_merged = df_merged.merge(df_weather, on='datetime', how='left')
 
     # Spaltenreihenfolge sicherstellen

@@ -1,5 +1,10 @@
 """
-"Erstellt ein stündliches Feiertags-Dataset für den gesamten Zeitraum 2015-2026. Liest die Feiertage aus 'feiertage_SZ_2015_2026.csv' und erzeugt für jede Stunde des Zeitraums einen Eintrag mit den Spalten datetime und is_holiday. Das Ergebnis wird als 'feiertage_SZ_2015_2026_hourly.csv' gespeichert."
+VERALTET – nicht mehr Teil der Pipeline.
+
+Die zentrale Feiertags-Datenbank wird jetzt von scripts/generate_holidays.py
+erzeugt (data/holidays/swiss_holidays_2015_2025.csv, alle 26 Kantone).
+merge_datasets.py liest direkt aus dieser Datei und braucht keine vorprozessierte
+stündliche Version mehr. Dieses Skript wird nicht mehr aufgerufen.
 """
 
 import pandas as pd

@@ -28,7 +28,7 @@ Die verwendeten Rohdaten stammen aus folgenden offiziellen Quellen:
 
 - **Verkehrsdaten:** Bundesamt für Strassen (ASTRA). Die Veröffentlichung der aufbereiteten Daten erfolgt mit freundlicher Genehmigung des ASTRA.
 - **Wetterdaten:** Bundesamt für Meteorologie und Klimatologie (MeteoSchweiz) über das [Daten-Portal](https://www.meteoschweiz.admin.ch/service-und-publikationen/applikationen/ext/daten-ohne-programmierkenntnisse-herunterladen.html)
-- **Feiertage:** Automatisch generiert mit dem Python-Modul `holidays` (offizielle Feiertage Kanton Schwyz).
+- **Feiertage:** Automatisch generiert mit dem Python-Modul `holidays` (alle 26 Schweizer Kantone, 2015–2025). Zentrale Datenbank: `data/holidays/swiss_holidays_2015_2025.csv`.
 
 *Jegliche Weiterverwendung der rohen Verkehrsdaten erfordert eine eigene Abklärung mit dem ASTRA.*
 
@@ -43,19 +43,20 @@ Die Rohdaten durchlaufen mehrere Verarbeitungsstufen, bevor sie für das Modellt
 | `data/v1_raw/` | Unveränderte ASTRA-Verkehrsrohdaten (`traffic/`) |
 | `data/v2_intermediate/` | Verarbeitete Verkehrsdaten direkt im Ordner: Richtungsaufspaltung (R1/R2) und Stundenaggregation (10 `*_hourly.csv`-Dateien) |
 | `data/weather/` | Externe Wetterdaten (MeteoSchweiz): `raw/` mit den Stations-Rohdateien (Luzern, Wädenswil), `processed/` mit den gefilterten und kategorisierten Datensätzen |
-| `data/holidays/` | Externe Feiertagsdaten (Kt. Schwyz): `raw/` mit der Feiertags-CSV, `processed/` mit den stündlichen Feiertags-Flags |
+| `data/holidays/` | Zentrale Feiertags-Datenbank: `swiss_holidays_2015_2025.csv` (alle 26 Kantone, erzeugt von `scripts/generate_holidays.py`). Alle Skripte lesen ausschliesslich diese Datei. |
 | `data/v3_merged/` | Verkehr + Wetter + Feiertage zusammengeführt (10 Dateien, je Station × Richtung) |
 | `data/v4_cleaned/` | NaN-Zeilen entfernt |
 | `data/v5_engineered/` | Fertige ML-Features: zyklische Zeitkodierung, Wetterklassen, alle 16 Feature-Spalten |
 | `data/v6_withoutcorona/` | `v5_engineered` ohne den Corona-Anomaliebereich (2020-03-16 bis 2021-02-28) |
+| `data/v7/` | `v6_withoutcorona` mit 26 kantonsspezifischen Feiertagsspalten (holiday_AG … holiday_ZH) statt binärem `is_holiday` |
 
-**Warum `data/weather/` und `data/holidays/` separat?** Wetter- und Feiertagsdaten stammen aus externen Quellen (MeteoSchweiz, Python-`holidays`-Modul) und sind unabhängig von der ASTRA-Verkehrs-Verarbeitungskette. Sie liegen daher in je einem eigenen Ordner mit `raw/`- und `processed/`-Unterordner. Die Trennung macht den Datenfluss klarer: Das `v1_raw → … → v6`-Schema enthält ausschliesslich ASTRA-Verkehrsdaten, `weather/` und `holidays/` die externen Datenquellen.
+**Warum `data/weather/` und `data/holidays/` separat?** Wetter- und Feiertagsdaten stammen aus externen Quellen (MeteoSchweiz, Python-`holidays`-Modul) und sind unabhängig von der ASTRA-Verkehrs-Verarbeitungskette. Sie liegen daher in eigenen Ordnern. Die Trennung macht den Datenfluss klarer: Das `v1_raw → … → v7`-Schema enthält ausschliesslich ASTRA-Verkehrsdaten, `weather/` und `holidays/` die externen Datenquellen.
 
 ### Ordnerübersicht
 
 | Ordner | Inhalt |
 |---|---|
-| `scripts/` | Python-Skripte für die Datenverarbeitung (v1 → v5), die Corona-Bereinigung (v6) und explorative Analysen |
+| `scripts/` | Python-Skripte für die Datenverarbeitung (v1 → v7), die Corona-Bereinigung (v6), den v7-Aufbau und explorative Analysen |
 | `models/` | Trainings-Skripte für die ML-Modelle (jeweils Variante für v5 und v6) sowie Optuna-Tuning |
 | `results/model_results/` | Metriken, Plots und Vorhersage-Vergleiche pro Modell (separat für v5- und v6-Varianten) |
 | `results/analysis/` | Output der explorativen Analyse-Skripte (Datensatz-Übersicht, COVID-Anomalie) |
@@ -83,6 +84,7 @@ Die Rohdaten durchlaufen mehrere Verarbeitungsstufen, bevor sie für das Modellt
 | `scripts/dataset_overview.py` | Übersicht aller v5-Datensätze: Zeilen, Zeitraum, fehlende Stunden, Lücken > 24 h, COVID-Anteil | `results/analysis/dataset_overview/` |
 | `scripts/covid_anomaly_analysis.py` | Pro Station 3 Plots: monatliches Durchschnittsvolumen mit COVID-Markierung, KW-Vergleich 2019–2022, prozentuale Abweichung 2020/2021 vs. Basisjahre | `results/analysis/covid_anomaly/` |
 | `scripts/create_v6_withoutcorona.py` | Erzeugt aus `v5_engineered` den Corona-bereinigten Datensatz `v6_withoutcorona` (entfernt 2020-03-16 bis 2021-02-28) | `data/v6_withoutcorona/` |
+| `scripts/build_v7.py` | Erzeugt aus `v6_withoutcorona` den v7-Datensatz: ersetzt `is_holiday` durch 26 kantonsspezifische Feiertagsspalten aus der zentralen Feiertags-DB | `data/v7/` |
 
 ### Ergebnisse pro Modell
 
@@ -146,28 +148,27 @@ python run_pipeline.py
 
 Das Skript läuft in drei Phasen ab:
 
-**Phase 1 – Datenverarbeitung (16 Skripte):** Verarbeitet die Rohdaten schrittweise bis zu den fertigen Feature-Datensätzen in `data/v5_engineered/`. Die Reihenfolge:
+**Phase 1 – Datenverarbeitung (15 Skripte):** Verarbeitet die Rohdaten schrittweise bis zu den fertigen Feature-Datensätzen in `data/v5_engineered/`. Die Reihenfolge:
 
 | Schritt | Skript | Input → Output |
 |---|---|---|
 | 1 | `split_directions.py` | `v1_raw/traffic/` → `v2_intermediate/` (R1/R2 trennen) |
 | 2 | `transform_hourly.py` | `v2_intermediate/` → `v2_intermediate/` (Stundenaggregation, ersetzt R1/R2 durch `*_hourly.csv`) |
-| 3 | `export_feiertage.py` | erzeugt `holidays/raw/feiertage_SZ_2015_2026.csv` |
-| 4 | `generate_holidays_hourly.py` | `holidays/raw/` → `holidays/processed/` (stündliche Flags) |
-| 5 | `filter_weather_luzern_2010_2026.py` | `weather/raw/Luzern/` → `weather/processed/` (Spaltenfilter) |
-| 6 | `filter_weather_waedenswil_2010_2026.py` | `weather/raw/Waedenswil/` → `weather/processed/` |
-| 7 | `add_snow_1h.py` | `weather/processed/` (snow_1h-Spalte hinzufügen, in-place) |
-| 8 | `categorize_weather.py` | `weather/processed/` (weather_cat-Spalte, erstellt `_categorized.csv`) |
-| 9 | `drop_snowheight.py` | `weather/processed/` (snowheight-Spalte entfernen) |
-| 10 | `merge_datasets.py` | `v2_intermediate/` + `weather/processed/` + `holidays/processed/` → `v3_merged/` |
-| 11 | `show_gaps.py` | `v3_merged/` → `results/data_visualizations/gaps.txt` |
-| 12 | `clean_merged_data.py` | `v3_merged/` → `v4_cleaned/` |
-| 13 | `add_time_features.py` | `v4_cleaned/` (zyklische Zeitfeatures, in-place) |
-| 14 | `create_engineered_features.py` | `v4_cleaned/` → `v5_engineered/` |
-| 15 | `plot_hourly_averages.py` | `v5_engineered/` → `results/data_visualizations/` |
-| 16 | `create_correlation_matrix_engineered.py` | `v5_engineered/` → `results/data_visualizations/` |
+| 3 | `generate_holidays.py` | erzeugt `data/holidays/swiss_holidays_2015_2025.csv` (alle 26 Kantone — **zentrale Feiertags-Datenbank**) |
+| 4 | `filter_weather_luzern_2010_2026.py` | `weather/raw/Luzern/` → `weather/processed/` (Spaltenfilter) |
+| 5 | `filter_weather_waedenswil_2010_2026.py` | `weather/raw/Waedenswil/` → `weather/processed/` |
+| 6 | `add_snow_1h.py` | `weather/processed/` (snow_1h-Spalte hinzufügen, in-place) |
+| 7 | `categorize_weather.py` | `weather/processed/` (weather_cat-Spalte, erstellt `_categorized.csv`) |
+| 8 | `drop_snowheight.py` | `weather/processed/` (snowheight-Spalte entfernen) |
+| 9 | `merge_datasets.py` | `v2_intermediate/` + `weather/processed/` + `holidays/swiss_holidays_2015_2025.csv` (SZ-Spalte) → `v3_merged/` |
+| 10 | `show_gaps.py` | `v3_merged/` → `results/data_visualizations/gaps.txt` |
+| 11 | `clean_merged_data.py` | `v3_merged/` → `v4_cleaned/` |
+| 12 | `add_time_features.py` | `v4_cleaned/` (zyklische Zeitfeatures, in-place) |
+| 13 | `create_engineered_features.py` | `v4_cleaned/` → `v5_engineered/` |
+| 14 | `plot_hourly_averages.py` | `v5_engineered/` → `results/data_visualizations/` |
+| 15 | `create_correlation_matrix_engineered.py` | `v5_engineered/` → `results/data_visualizations/` |
 
-**Phase 2 – Analyse + Corona-Bereinigung (3 Skripte):** `dataset_overview.py` und `covid_anomaly_analysis.py` erzeugen die Diagnostik unter `results/analysis/`; `create_v6_withoutcorona.py` schreibt anschliessend den Corona-bereinigten Datensatz nach `data/v6_withoutcorona/`.
+**Phase 2 – Analyse + Corona-Bereinigung + v7 (4 Skripte):** `dataset_overview.py` und `covid_anomaly_analysis.py` erzeugen die Diagnostik unter `results/analysis/`; `create_v6_withoutcorona.py` schreibt den Corona-bereinigten Datensatz nach `data/v6_withoutcorona/`; `build_v7.py` erweitert v6 mit 26 kantonsspezifischen Feiertagsspalten aus der zentralen Feiertags-DB nach `data/v7/`.
 
 **Phase 3 – Modelltraining (4 Skripte):** `linear_regression.py` und `mlp.py` trainieren je 10 Modelle auf v5, `linear_regression_v6.py` und `mlp_v6.py` trainieren mit identischen Hyperparametern dieselben Modelle auf v6.
 
@@ -196,4 +197,5 @@ Damit die Ergebnisse reproduzierbar sind, habe ich auf folgende Punkte geachtet:
 - **Chronologischer Split:** Die Daten werden immer zeitlich geordnet aufgeteilt — kein `shuffle` (Linear: 80/20, MLP: 70/10/20).
 - **Kein `shuffle` im DataLoader:** Die zeitliche Reihenfolge bleibt auch während des Trainings erhalten.
 - **Identische Hyperparameter zwischen v5- und v6-Modellen:** Damit der Vergleich wirklich nur den Daten-Cut misst und nicht ein verändertes Modell.
+- **Einheitliche Feiertags-Datenbank:** `data/holidays/swiss_holidays_2015_2025.csv` ist die einzige Feiertags-Quelle im Projekt. Sie wird in Phase 1 von `generate_holidays.py` erzeugt und von `merge_datasets.py` (SZ-Spalte als `is_holiday`) sowie `build_v7.py` (alle 26 Kantonsspalten) gelesen.
 - **Konsistente Feiertags-Logik:** `export_weights.py` und `webapp/src/utils/swissHolidays.js` verwenden denselben Butcher-Algorithmus für das Osterdatum und dieselbe Liste der 13 Schwyzer Feiertage — die exportierten Feature-Vektoren und die in der Webapp angezeigten Feiertage stimmen dadurch exakt überein.
