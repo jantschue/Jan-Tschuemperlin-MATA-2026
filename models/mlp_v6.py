@@ -1,6 +1,6 @@
 """
 Dieses Skript trainiert ein MLP (Multi-Layer Perceptron) fuer die Verkehrsvorhersage
-auf den Corona-bereinigten Daten (v6_withoutcorona). Die Resultate werden in
+auf den Corona-bereinigten Daten (v6). Die Resultate werden in
 einem separaten Verzeichnis abgelegt, damit die bestehenden v5-Resultate
 unveraendert bleiben. Hyperparameter bleiben identisch zum v5-Modell, damit
 der Unterschied wirklich nur aus den Daten kommt.
@@ -41,15 +41,15 @@ VAL_RATIO     = 0.10
 # TEST_RATIO  = 0.20 (implizit: 1 - TRAIN_RATIO - VAL_RATIO)
 
 # Pfade konfigurieren
-DATA_DIR    = Path("data/v6_withoutcorona")
+DATA_DIR    = Path("data/v6")
 RESULTS_DIR = Path("results/model_results/mlp_v6")
 
 DATASETS = [
-    "050_Brunnen_Mositunnel_R1_withoutcorona.csv", "050_Brunnen_Mositunnel_R2_withoutcorona.csv",
-    "171_Sattel_R1_withoutcorona.csv",              "171_Sattel_R2_withoutcorona.csv",
-    "216_Wangen_SZ_R1_withoutcorona.csv",           "216_Wangen_SZ_R2_withoutcorona.csv",
-    "299_Wollerau_Blatttunnel_R1_withoutcorona.csv","299_Wollerau_Blatttunnel_R2_withoutcorona.csv",
-    "720_Schwyz_R1_withoutcorona.csv",              "720_Schwyz_R2_withoutcorona.csv",
+    "050_Brunnen_Mositunnel_R1_v6.csv", "050_Brunnen_Mositunnel_R2_v6.csv",
+    "171_Sattel_R1_v6.csv",              "171_Sattel_R2_v6.csv",
+    "216_Wangen_SZ_R1_v6.csv",           "216_Wangen_SZ_R2_v6.csv",
+    "299_Wollerau_Blatttunnel_R1_v6.csv","299_Wollerau_Blatttunnel_R2_v6.csv",
+    "720_Schwyz_R1_v6.csv",              "720_Schwyz_R2_v6.csv",
 ]
 
 FEATURES = [

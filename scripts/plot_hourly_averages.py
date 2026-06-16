@@ -9,15 +9,15 @@ import glob
 
 # Definiere Pfade relativ zum Speicherort des Skripts
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-input_dir = os.path.join(base_dir, "data", "v5_engineered")
+input_dir = os.path.join(base_dir, "data", "v5")
 output_dir = os.path.join(base_dir, "results", "hourly_plots")
 
 def main():
     # Erstelle den Ausgabeordner, falls er nicht existiert
     os.makedirs(output_dir, exist_ok=True)
     
-    # Hole alle CSV-Dateien mit '_engineered.csv'
-    csv_files = glob.glob(os.path.join(input_dir, "*_engineered.csv"))
+    # Hole alle CSV-Dateien mit '_v5.csv'
+    csv_files = glob.glob(os.path.join(input_dir, "*_v5.csv"))
     
     if not csv_files:
         print(f"Keine CSV-Dateien in {input_dir} gefunden.")

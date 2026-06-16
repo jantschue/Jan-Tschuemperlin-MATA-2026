@@ -1,5 +1,5 @@
 """
-"Transformiert die R1- und R2-CSV-Dateien in ein stündliches Format. Die Originaldateien im Ordner 'data/v2_intermediate' werden gelesen und stündliche Versionen (*_hourly.csv) am selben Ort gespeichert."
+"Transformiert die R1- und R2-CSV-Dateien in ein stündliches Format. Die Originaldateien im Ordner 'data/v2' werden gelesen und stündliche Versionen (*_v2.csv) am selben Ort gespeichert."
 """
 
 import os
@@ -8,7 +8,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-traffic_dir = os.path.join(base_dir, "data", "v2_intermediate")
+traffic_dir = os.path.join(base_dir, "data", "v2")
 
 hour_cols = [f"H{str(i).zfill(2)}" for i in range(24)]
 
@@ -51,7 +51,7 @@ for src_file in files:
 
     out_df = pd.DataFrame(rows)
 
-    out_basename = os.path.basename(src_file).replace(".csv", "_hourly.csv")
+    out_basename = os.path.basename(src_file).replace(".csv", "_v2.csv")
     out_file = os.path.join(traffic_dir, out_basename)
     out_df.to_csv(out_file, index=False)
     os.remove(src_file)  # Clean up intermediate file

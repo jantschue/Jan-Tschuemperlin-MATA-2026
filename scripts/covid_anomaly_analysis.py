@@ -35,11 +35,11 @@ def find_project_root(marker_subpath):
     return None
 
 
-BASE_DIR = find_project_root(os.path.join("data", "v4_cleaned"))
+BASE_DIR = find_project_root(os.path.join("data", "v4"))
 if BASE_DIR is None:
-    raise FileNotFoundError("Konnte 'data/v4_cleaned' weder vom Skript-Ort "
+    raise FileNotFoundError("Konnte 'data/v4' weder vom Skript-Ort "
                             "noch vom Arbeitsverzeichnis aus finden.")
-INPUT_DIR = os.path.join(BASE_DIR, "data", "v4_cleaned")
+INPUT_DIR = os.path.join(BASE_DIR, "data", "v4")
 OUTPUT_DIR = os.path.join(BASE_DIR, "results", "analysis", "covid_anomaly")
 
 # COVID-Zeitraum
@@ -225,7 +225,7 @@ def print_summary_table(rows):
 
 
 def main():
-    csv_files = sorted(glob.glob(os.path.join(INPUT_DIR, "*_merged_gapless.csv")))
+    csv_files = sorted(glob.glob(os.path.join(INPUT_DIR, "*_v4.csv")))
     if not csv_files:
         print(f"Keine CSV-Dateien in {INPUT_DIR} gefunden.")
         return

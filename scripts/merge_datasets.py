@@ -2,7 +2,7 @@
 Erstellt 10 zusammengefuehrte Datensets (5 Zaehlstellen x 2 Richtungen). Fuer jede
 stundliche Verkehrsdatei wird: 1. Das Verkehrsvolumen geladen, 2. Die is_holiday-Spalte
 aus der zentralen Feiertags-Datenbank (Kanton SZ) angehaengt, 3. Die kategorisierten
-Wetterdaten angehaengt. Die Dateien werden im Ordner 'data/v3_merged' gespeichert.
+Wetterdaten angehaengt. Die Dateien werden im Ordner 'data/v3' gespeichert.
 
 Feiertags-Quelle: data/holidays/swiss_holidays_2015_2025.csv (zentrale Datenbank,
 generiert von scripts/generate_holidays.py). Es wird die SZ-Spalte als is_holiday
@@ -17,14 +17,14 @@ base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # --- Quell-Dateien ---
 weather_file = os.path.join(base_dir, "data", "weather", "processed",
-                            "wetter_waedenswil_2010-2026_categorized.csv")
+                            "weather_waedenswil_2010-2026_categorized.csv")
 # Zentrale Feiertags-Datenbank (alle 26 Kantone, Datumsebene)
 holiday_file = os.path.join(base_dir, "data", "holidays",
                             "swiss_holidays_2015_2025.csv")
-traffic_dir = os.path.join(base_dir, "data", "v2_intermediate")
+traffic_dir = os.path.join(base_dir, "data", "v2")
 
 # --- Ausgabe-Ordner ---
-output_dir = os.path.join(base_dir, "data", "v3_merged")
+output_dir = os.path.join(base_dir, "data", "v3")
 os.makedirs(output_dir, exist_ok=True)
 
 # --- Wetter laden ---
@@ -41,7 +41,7 @@ sz_holiday_dates = set(df_hol.loc[df_hol["SZ"] == 1, "date"].dt.date)
 
 # --- Alle stündlichen Verkehrsdateien finden ---
 traffic_files = sorted(glob.glob(
-    os.path.join(traffic_dir, "*_hourly.csv")
+    os.path.join(traffic_dir, "*_v2.csv")
 ))
 
 print(f"\n{len(traffic_files)} Verkehrsdateien gefunden.\n")
@@ -68,7 +68,7 @@ for traffic_file in traffic_files:
     df_merged = df_merged[cols]
 
     # Speichern
-    out_name = basename.replace('_hourly.csv', '_merged.csv')
+    out_name = basename.replace('_v2.csv', '_v3.csv')
     out_path = os.path.join(output_dir, out_name)
     df_merged.to_csv(out_path, index=False)
 
@@ -82,4 +82,4 @@ for traffic_file in traffic_files:
     if missing_holiday > 0:
         print(f"     [!] {missing_holiday} Zeilen ohne Feiertagsdaten")
 
-print("\nFertig! Alle Datensets wurden in 'data/v3_merged/' gespeichert.")
+print("\nFertig! Alle Datensets wurden in 'data/v3/' gespeichert.")

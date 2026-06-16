@@ -23,15 +23,15 @@ np.random.seed(42)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Pfade konfigurieren
-DATA_DIR = Path("data/v5_engineered")
-RESULTS_DIR = Path("results/model_results/linear_regression")
+DATA_DIR = Path("data/v5")
+RESULTS_DIR = Path("results/model_results/linear_regression_v5")
 
 DATASETS = [
-    "050_Brunnen_Mositunnel_R1_engineered.csv", "050_Brunnen_Mositunnel_R2_engineered.csv",
-    "171_Sattel_R1_engineered.csv", "171_Sattel_R2_engineered.csv",
-    "216_Wangen_SZ_R1_engineered.csv", "216_Wangen_SZ_R2_engineered.csv",
-    "299_Wollerau_Blatttunnel_R1_engineered.csv", "299_Wollerau_Blatttunnel_R2_engineered.csv",
-    "720_Schwyz_R1_engineered.csv", "720_Schwyz_R2_engineered.csv"
+    "050_Brunnen_Mositunnel_R1_v5.csv", "050_Brunnen_Mositunnel_R2_v5.csv",
+    "171_Sattel_R1_v5.csv", "171_Sattel_R2_v5.csv",
+    "216_Wangen_SZ_R1_v5.csv", "216_Wangen_SZ_R2_v5.csv",
+    "299_Wollerau_Blatttunnel_R1_v5.csv", "299_Wollerau_Blatttunnel_R2_v5.csv",
+    "720_Schwyz_R1_v5.csv", "720_Schwyz_R2_v5.csv"
 ]
 
 # Unterordner automatisch erstellen

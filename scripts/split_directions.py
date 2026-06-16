@@ -7,10 +7,10 @@ import os
 import glob
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-traffic_dir_in = os.path.join(base_dir, "data", "v1_raw", "traffic")
-traffic_dir_out = os.path.join(base_dir, "data", "v2_intermediate")
+traffic_dir_in = os.path.join(base_dir, "data", "v1", "traffic")
+traffic_dir_out = os.path.join(base_dir, "data", "v2")
 
-# Raw-Dateien liegen jetzt im Ordner: data/v1_raw/traffic/*_raw.CSV
+# Raw-Dateien liegen jetzt im Ordner: data/v1/traffic/*_raw.CSV
 files = glob.glob(os.path.join(traffic_dir_in, "*_raw.CSV"))
 
 for file in files:

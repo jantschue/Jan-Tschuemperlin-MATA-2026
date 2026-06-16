@@ -10,15 +10,15 @@ import glob
 
 # Pfade relativ zum Skript-Speicherort festlegen
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-input_dir = os.path.join(base_dir, "data", "v5_engineered")
+input_dir = os.path.join(base_dir, "data", "v5")
 output_dir = os.path.join(base_dir, "results", "correlation_analysis")
 
 def main():
     # Zielordner erstellen, falls nicht vorhanden
     os.makedirs(output_dir, exist_ok=True)
     
-    # Alle .csv-Dateien laden, die '_engineered.csv' am Ende haben
-    csv_files = glob.glob(os.path.join(input_dir, "*_engineered.csv"))
+    # Alle .csv-Dateien laden, die '_v5.csv' am Ende haben
+    csv_files = glob.glob(os.path.join(input_dir, "*_v5.csv"))
     
     if not csv_files:
         print(f"Keine CSV-Dateien in {input_dir} gefunden.")

@@ -1,27 +1,31 @@
 /**
- * Wandelt die UI-Eingaben in den 16-dimensionalen Feature-Vektor um, der
- * exakt der FEATURES-Liste aus models/mlp.py entspricht:
+ * Wandelt die UI-Eingaben in den Feature-Vektor des v7-Modells um. v7 ersetzt
+ * das binäre is_holiday durch 26 kantonsspezifische Feiertagsspalten
+ * (holiday_AG … holiday_ZH); der volle Feature-Satz hat damit 41 Spalten:
  *
- *  0: Year             (Kalenderjahr 2015..2025)
- *  1: Hour_sin         (zyklische Stunde, Periode 24)
- *  2: Hour_cos
- *  3: DayOfWeek_sin    (Periode 7, Montag = 0)
- *  4: DayOfWeek_cos
- *  5: Month_sin        (Periode 12, Januar = 1)
- *  6: Month_cos
- *  7: DayOfYear_sin    (Periode 365, 1. Januar = 1)
- *  8: DayOfYear_cos
- *  9: is_weekend
- * 10: is_holiday
- * 11: temp
- * 12: rain_1h
- * 13: sun_1h
- * 14: snow_1h
- * 15: weather_cat      (LabelEncoded: 0=Clear, 1=Cloudy, 2=Night, 3=Rain, 4=Snow)
+ *   Year, Hour_sin/cos, DayOfWeek_sin/cos, Month_sin/cos, DayOfYear_sin/cos,
+ *   is_weekend, holiday_AG … holiday_ZH (26), temp, rain_1h, sun_1h, snow_1h,
+ *   weather_cat (LabelEncoded: 0=Clear, 1=Cloudy, 2=Night, 3=Rain, 4=Snow)
  *
- * Wichtig: Encodings (Periode, Offset) müssen mit der Daten-Engineering-
- * Pipeline (scripts/add_time_features.py) übereinstimmen.
+ * Wichtig: Der Vektor wird NICHT in fester Reihenfolge gebaut, sondern anhand
+ * der pro Station exportierten `features`-Liste zusammengesetzt. Damit passt er
+ * automatisch auch für Stationen mit Ausnahmen (Sattel R1/R2 enthalten kein
+ * `Year`, siehe FEATURE_EXCLUDE in models/mlp_v7.py → 40 statt 41 Features).
+ *
+ * Feiertage: Die Live-UI kennt nur einen einzigen "Feiertag"-Schalter. Da das
+ * Projektgebiet im Kanton Schwyz liegt, wird dieser als Schwyzer Feiertag
+ * interpretiert (holiday_SZ = 1, alle übrigen Kantone 0).
+ *
+ * Encodings (Periode, Offset) müssen mit der Daten-Engineering-Pipeline
+ * (scripts/add_time_features.py) übereinstimmen.
  */
+
+// 26 Schweizer Kantonskürzel (alphabetisch, wie in scripts/generate_holidays.py)
+const CANTONS = [
+  'AG', 'AI', 'AR', 'BE', 'BL', 'BS', 'FR', 'GE', 'GL', 'GR',
+  'JU', 'LU', 'NE', 'NW', 'OW', 'SG', 'SH', 'SO', 'SZ', 'TG',
+  'TI', 'UR', 'VD', 'VS', 'ZG', 'ZH'
+]
 
 // Tag-im-Jahr aus Monat (1..12), Tag (1..31)
 function dayOfYear(month, day) {
@@ -47,11 +51,13 @@ function cyclic(value, period) {
  *   day:        1..31 (Default 15),
  *   temp, rain, sun, snow,
  *   weatherCat: 0..4 (LabelEncoder-Index),
- *   isHoliday:  boolean
+ *   isHoliday:  boolean (als Schwyzer Feiertag interpretiert)
  * }
- * @returns {number[]} 16-dimensionaler Feature-Vektor
+ * @param {string[]} featureNames - die pro Station exportierte `features`-Liste
+ *   (aus dem Weights-JSON). Bestimmt Reihenfolge und Umfang des Vektors.
+ * @returns {number[]} Feature-Vektor in der Reihenfolge von featureNames
  */
-export function buildFeatureVector(inputs) {
+export function buildFeatureVector(inputs, featureNames) {
   const day = inputs.day || 15
   const [hourSin, hourCos]   = cyclic(inputs.hour, 24)
   const [dowSin,  dowCos]    = cyclic(inputs.dayOfWeek, 7)
@@ -61,20 +67,27 @@ export function buildFeatureVector(inputs) {
   const isWeekend = inputs.dayOfWeek >= 5 ? 1 : 0
   const isHoliday = inputs.isHoliday ? 1 : 0
 
-  return [
-    inputs.year,
-    hourSin, hourCos,
-    dowSin,  dowCos,
-    monthSin, monthCos,
-    doySin,  doyCos,
-    isWeekend,
-    isHoliday,
-    inputs.temp,
-    inputs.rain,
-    inputs.sun,
-    inputs.snow,
-    inputs.weatherCat
-  ]
+  // Benannte Feature-Map (Schlüssel = exakte Spaltennamen der Python-Pipeline)
+  const map = {
+    Year: inputs.year,
+    Hour_sin: hourSin, Hour_cos: hourCos,
+    DayOfWeek_sin: dowSin, DayOfWeek_cos: dowCos,
+    Month_sin: monthSin, Month_cos: monthCos,
+    DayOfYear_sin: doySin, DayOfYear_cos: doyCos,
+    is_weekend: isWeekend,
+    temp: inputs.temp,
+    rain_1h: inputs.rain,
+    sun_1h: inputs.sun,
+    snow_1h: inputs.snow,
+    weather_cat: inputs.weatherCat
+  }
+  // 26 Kantons-Feiertagsspalten: einziger UI-Schalter -> holiday_SZ
+  for (const c of CANTONS) map[`holiday_${c}`] = c === 'SZ' ? isHoliday : 0
+
+  // Vektor in der Reihenfolge der modellspezifischen Feature-Liste aufbauen.
+  // Unbekannte/fehlende Namen (sollte nicht vorkommen) werden zu 0.
+  const names = featureNames && featureNames.length ? featureNames : Object.keys(map)
+  return names.map((n) => (n in map ? map[n] : 0))
 }
 
 export const WEEKDAYS = [

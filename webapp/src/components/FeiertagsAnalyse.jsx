@@ -1,7 +1,10 @@
 /**
  * Feiertags-Analyse: zeigt, welche Schwyzer Feiertage im Testzeitraum vorkommen,
- * wie das Modell an diesen Tagen abschneidet, wie stark es auf das is_holiday-Flag
- * reagiert (Counterfactual) und welche Feiertage den Verkehr am stärksten verändern.
+ * wie das Modell an diesen Tagen abschneidet, wie stark es auf die Feiertags-
+ * Features reagiert (Counterfactual) und welche Feiertage den Verkehr am stärksten
+ * verändern. Das v7-Modell hat 26 kantonsspezifische Feiertagsspalten statt eines
+ * is_holiday-Flags; das Counterfactual setzt für den gewählten Tag alle 26 Spalten
+ * auf 0 ("ganz normaler Tag").
  */
 import { useMemo, useState, useEffect } from 'react'
 import {
@@ -15,7 +18,6 @@ import { mlpForward } from '../utils/modelForward.js'
 import { holidayMap, holidayDateSet, HOLIDAY_ORDER } from '../utils/swissHolidays.js'
 
 const WEEKDAY_FULL = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
-const IS_HOLIDAY_IDX = 10 // Position von is_holiday im 16-Feature-Vektor (siehe featureBuilder.js)
 
 // ── Hilfsfunktionen ───────────────────────────────────────────────────────────
 
@@ -238,6 +240,11 @@ export default function FeiertagsAnalyse({ station, stations }) {
   // Counterfactual-Verlauf für den gewählten Tag (24 Stunden)
   const cfData = useMemo(() => {
     if (!selected || !weights.weights) return []
+    // Indizes aller Feiertagsspalten (holiday_*) im stationsspezifischen
+    // Feature-Vektor – für das Counterfactual ("kein Feiertag") auf 0 gesetzt.
+    const holidayIdx = (weights.weights.mlp.features || [])
+      .map((n, i) => (n.startsWith('holiday_') ? i : -1))
+      .filter((i) => i >= 0)
     const featHours = featByDate.get(selected.dateStr) || new Map()
     const dayHours = byDate.get(selected.dateStr)?.hours || []
     const actualByHour = new Map(dayHours.map(h => [h.hour, h.actual]))
@@ -247,7 +254,7 @@ export default function FeiertagsAnalyse({ station, stations }) {
       let predHoliday = null, predNoHoliday = null
       if (f) {
         predHoliday = mlpForward(f, weights.weights.mlp)
-        const f0 = [...f]; f0[IS_HOLIDAY_IDX] = 0
+        const f0 = [...f]; for (const idx of holidayIdx) f0[idx] = 0
         predNoHoliday = mlpForward(f0, weights.weights.mlp)
       }
       out.push({
@@ -501,8 +508,8 @@ export default function FeiertagsAnalyse({ station, stations }) {
                     <Tooltip content={<CfTooltip />} cursor={{ stroke: 'var(--border)' }} />
                     <Line type="monotone" dataKey="reference" name="Wochentag-Referenz" stroke="var(--text-faint)" strokeWidth={1.5} strokeDasharray="2 3" dot={false} isAnimationActive={false} connectNulls />
                     <Line type="monotone" dataKey="actual" name="Tatsächlich" stroke="var(--text-primary)" strokeWidth={2} dot={false} isAnimationActive={false} connectNulls />
-                    <Line type="monotone" dataKey="predHoliday" name="Modell (is_holiday=1)" stroke="var(--accent)" strokeWidth={2} dot={false} isAnimationActive={false} connectNulls />
-                    <Line type="monotone" dataKey="predNoHoliday" name="Counterfactual (is_holiday=0)" stroke="var(--lr-color)" strokeWidth={1.5} strokeDasharray="5 4" dot={false} isAnimationActive={false} connectNulls />
+                    <Line type="monotone" dataKey="predHoliday" name="Modell (Feiertag)" stroke="var(--accent)" strokeWidth={2} dot={false} isAnimationActive={false} connectNulls />
+                    <Line type="monotone" dataKey="predNoHoliday" name="Counterfactual (kein Feiertag)" stroke="var(--lr-color)" strokeWidth={1.5} strokeDasharray="5 4" dot={false} isAnimationActive={false} connectNulls />
                   </LineChart>
                 </ResponsiveContainer>
               </div>

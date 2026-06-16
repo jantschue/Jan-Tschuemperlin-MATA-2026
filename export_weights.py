@@ -18,12 +18,12 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 # ── Pfade ───────────────────────────────────────────────────────────────────
 PROJECT_ROOT = Path(__file__).resolve().parent
-DATA_DIR     = PROJECT_ROOT / "data" / "v5_engineered"
+DATA_DIR     = PROJECT_ROOT / "data" / "v7"
 
-MLP_WEIGHTS_DIR = PROJECT_ROOT / "results" / "model_results" / "mlp"     / "model_weights"
-LR_WEIGHTS_DIR  = PROJECT_ROOT / "results" / "model_results" / "linear_regression" / "model_weights"
-MLP_PREDS_DIR   = PROJECT_ROOT / "results" / "model_results" / "mlp"     / "predictions"
-LR_PREDS_DIR    = PROJECT_ROOT / "results" / "model_results" / "linear_regression" / "predictions"
+MLP_WEIGHTS_DIR = PROJECT_ROOT / "results" / "model_results" / "mlp_v7"     / "model_weights"
+LR_WEIGHTS_DIR  = PROJECT_ROOT / "results" / "model_results" / "linear_regression_v7" / "model_weights"
+MLP_PREDS_DIR   = PROJECT_ROOT / "results" / "model_results" / "mlp_v7"     / "predictions"
+LR_PREDS_DIR    = PROJECT_ROOT / "results" / "model_results" / "linear_regression_v7" / "predictions"
 
 OUT_DATA     = PROJECT_ROOT / "webapp" / "public" / "data"
 OUT_WEIGHTS  = OUT_DATA / "weights"
@@ -37,14 +37,14 @@ OUT_FEATURES.mkdir(parents=True, exist_ok=True)
 # ── Modellklassen aus den vorhandenen Python-Files importieren ──────────────
 sys.path.insert(0, str(PROJECT_ROOT / "models"))
 # noqa: import order – MLP und LinearRegressionModel werden zur Laufzeit gebraucht
-from mlp import MLP, HIDDEN_DIMS, DROPOUT, FEATURES, TRAIN_RATIO, VAL_RATIO  # type: ignore
-from linear_regression import LinearRegressionModel  # type: ignore
+from mlp_v7 import MLP, HIDDEN_DIMS, DROPOUT, FEATURES, FEATURE_EXCLUDE, TRAIN_RATIO, VAL_RATIO  # type: ignore
+from linear_regression_v7 import LinearRegressionModel  # type: ignore
 
 # ── Konfiguration ───────────────────────────────────────────────────────────
 # Linear: chronologischer 80/20 Split, MLP: 70/10/20 Split.
 LR_TRAIN_RATIO  = 0.8
-MLP_TRAIN_RATIO = TRAIN_RATIO  # 0.70 aus mlp.py
-MLP_VAL_RATIO   = VAL_RATIO    # 0.10 aus mlp.py
+MLP_TRAIN_RATIO = TRAIN_RATIO  # 0.70 aus mlp_v7.py
+MLP_VAL_RATIO   = VAL_RATIO    # 0.10 aus mlp_v7.py
 
 # Metadaten pro Stations-Nummer (LV95 → WGS84 wird unten umgerechnet)
 STATION_META = {
@@ -78,7 +78,7 @@ def lv95_to_wgs84(E: float, N: float) -> tuple[float, float]:
 
 
 def station_id_from_filename(name: str) -> str:
-    """`mlp_050_Brunnen_Mositunnel_R1_engineered.pt` → `050_Brunnen_Mositunnel_R1`."""
+    """`mlp_050_Brunnen_Mositunnel_R1_v7.pt` → `050_Brunnen_Mositunnel_R1`."""
     base = name
     for pfx in ("mlp_", "lr_", "predictions_"):
         if base.startswith(pfx):
@@ -87,8 +87,8 @@ def station_id_from_filename(name: str) -> str:
         base = base[:-3]
     if base.endswith(".csv"):
         base = base[:-4]
-    if base.endswith("_engineered"):
-        base = base[: -len("_engineered")]
+    if base.endswith("_v7"):
+        base = base[: -len("_v7")]
     return base
 
 
@@ -98,10 +98,14 @@ def parse_station_id(station_id: str) -> tuple[str, str]:
     return parts[0], parts[-1]
 
 
-def load_csv_with_split(csv_path: Path, train_ratio: float, val_ratio: float = 0.0):
+def load_csv_with_split(csv_path: Path, train_ratio: float, val_ratio: float = 0.0,
+                        station_id: str = ""):
     """
     Lädt einen Datensatz und reproduziert die chronologische Aufteilung der
-    Trainings-Skripte, damit Scaler und Test-Set identisch sind.
+    Trainings-Skripte, damit Scaler und Test-Set identisch sind. Die
+    stationsspezifischen Feature-Ausnahmen (FEATURE_EXCLUDE aus mlp_v7.py, z.B.
+    Year bei Sattel) werden angewendet, damit die Feature-Liste exakt zu den
+    trainierten Gewichten passt.
     """
     df = pd.read_csv(csv_path).dropna()
     if "datetime" in df.columns:
@@ -113,6 +117,9 @@ def load_csv_with_split(csv_path: Path, train_ratio: float, val_ratio: float = 0
         df["weather_cat"] = LabelEncoder().fit_transform(df["weather_cat"])
 
     feature_cols = [c for c in FEATURES if c in df.columns]
+    excluded = next((cols for key, cols in FEATURE_EXCLUDE.items() if key in station_id), [])
+    if excluded:
+        feature_cols = [c for c in feature_cols if c not in excluded]
     X = df[feature_cols].values
     y = df["volume"].values.reshape(-1, 1)
 
@@ -138,13 +145,13 @@ def fit_scalers(X_train: np.ndarray, y_train: np.ndarray):
 
 def export_linear(station_id: str) -> dict | None:
     """Exportiert ein lineares Modell als JSON. Gibt {weight, bias, scaler} zurück."""
-    pt_path = LR_WEIGHTS_DIR / f"lr_{station_id}_engineered.pt"
-    csv_path = DATA_DIR / f"{station_id}_engineered.csv"
+    pt_path = LR_WEIGHTS_DIR / f"lr_{station_id}_v7.pt"
+    csv_path = DATA_DIR / f"{station_id}_v7.csv"
     if not pt_path.exists() or not csv_path.exists():
         print(f"  !Lineare Regression {station_id}: Datei fehlt – übersprungen")
         return None
 
-    feature_cols, X_train, y_train, *_ = load_csv_with_split(csv_path, LR_TRAIN_RATIO)
+    feature_cols, X_train, y_train, *_ = load_csv_with_split(csv_path, LR_TRAIN_RATIO, station_id=station_id)
     x_scaler, y_scaler = fit_scalers(X_train, y_train)
 
     model = LinearRegressionModel(input_dim=len(feature_cols))
@@ -170,19 +177,19 @@ def export_linear(station_id: str) -> dict | None:
 
 def export_mlp(station_id: str) -> dict | None:
     """
-    Exportiert ein MLP-Modell als JSON. Architektur (mlp.py):
+    Exportiert ein MLP-Modell als JSON. Architektur (mlp_v7.py):
     Pro Hidden-Block: Linear → BatchNorm1d → ReLU → (Dropout)
     Output: Linear (keine Aktivierung). Dropout ist im Eval-Modus identity
     und wird daher nicht exportiert.
     """
-    pt_path  = MLP_WEIGHTS_DIR / f"mlp_{station_id}_engineered.pt"
-    csv_path = DATA_DIR / f"{station_id}_engineered.csv"
+    pt_path  = MLP_WEIGHTS_DIR / f"mlp_{station_id}_v7.pt"
+    csv_path = DATA_DIR / f"{station_id}_v7.csv"
     if not pt_path.exists() or not csv_path.exists():
         print(f"  !MLP {station_id}: Datei fehlt – übersprungen")
         return None
 
     feature_cols, X_train, y_train, *_ = load_csv_with_split(
-        csv_path, MLP_TRAIN_RATIO, MLP_VAL_RATIO
+        csv_path, MLP_TRAIN_RATIO, MLP_VAL_RATIO, station_id=station_id
     )
     x_scaler, y_scaler = fit_scalers(X_train, y_train)
 
@@ -290,13 +297,13 @@ def export_holiday_features(station_id: str) -> int:
     das Modell schicken). Der Test-Split ist identisch mit jenem des MLP, damit
     die Datetimes mit den daily-results übereinstimmen.
     """
-    csv_path = DATA_DIR / f"{station_id}_engineered.csv"
+    csv_path = DATA_DIR / f"{station_id}_v7.csv"
     if not csv_path.exists():
         print(f"  !Holiday-Features {station_id}: CSV fehlt – übersprungen")
         return 0
 
     feature_cols, _, _, X_test, _, test_index = load_csv_with_split(
-        csv_path, MLP_TRAIN_RATIO, MLP_VAL_RATIO
+        csv_path, MLP_TRAIN_RATIO, MLP_VAL_RATIO, station_id=station_id
     )
 
     # Feiertags-Datumsmenge über alle im Test-Set vorkommenden Jahre
@@ -320,8 +327,8 @@ def export_holiday_features(station_id: str) -> int:
 
 def export_daily_results(station_id: str) -> list[dict]:
     """Merged stündliche Test-Vorhersagen MLP + Linear → daily-results JSON."""
-    mlp_csv = MLP_PREDS_DIR / f"predictions_{station_id}_engineered.csv"
-    lr_csv  = LR_PREDS_DIR  / f"predictions_{station_id}_engineered.csv"
+    mlp_csv = MLP_PREDS_DIR / f"predictions_{station_id}_v7.csv"
+    lr_csv  = LR_PREDS_DIR  / f"predictions_{station_id}_v7.csv"
 
     if not mlp_csv.exists() or not lr_csv.exists():
         print(f"  !Predictions {station_id}: fehlen – übersprungen")
@@ -353,15 +360,15 @@ def export_daily_results(station_id: str) -> list[dict]:
 
 
 def load_metrics_table(path: Path) -> dict[str, dict]:
-    """Liest all_metrics.csv und keyed nach Station-ID (ohne `_engineered`)."""
+    """Liest all_metrics.csv und keyed nach Station-ID (ohne `_v7`)."""
     if not path.exists():
         return {}
     df = pd.read_csv(path)
     out = {}
     for _, row in df.iterrows():
         sid = str(row["station"])
-        if sid.endswith("_engineered"):
-            sid = sid[: -len("_engineered")]
+        if sid.endswith("_v7"):
+            sid = sid[: -len("_v7")]
         out[sid] = {
             "mae":  float(row["MAE"]),
             "rmse": float(row["RMSE"]),
@@ -373,7 +380,7 @@ def load_metrics_table(path: Path) -> dict[str, dict]:
 def collect_station_ids() -> list[str]:
     """Ermittelt alle Station-IDs aus den Daten-CSV-Dateinamen."""
     ids = []
-    for csv in sorted(DATA_DIR.glob("*_engineered.csv")):
+    for csv in sorted(DATA_DIR.glob("*_v7.csv")):
         ids.append(station_id_from_filename(csv.name))
     return ids
 

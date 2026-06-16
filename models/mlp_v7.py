@@ -64,6 +64,18 @@ FEATURES = [
     "temp", "rain_1h", "sun_1h", "snow_1h", "weather_cat",
 ]
 
+# ── Stationsspezifische Feature-Ausnahmen ────────────────────────────────────
+# Die Station Sattel (beide Richtungen R1 und R2) hat nur fuer 2015-2017 dichte
+# Trainingsdaten, das Testset reicht aber bis 2025 (rund 8 Jahre Extrapolation).
+# Das absolute Year-Feature liegt fuer 2025 weit ausserhalb des Trainingsbereichs
+# und entgleist die v7-Vorhersage massiv (Test-R2 faellt fuer R1 auf ~0.54). Fuer
+# diese Station wird Year daher aus dem Feature-Satz entfernt. Details siehe README
+# ("Stationsspezifische Ausnahme").
+FEATURE_EXCLUDE = {
+    "171_Sattel_R1": ["Year"],
+    "171_Sattel_R2": ["Year"],
+}
+
 # Unterordner automatisch erstellen
 for sub in ["metrics", "model_weights", "plots/loss_curves", "plots/scatter",
             "plots/timeseries", "plots/residuals", "plots/tagesverlauf", "summary", "predictions"]:
@@ -114,6 +126,13 @@ def main():
             print(f"Warnung: Datei {file_path} nicht gefunden, wird übersprungen.")
             continue
 
+        # Seed pro Station neu setzen, damit jede Station unabhaengig und exakt
+        # reproduzierbar ist. Ohne dies wuerde das stationsspezifische Entfernen
+        # eines Features (FEATURE_EXCLUDE) die fortlaufende Zufalls-Kette und damit
+        # die Resultate aller NACHFOLGENDEN Stationen mit veraendern.
+        torch.manual_seed(42)
+        np.random.seed(42)
+
         # Daten laden, NaN droppen
         df = pd.read_csv(file_path).dropna()
 
@@ -129,6 +148,12 @@ def main():
 
         # Nur vorhandene Features nutzen
         feature_cols = [c for c in FEATURES if c in df.columns]
+
+        # Stationsspezifische Ausnahmen anwenden (z.B. Year bei Sattel R1 entfernen)
+        excluded = next((cols for key, cols in FEATURE_EXCLUDE.items() if key in name), [])
+        if excluded:
+            feature_cols = [c for c in feature_cols if c not in excluded]
+            print(f"  Hinweis: Fuer {name} aus dem Feature-Satz entfernt: {excluded}")
 
         X = df[feature_cols].values
         y = df["volume"].values.reshape(-1, 1)

@@ -39,9 +39,9 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.metrics import mean_squared_error, r2_score
 
-# Hinweis zum Import-Modul: Die v6-Welt (Corona-bereinigte Daten, _withoutcorona-
+# Hinweis zum Import-Modul: Die v6-Welt (Corona-bereinigte Daten, _v6-
 # DATASETS und der results/.../mlp_v6-Resultatbaum) ist im Trainingsskript
-# `mlp_v6.py` definiert – nicht in `mlp.py`, das weiterhin auf die v5-Daten zeigt.
+# `mlp_v6.py` definiert – nicht in `mlp_v5.py`, das weiterhin auf die v5-Daten zeigt.
 # Es wird daher aus `mlp_v6` importiert, damit DATA_DIR/RESULTS_DIR/DATASETS
 # tatsaechlich auf die v6-Welt verweisen. Der Import ist gefahrlos, weil das
 # eigentliche Training dort nur unter dem __main__-Guard laeuft.
@@ -53,10 +53,10 @@ from mlp_v6 import (  # noqa: E402  (Import bewusst nach os.chdir/sys.path)
 
 # ── Konfiguration ────────────────────────────────────────────────────────────
 # Repraesentative Station fuer die Kurve. MUSS einer der Eintraege in DATASETS
-# sein (die ..._withoutcorona.csv-Dateien). Wird beim Start validiert.
+# sein (die ..._v6.csv-Dateien). Wird beim Start validiert.
 # Gewaehlt: dieselbe Station wie beim Optuna-Tuning (050 Brunnen Mositunnel R1),
-# hier in der v6-Variante (_withoutcorona).
-STATION = "050_Brunnen_Mositunnel_R1_withoutcorona.csv"
+# hier in der v6-Variante (_v6).
+STATION = "050_Brunnen_Mositunnel_R1_v6.csv"
 
 # Proportionen der gewaehlten Architektur [256, 128, 128, 64] = 64 * [4, 2, 2, 1].
 BASE_SHAPE = [4, 2, 2, 1]
@@ -394,7 +394,7 @@ def main():
     # STATION validieren
     if STATION not in DATASETS:
         raise SystemExit(
-            "STATION ist ungueltig. Bitte oben im Skript eine der _withoutcorona.csv "
+            "STATION ist ungueltig. Bitte oben im Skript eine der _v6.csv "
             f"aus DATASETS setzen.\nAktuell: STATION = {STATION!r}\n"
             f"Gueltige Werte:\n  " + "\n  ".join(DATASETS)
         )

@@ -86,8 +86,9 @@ export function useDailyResults(stationId) {
 
 /**
  * Lädt die rohen Feiertags-Feature-Vektoren einer Station (aus
- * export_weights.py). Jeder Eintrag: { datetime, f: [16 Roh-Features] }.
- * Wird für das Counterfactual gebraucht (is_holiday auf 0 setzen).
+ * export_weights.py). Jeder Eintrag: { datetime, f: [Roh-Features] } in der
+ * stationsspezifischen v7-Feature-Reihenfolge (41 bzw. 40 bei Sattel).
+ * Wird für das Counterfactual gebraucht (alle holiday_*-Spalten auf 0 setzen).
  */
 const holidayCache = new Map()
 

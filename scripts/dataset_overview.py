@@ -30,11 +30,11 @@ def find_project_root(marker_subpath):
     return None
 
 
-BASE_DIR = find_project_root(os.path.join("data", "v5_engineered"))
+BASE_DIR = find_project_root(os.path.join("data", "v5"))
 if BASE_DIR is None:
-    raise FileNotFoundError("Konnte 'data/v5_engineered' weder vom Skript-Ort "
+    raise FileNotFoundError("Konnte 'data/v5' weder vom Skript-Ort "
                             "noch vom Arbeitsverzeichnis aus finden.")
-INPUT_DIR = os.path.join(BASE_DIR, "data", "v5_engineered")
+INPUT_DIR = os.path.join(BASE_DIR, "data", "v5")
 OUTPUT_DIR = os.path.join(BASE_DIR, "results", "analysis", "dataset_overview")
 
 # COVID-Zeitraum
@@ -188,7 +188,7 @@ def write_outputs(results, report_lines):
 
 
 def main():
-    csv_files = sorted(glob.glob(os.path.join(INPUT_DIR, "*_engineered.csv")))
+    csv_files = sorted(glob.glob(os.path.join(INPUT_DIR, "*_v5.csv")))
     if not csv_files:
         print(f"Keine CSV-Dateien in {INPUT_DIR} gefunden.")
         return

@@ -26,10 +26,10 @@ np.random.seed(42)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ── Konfiguration ────────────────────────────────────────────────────────────
-DATA_DIR    = Path("data/v5_engineered")
-RESULTS_DIR = Path("results/model_results/mlp")
+DATA_DIR    = Path("data/v5")
+RESULTS_DIR = Path("results/model_results/mlp_v5")
 
-TUNING_DATASET = "050_Brunnen_Mositunnel_R1_engineered.csv"
+TUNING_DATASET = "050_Brunnen_Mositunnel_R1_v5.csv"
 N_TRIALS       = 150
 TUNING_EPOCHS  = 150  # Reduziert gegenüber Final-Training für schnellere Trials
 ES_PATIENCE    = 25
@@ -174,8 +174,8 @@ def main():
     optuna.logging.set_verbosity(optuna.logging.WARNING)
 
     study = optuna.create_study(
-        study_name="mlp_tuning",
-        storage="sqlite:///optuna_mlp.db",
+        study_name="mlp_v5_tuning",
+        storage="sqlite:///optuna_mlp_v5.db",
         load_if_exists=True,
         direction="minimize",
         sampler=optuna.samplers.TPESampler(seed=None),

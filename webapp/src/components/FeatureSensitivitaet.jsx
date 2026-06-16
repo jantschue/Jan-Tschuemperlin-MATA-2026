@@ -66,7 +66,7 @@ export default function FeatureSensitivitaet({ station }) {
     const allVals = SWEEPS.flatMap(sweep => {
       const values = linspace(sweep.min, sweep.max, sweep.points)
       return values.flatMap(v => {
-        const vec = buildFeatureVector({ ...DEFAULT_INPUTS, [sweep.key]: v })
+        const vec = buildFeatureVector({ ...DEFAULT_INPUTS, [sweep.key]: v }, weights.mlp.features)
         return [mlpForward(vec, weights.mlp), linearForward(vec, weights.linear)]
       })
     })
@@ -84,7 +84,7 @@ export default function FeatureSensitivitaet({ station }) {
     return SWEEPS.map((sweep) => {
       const values = linspace(sweep.min, sweep.max, sweep.points)
       const data = values.map((v) => {
-        const vec = buildFeatureVector({ ...inputs, [sweep.key]: v })
+        const vec = buildFeatureVector({ ...inputs, [sweep.key]: v }, weights.mlp.features)
         return {
           x: v,
           MLP: mlpForward(vec, weights.mlp),

@@ -167,7 +167,7 @@ export default function LiveVorhersage({ station, onGoToMap }) {
   const fixedYMax = useMemo(() => {
     if (!weights) return 2000
     const maxVal = Math.max(...Array.from({ length: 24 }, (_, h) => {
-      const v = buildFeatureVector({ ...DEFAULT_INPUTS, hour: h })
+      const v = buildFeatureVector({ ...DEFAULT_INPUTS, hour: h }, weights.mlp.features)
       return Math.max(mlpForward(v, weights.mlp), linearForward(v, weights.linear))
     }))
     return Math.ceil(maxVal / 100) * 100
@@ -181,7 +181,7 @@ export default function LiveVorhersage({ station, onGoToMap }) {
   // Vorhersage für aktuelle Eingaben
   const prediction = useMemo(() => {
     if (!weights) return { mlp: 0, linear: 0 }
-    const v = buildFeatureVector(inputs)
+    const v = buildFeatureVector(inputs, weights.mlp.features)
     return {
       mlp: mlpForward(v, weights.mlp),
       linear: linearForward(v, weights.linear)
@@ -192,7 +192,7 @@ export default function LiveVorhersage({ station, onGoToMap }) {
   const dayPredictions = useMemo(() => {
     if (!weights) return []
     return Array.from({ length: 24 }, (_, h) => {
-      const v = buildFeatureVector({ ...inputs, hour: h })
+      const v = buildFeatureVector({ ...inputs, hour: h }, weights.mlp.features)
       return {
         hour: h,
         MLP: mlpForward(v, weights.mlp),

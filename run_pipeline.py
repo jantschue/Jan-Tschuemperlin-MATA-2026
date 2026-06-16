@@ -2,7 +2,7 @@
 Master-Skript, um das gesamte Projekt vollstaendig reproduzieren zu koennen.
 Die Pipeline laeuft in drei Phasen:
     Phase 1: Datenverarbeitung (Rohdaten -> v5_engineered)
-    Phase 2: Analyse + v6_withoutcorona (Corona-bereinigter Datensatz) + v7
+    Phase 2: Analyse + v6 (Corona-bereinigter Datensatz) + v7
     Phase 3: Modelltraining (Lineare Regression & MLP auf v5 und v6, MLP auf v7)
 Alle Schritte werden in der korrekten Reihenfolge ausgefuehrt.
 
@@ -28,8 +28,8 @@ def main():
         "split_directions.py",
         "transform_hourly.py",
         "generate_holidays.py",          # zentrale Feiertags-DB (alle 26 Kantone)
-        "filter_weather_luzern_2010_2026.py",
-        "filter_weather_waedenswil_2010_2026.py",
+        "filter_weather_luzern.py",
+        "filter_weather_waedenswil.py",
         "add_snow_1h.py",
         "categorize_weather.py",
         "drop_snowheight.py",
@@ -42,22 +42,22 @@ def main():
         "create_correlation_matrix_engineered.py",
     ]
 
-    # Phase 2: Analyse + v6_withoutcorona + v7 (kantonsspezifische Feiertage)
+    # Phase 2: Analyse + v6 + v7 (kantonsspezifische Feiertage)
     analysis_scripts = [
         "dataset_overview.py",
         "covid_anomaly_analysis.py",
-        "create_v6_withoutcorona.py",
+        "build_v6.py",
         "build_v7.py",                   # v6 + 26 Feiertagsspalten -> v7
     ]
 
     # Phase 3: Modelltraining (v5 + v6 + v7)
-    # v7 hat nur ein MLP (die kantonsspezifische Feiertagskodierung ist eine
-    # Verfeinerung des MLP-Hauptmodells; keine eigene lineare Baseline).
+    # Jede Datenvariante hat eine lineare Baseline und ein MLP (gleiche Reihenfolge).
     training_scripts = [
-        "linear_regression.py",
-        "mlp.py",
+        "linear_regression_v5.py",
+        "mlp_v5.py",
         "linear_regression_v6.py",
         "mlp_v6.py",
+        "linear_regression_v7.py",
         "mlp_v7.py",
     ]
 
@@ -89,8 +89,8 @@ def main():
     for name in data_scripts:
         run_step(os.path.join(scripts_dir, name), name)
 
-    # --- Phase 2: Analyse + v6_withoutcorona + v7 ---
-    print("\n--- Phase 2: Analyse + Corona-Bereinigung (v6_withoutcorona) + v7-Aufbau ---")
+    # --- Phase 2: Analyse + v6 + v7 ---
+    print("\n--- Phase 2: Analyse + Corona-Bereinigung (v6) + v7-Aufbau ---")
     for name in analysis_scripts:
         run_step(os.path.join(scripts_dir, name), name)
 

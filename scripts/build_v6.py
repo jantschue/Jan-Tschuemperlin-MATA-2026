@@ -2,7 +2,7 @@
 Dieses Skript entfernt den Corona-Zeitraum aus den Engineered-CSV-Dateien.
 Alle Zeilen mit datetime zwischen 2020-03-16 und 2021-02-28 (inklusive) werden
 verworfen, die uebrigen Zeilen unter gleichem Dateinamen nach
-data/v6_withoutcorona/ geschrieben. Pro Datei wird anschliessend eine kurze
+data/v6/ geschrieben. Pro Datei wird anschliessend eine kurze
 Zusammenfassung ausgegeben. Bestehende Dateien und Ordner werden nicht
 veraendert.
 """
@@ -30,12 +30,12 @@ def find_project_root(marker_subpath):
     return None
 
 
-BASE_DIR = find_project_root(os.path.join("data", "v5_engineered"))
+BASE_DIR = find_project_root(os.path.join("data", "v5"))
 if BASE_DIR is None:
-    raise FileNotFoundError("Konnte 'data/v5_engineered' weder vom Skript-Ort "
+    raise FileNotFoundError("Konnte 'data/v5' weder vom Skript-Ort "
                             "noch vom Arbeitsverzeichnis aus finden.")
-INPUT_DIR = os.path.join(BASE_DIR, "data", "v5_engineered")
-OUTPUT_DIR = os.path.join(BASE_DIR, "data", "v6_withoutcorona")
+INPUT_DIR = os.path.join(BASE_DIR, "data", "v5")
+OUTPUT_DIR = os.path.join(BASE_DIR, "data", "v6")
 
 # Auszuschliessender Zeitraum (inklusive beider Grenzen)
 CORONA_START = pd.Timestamp("2020-03-16 00:00:00")
@@ -44,11 +44,11 @@ CORONA_END = pd.Timestamp("2021-02-28 23:00:00")
 
 def process_file(file_path):
     """Liest eine CSV-Datei, entfernt den Corona-Zeitraum und schreibt sie
-    mit dem Suffix '_withoutcorona.csv' nach OUTPUT_DIR. Gibt eine Statistik
+    mit dem Suffix '_v6.csv' nach OUTPUT_DIR. Gibt eine Statistik
     fuer die Zusammenfassung zurueck."""
     filename = os.path.basename(file_path)
     # Suffix umbenennen, damit v6-Dateien sich klar von v5 unterscheiden
-    out_filename = filename.replace("_engineered.csv", "_withoutcorona.csv")
+    out_filename = filename.replace("_v5.csv", "_v6.csv")
 
     df = pd.read_csv(file_path)
     df["datetime"] = pd.to_datetime(df["datetime"])
@@ -89,7 +89,7 @@ def print_summary(results):
         f"{'Neu':>9} | {'Neuer Zeitraum (von -> bis)':<43}"
     )
     print("=" * len(header))
-    print("ZUSAMMENFASSUNG: Corona-Bereinigung (v5 -> v6_withoutcorona)")
+    print("ZUSAMMENFASSUNG: Corona-Bereinigung (v5 -> v6)")
     print("=" * len(header))
     print(header)
     print("-" * len(header))
@@ -112,7 +112,7 @@ def print_summary(results):
 
 
 def main():
-    csv_files = sorted(glob.glob(os.path.join(INPUT_DIR, "*_engineered.csv")))
+    csv_files = sorted(glob.glob(os.path.join(INPUT_DIR, "*_v5.csv")))
     if not csv_files:
         print(f"Keine CSV-Dateien in {INPUT_DIR} gefunden.")
         return

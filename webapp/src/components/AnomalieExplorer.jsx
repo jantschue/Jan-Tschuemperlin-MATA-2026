@@ -191,6 +191,16 @@ function DayChart({ stationId, dateStr, hour: highlightHour, actual: highlightAc
     [allData, stationId, dateStr]
   )
 
+  // Y-Achse an Daten + MLP ausrichten; extreme LR-Ausreisser (Year-Extrapolation,
+  // v.a. verkehrsstarke Stationen) erhalten 15 % Spielraum und werden sonst oben
+  // abgeschnitten, statt die Skala zu dominieren.
+  const dayYMax = useMemo(() => {
+    if (!dayRows.length) return undefined
+    const dataMax = Math.max(...dayRows.flatMap(r => [r.actual, r.mlp]))
+    const lrMax = Math.max(...dayRows.map(r => r.lr))
+    return Math.ceil(Math.max(dataMax, Math.min(lrMax, dataMax * 1.15)) / 50) * 50
+  }, [dayRows])
+
   if (!dayRows.length) {
     return (
       <div className="text-xs text-[var(--text-muted)] py-6 text-center">
@@ -205,7 +215,7 @@ function DayChart({ stationId, dateStr, hour: highlightHour, actual: highlightAc
         <LineChart data={dayRows} margin={{ top: 4, right: 8, bottom: 0, left: -20 }}>
           <CartesianGrid stroke="var(--border)" strokeDasharray="2 3" />
           <XAxis dataKey="hour" stroke="var(--text-muted)" tick={{ fontSize: 10 }} />
-          <YAxis stroke="var(--text-muted)" tick={{ fontSize: 10 }} />
+          <YAxis domain={[0, dayYMax]} stroke="var(--text-muted)" tick={{ fontSize: 10 }} />
           <RechartTooltip
             cursor={{ stroke: 'var(--border)' }}
             content={({ active, payload, label: lbl }) => {

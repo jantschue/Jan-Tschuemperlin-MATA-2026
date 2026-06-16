@@ -72,11 +72,18 @@ export default function DatumsAnalyse({ station, initialDate = '' }) {
   }, [initialDate])
   const [showWeekAvg, setShowWeekAvg] = useState(false)
 
-  // Globales Y-Maximum über den gesamten Datensatz – bleibt bei Datumswechsel stabil
+  // Globales Y-Maximum über den gesamten Datensatz – bleibt bei Datumswechsel stabil.
+  // Die Achse richtet sich an den echten Daten und dem MLP aus. Die lineare Baseline
+  // kann durch Year-Extrapolation einzelne Ausreisser weit über den Daten erzeugen
+  // (v.a. verkehrsstarke Stationen wie Wollerau/Wangen, LR bis ~7000 statt ~3000);
+  // diese sollen die Skala nicht dominieren. Der LR erhält 15 % Spielraum über dem
+  // Datenbereich, darüber hinausgehende Ausreisser werden oben abgeschnitten.
   const globalYMax = useMemo(() => {
     if (!data || !data.length) return 2000
-    const all = data.flatMap(r => [r.actual, r.pred_mlp, r.pred_linear])
-    return Math.ceil(Math.max(...all) / 100) * 100
+    const dataMax = Math.max(...data.flatMap(r => [r.actual, r.pred_mlp]))
+    const lrMax = Math.max(...data.map(r => r.pred_linear))
+    const ymax = Math.max(dataMax, Math.min(lrMax, dataMax * 1.15))
+    return Math.ceil(ymax / 100) * 100
   }, [data])
 
   // Beim ersten Laden ein Standarddatum aus dem Datensatz wählen

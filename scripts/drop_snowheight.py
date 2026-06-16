@@ -8,8 +8,8 @@ import os
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 files = [
-    os.path.join(base_dir, "data", "weather", "processed", "wetter_luzern_2010-2026_categorized.csv"),
-    os.path.join(base_dir, "data", "weather", "processed", "wetter_waedenswil_2010-2026_categorized.csv"),
+    os.path.join(base_dir, "data", "weather", "processed", "weather_luzern_2010-2026_categorized.csv"),
+    os.path.join(base_dir, "data", "weather", "processed", "weather_waedenswil_2010-2026_categorized.csv"),
 ]
 
 for file in files:

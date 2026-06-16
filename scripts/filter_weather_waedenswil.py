@@ -7,10 +7,10 @@ import os
 
 def main():
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    input_file = os.path.join(base_dir, "data", "weather", "raw", "Waedenswil", "wetter_waedenswil_2010-2026.csv")
+    input_file = os.path.join(base_dir, "data", "weather", "raw", "Waedenswil", "weather_waedenswil_2010-2026.csv")
     output_dir = os.path.join(base_dir, "data", "weather", "processed")
     os.makedirs(output_dir, exist_ok=True)
-    output_file = os.path.join(output_dir, "wetter_waedenswil_2010-2026_filtered.csv")
+    output_file = os.path.join(output_dir, "weather_waedenswil_2010-2026_filtered.csv")
 
     print(f"Lade Daten von {input_file}...")
     df = pd.read_csv(input_file, sep=';', low_memory=False)

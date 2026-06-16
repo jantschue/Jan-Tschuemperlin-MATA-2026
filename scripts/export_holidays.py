@@ -19,7 +19,7 @@ jahre = range(2015, 2027)  # 2015 bis 2026 inkl.
 basis = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ordner = os.path.join(basis, "data", "holidays", "raw")
 os.makedirs(ordner, exist_ok=True)
-csv_datei = os.path.join(ordner, f"feiertage_{kanton}_2015_2026.csv")
+csv_datei = os.path.join(ordner, f"holidays_{kanton}_2015_2026.csv")
 
 alle_eintraege = []
 

@@ -1,11 +1,11 @@
 """
-"Überprüft alle zusammengeführten Datensätze ('_merged.csv') auf fehlende Verkehrsdaten (lückenhafte Stunden). Die gefundenen Lücken werden berechnet und in einer Übersichtstextdatei ('gaps.txt') im Ordner 'merged_gapless' gespeichert."
+"Überprüft alle zusammengeführten Datensätze ('_v3.csv') auf fehlende Verkehrsdaten (lückenhafte Stunden). Die gefundenen Lücken werden berechnet und in einer Übersichtstextdatei ('gaps.txt') im Ordner 'results' gespeichert."
 """
 
 import pandas as pd
 import os
 
-merged_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'v3_merged')
+merged_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'v3')
 results_dir = os.path.join(os.path.dirname(__file__), '..', 'results')
 os.makedirs(results_dir, exist_ok=True)
 output_file = os.path.join(results_dir, 'gaps.txt')
@@ -13,14 +13,14 @@ output_file = os.path.join(results_dir, 'gaps.txt')
 lines = []
 
 for filename in sorted(os.listdir(merged_dir)):
-    if not filename.endswith('_merged.csv'):
+    if not filename.endswith('_v3.csv'):
         continue
 
     df = pd.read_csv(os.path.join(merged_dir, filename))
     df['datetime'] = pd.to_datetime(df['datetime'])
     missing = df[df['volume'].isna()].copy()
 
-    name = filename.replace('_merged.csv', '')
+    name = filename.replace('_v3.csv', '')
 
     if missing.empty:
         lines.append(f"{name}: Keine fehlenden Daten\n")

@@ -7,15 +7,15 @@ import numpy as np
 import os
 
 # Pfade für In- und Output definieren
-input_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'v5_engineered')
-output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'v5_engineered')
+input_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'v5')
+output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'v5')
 
 # Output-Verzeichnis erstellen, falls es nicht existiert
 os.makedirs(output_dir, exist_ok=True)
 
 # Alle Dateien im Input-Verzeichnis verarbeiten
 for filename in sorted(os.listdir(input_dir)):
-    if not filename.endswith('_merged_gapless_time.csv'):
+    if not filename.endswith('_v5_time.csv'):
         continue
 
     filepath = os.path.join(input_dir, filename)
@@ -64,9 +64,9 @@ for filename in sorted(os.listdir(input_dir)):
     out_df['weather_cat'] = df['weather_cat']
 
     # Speichern
-    output_filename = filename.replace('_merged_gapless_time.csv', '_engineered.csv')
-    if '_engineered.csv' not in output_filename:
-        output_filename = filename.replace('.csv', '_engineered.csv')
+    output_filename = filename.replace('_v5_time.csv', '_v5.csv')
+    if '_v5.csv' not in output_filename:
+        output_filename = filename.replace('.csv', '_v5.csv')
         
     output_path = os.path.join(output_dir, output_filename)
     
@@ -74,4 +74,4 @@ for filename in sorted(os.listdir(input_dir)):
     os.remove(filepath)  # Clean up intermediate file
     print(f'{filename} verarbeitet -> {output_filename} und Original gelöscht')
 
-print(f'\nAlle neuen Datensätze im Ordner "data/v5_engineered" gespeichert.')
+print(f'\nAlle neuen Datensätze im Ordner "data/v5" gespeichert.')

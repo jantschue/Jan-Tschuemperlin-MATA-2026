@@ -10,9 +10,9 @@ def main():
     base_path_in = os.path.join(base_dir, "data", "weather", "raw", "Luzern")
     base_path_out = os.path.join(base_dir, "data", "weather", "processed")
     os.makedirs(base_path_out, exist_ok=True)
-    file1 = os.path.join(base_path_in, "wetter_luzern_2010-2019.csv")
-    file2 = os.path.join(base_path_in, "wetter_luzern_2020-2026.csv")
-    output_file = os.path.join(base_path_out, "wetter_luzern_2010-2026_filtered.csv")
+    file1 = os.path.join(base_path_in, "weather_luzern_2010-2019.csv")
+    file2 = os.path.join(base_path_in, "weather_luzern_2020-2026.csv")
+    output_file = os.path.join(base_path_out, "weather_luzern_2010-2026_filtered.csv")
 
     print(f"Lade Daten von {file1}...")
     df1 = pd.read_csv(file1, sep=';', low_memory=False)

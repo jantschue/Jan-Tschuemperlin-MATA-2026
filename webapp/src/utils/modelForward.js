@@ -1,7 +1,7 @@
 /**
  * Modell-Vorwärtsdurchläufe für MLP und Lineare Regression. Die Implementierung
- * spiegelt exakt die in models/mlp.py und models/linear_regression.py definierte
- * Architektur wider:
+ * spiegelt exakt die in models/mlp_v7.py und models/linear_regression_v7.py
+ * definierte Architektur wider:
  *
  * MLP (mlp.py):
  *   Pro Hidden-Block: Linear -> BatchNorm1d -> ReLU -> (Dropout)
