@@ -11,7 +11,7 @@ die Kurve mit den dort berichteten Metriken vergleichbar ist.
 
 Ausfuehren aus dem Projekt-Stammverzeichnis:
 
-    python analysen/parameter_vs_performance.py
+    python scripts/parameter_vs_performance_v6.py
 
 (Das Skript wechselt zur Sicherheit selbst ins Projekt-Stammverzeichnis, damit die
 relativen Daten- und Resultatpfade aus dem Trainingsmodul korrekt aufgeloest werden.)

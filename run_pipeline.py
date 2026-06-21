@@ -61,7 +61,7 @@ def main():
         "mlp_v7.py",
     ]
 
-    total_steps = len(data_scripts) + len(analysis_scripts) + len(training_scripts)
+    total_steps = len(data_scripts) + len(analysis_scripts) + len(training_scripts) + 1
     step_counter = 0
 
     def run_step(script_path, label):
@@ -98,6 +98,10 @@ def main():
     print("\n--- Phase 3: Modelltraining (Lineare Regression & MLP auf v5/v6, MLP auf v7) ---")
     for name in training_scripts:
         run_step(os.path.join(models_dir, name), f"models/{name}")
+
+    # plot_trainingsverlauf.py braucht die training_history_*.csv-Dateien, die
+    # mlp_v7.py beim Training erzeugt, daher erst nach Phase 3 ausfuehren.
+    run_step(os.path.join(scripts_dir, "plot_trainingsverlauf.py"), "plot_trainingsverlauf.py")
 
     print("\n" + "=" * 60)
     print("Pipeline erfolgreich und fehlerfrei abgeschlossen!")

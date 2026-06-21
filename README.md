@@ -58,9 +58,8 @@ Die Rohdaten durchlaufen mehrere Verarbeitungsstufen, bevor sie für das Modellt
 
 | Ordner | Inhalt |
 |---|---|
-| `scripts/` | Python-Skripte für die Datenverarbeitung (v1 → v7), die Corona-Bereinigung (v6), den v7-Aufbau und explorative Analysen |
+| `scripts/` | Python-Skripte für die Datenverarbeitung (v1 → v7), die Corona-Bereinigung (v6), den v7-Aufbau, explorative Analysen sowie die Parameter-vs-Performance-Studien (v6, v7) und den Trainingsverlauf-Plot (v7) |
 | `models/` | Trainings-Skripte für die ML-Modelle (Varianten für v5, v6 und v7) sowie Optuna-Tuning (v5 und v7) |
-| `analysen/` | Eigenständige Analyse-Skripte zur Begründung der Modellwahl (Parameter-vs-Performance-Studien für v6 und v7) |
 | `results/model_results/` | Metriken, Plots und Vorhersage-Vergleiche pro Modell (separat für v5-, v6- und v7-Varianten) |
 | `results/analysis/` | Output der explorativen Analyse-Skripte (Datensatz-Übersicht, COVID-Anomalie) |
 | `results/data_visualizations/` | Diagnostik der Datenpipeline: Korrelationsmatrizen, Tagesverlaufs-Plots und Lücken-Übersicht (`gaps.txt`) |
@@ -91,8 +90,9 @@ Die Rohdaten durchlaufen mehrere Verarbeitungsstufen, bevor sie für das Modellt
 | `scripts/covid_anomaly_analysis.py` | Pro Station 3 Plots: monatliches Durchschnittsvolumen mit COVID-Markierung, KW-Vergleich 2019–2022, prozentuale Abweichung 2020/2021 vs. Basisjahre | `results/analysis/covid_anomaly/` |
 | `scripts/build_v6.py` | Erzeugt aus `v5` den Corona-bereinigten Datensatz `v6` (entfernt 2020-03-16 bis 2021-02-28) | `data/v6/` |
 | `scripts/build_v7.py` | Erzeugt aus `v6` den v7-Datensatz: ersetzt `is_holiday` durch 26 kantonsspezifische Feiertagsspalten aus der zentralen Feiertags-DB | `data/v7/` |
-| `analysen/parameter_vs_performance_v6.py` | Parameter-vs-Performance-Kurve einer Station (v6): variiert die MLP-Grösse und misst Train-/Test-RMSE und Test-R² → begründet die gewählte Architektur | `results/model_results/mlp_v6/analysen/` |
-| `analysen/parameter_vs_performance_v7.py` | Dasselbe für das v7-Modell (importiert Hyperparameter live aus `mlp_v7.py`) | `results/model_results/mlp_v7/analysen/` |
+| `scripts/parameter_vs_performance_v6.py` | Parameter-vs-Performance-Kurve einer Station (v6): variiert die MLP-Grösse und misst Train-/Test-RMSE und Test-R² → begründet die gewählte Architektur | `results/model_results/mlp_v6/analysen/` |
+| `scripts/parameter_vs_performance_v7.py` | Dasselbe für das v7-Modell (importiert Hyperparameter live aus `mlp_v7.py`) | `results/model_results/mlp_v7/analysen/` |
+| `scripts/plot_trainingsverlauf.py` | Liest die pro Station von `mlp_v7.py` gespeicherten `training_history_*.csv`-Dateien und plottet je Station eine Kombination aus R²- und Verlustkurve (Trainings-/Validierungswerte) | `results/model_results/mlp_v7/plots/trainingsverlauf/abbildung_trainingsverlauf_v7_<station>.png` |
 
 ### Ergebnisse pro Modell
 
@@ -108,7 +108,11 @@ Nach dem Training werden die Resultate unter `results/model_results/<modell>/` g
 | `plots/timeseries/` | Zeitreihendarstellung (erste 2 zusammenhängende Wochen des Testsets) |
 | `plots/residuals/` | Durchschnittliche Residuals nach Tagesstunde |
 | `plots/tagesverlauf/` | Durchschnittlicher Tagesverlauf: Ist-Werte vs. Vorhersage |
+| `plots/trainingsverlauf/` | Nur beim v7-MLP: Kombination aus R²- und Verlustkurve pro Station (`abbildung_trainingsverlauf_v7_<station>.png`) |
 | `summary/` | R²-Übersichtsplot über alle Stationen + Split-Infos pro Station |
+| `training_history/` | Nur beim v7-MLP: `training_history_<station>.csv` mit Spalten `epoch,train_mse,val_mse,train_rmse,val_rmse,train_r2,val_r2` (MSE/RMSE in Fahrzeuge/h zurücktransformiert, R² pro Epoche auf Trainings- bzw. Validierungsbatches) |
+
+Beim v7-MLP speichert `mlp_v7.py` zusätzlich pro Station `training_history/training_history_<station>.csv`. Daraus erzeugt `scripts/plot_trainingsverlauf.py` je Station eine Trainingsverlauf-Abbildung in `plots/trainingsverlauf/` (R² links, MSE rechts, je Trainings- und Validierungskurve).
 
 Bei getunten Modellen liegt zusätzlich `best_params.json` (bzw. `best_params_v7.json`) im Modell-Ordner (Output des Optuna-Tunings), und die Parameter-vs-Performance-Studien schreiben nach `<modell>/analysen/`.
 
@@ -180,7 +184,7 @@ Das Skript läuft in drei Phasen ab:
 
 **Phase 2 – Analyse + Corona-Bereinigung + v7 (4 Skripte):** `dataset_overview.py` und `covid_anomaly_analysis.py` erzeugen die Diagnostik unter `results/analysis/`; `build_v6.py` schreibt den Corona-bereinigten Datensatz nach `data/v6/`; `build_v7.py` erweitert v6 mit 26 kantonsspezifischen Feiertagsspalten aus der zentralen Feiertags-DB nach `data/v7/`.
 
-**Phase 3 – Modelltraining (6 Skripte):** `linear_regression_v5.py` und `mlp_v5.py` trainieren je 10 Modelle auf v5, `linear_regression_v6.py` und `mlp_v6.py` trainieren mit identischen Hyperparametern dieselben Modelle auf v6, und `linear_regression_v7.py` und `mlp_v7.py` trainieren Baseline und MLP auf den v7-Daten (26 kantonsspezifische Feiertagsspalten; das v7-MLP nutzt eigene getunte Hyperparameter).
+**Phase 3 – Modelltraining (6 Skripte + 1 Plot):** `linear_regression_v5.py` und `mlp_v5.py` trainieren je 10 Modelle auf v5, `linear_regression_v6.py` und `mlp_v6.py` trainieren mit identischen Hyperparametern dieselben Modelle auf v6, und `linear_regression_v7.py` und `mlp_v7.py` trainieren Baseline und MLP auf den v7-Daten (26 kantonsspezifische Feiertagsspalten; das v7-MLP nutzt eigene getunte Hyperparameter). Direkt danach liest `scripts/plot_trainingsverlauf.py` die von `mlp_v7.py` erzeugten `training_history/training_history_*.csv`-Dateien ein und erstellt je Station eine R²-/Verlust-Trainingsverlauf-Abbildung unter `plots/trainingsverlauf/`.
 
 ### Schritt 2: Webapp-Daten exportieren
 
@@ -202,8 +206,8 @@ Führt Optuna-Trials auf der Messstation Brunnen (R1) durch und gibt am Ende die
 ### Optionale Architektur-Analyse (Parameter vs. Performance)
 
 ```bash
-python analysen/parameter_vs_performance_v6.py       # v6-Modell
-python analysen/parameter_vs_performance_v7.py    # v7-Modell
+python scripts/parameter_vs_performance_v6.py       # v6-Modell
+python scripts/parameter_vs_performance_v7.py    # v7-Modell
 ```
 
 Variiert systematisch die MLP-Grösse für eine repräsentative Station und zeichnet Train-/Test-RMSE und Test-R² gegen die Parameterzahl auf. So lässt sich die gewählte Architektur begründen. Output (CSV + Plots) landet unter `results/model_results/<modell>/analysen/`. Nicht Teil von `run_pipeline.py`.

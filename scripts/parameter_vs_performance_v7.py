@@ -14,7 +14,7 @@ Analyse automatisch mit.
 
 Ausfuehren aus dem Projekt-Stammverzeichnis:
 
-    python analysen/parameter_vs_performance_v7.py
+    python scripts/parameter_vs_performance_v7.py
 
 (Das Skript wechselt zur Sicherheit selbst ins Projekt-Stammverzeichnis, damit die
 relativen Daten- und Resultatpfade aus dem Trainingsmodul korrekt aufgeloest werden.)

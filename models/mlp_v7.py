@@ -78,7 +78,8 @@ FEATURE_EXCLUDE = {
 
 # Unterordner automatisch erstellen
 for sub in ["metrics", "model_weights", "plots/loss_curves", "plots/scatter",
-            "plots/timeseries", "plots/residuals", "plots/tagesverlauf", "summary", "predictions"]:
+            "plots/timeseries", "plots/residuals", "plots/tagesverlauf",
+            "plots/trainingsverlauf", "summary", "predictions", "training_history"]:
     (RESULTS_DIR / sub).mkdir(parents=True, exist_ok=True)
 
 
@@ -223,6 +224,8 @@ def main():
         epoch_count  = []
         train_losses = []
         val_losses   = []
+        train_r2s    = []
+        val_r2s      = []
 
         print(f"\nTrainiere Modell {i + 1}/10: {name}")
         print(f"LR: {LEARNING_RATE}, Max. Epochen: {MAX_EPOCHS}, Batch Size: {BATCH_SIZE}")
@@ -237,6 +240,8 @@ def main():
             model.train()
 
             epoch_train_loss = 0.0
+            train_true_batches = []
+            train_pred_batches = []
             for X_batch, y_batch in train_loader:
                 X_batch, y_batch = X_batch.to(device), y_batch.to(device)
 
@@ -256,17 +261,30 @@ def main():
                 optimizer.step()
 
                 epoch_train_loss += loss.item() * len(X_batch)
+                train_true_batches.append(y_batch.detach().cpu().numpy())
+                train_pred_batches.append(y_pred.detach().cpu().numpy())
 
             epoch_train_loss /= len(train_loader.dataset)
+            epoch_train_r2 = r2_score(
+                np.concatenate(train_true_batches), np.concatenate(train_pred_batches)
+            )
 
             ### Validation
             model.eval()  # turns off dropout and batchnorm training behaviour
             with torch.inference_mode():
                 epoch_val_loss = 0.0
+                val_true_batches = []
+                val_pred_batches = []
                 for X_batch, y_batch in val_loader:
                     X_batch, y_batch = X_batch.to(device), y_batch.to(device)
-                    epoch_val_loss += loss_fn(model(X_batch), y_batch).item() * len(X_batch)
+                    y_pred = model(X_batch)
+                    epoch_val_loss += loss_fn(y_pred, y_batch).item() * len(X_batch)
+                    val_true_batches.append(y_batch.cpu().numpy())
+                    val_pred_batches.append(y_pred.cpu().numpy())
                 epoch_val_loss /= len(val_loader.dataset)
+                epoch_val_r2 = r2_score(
+                    np.concatenate(val_true_batches), np.concatenate(val_pred_batches)
+                )
 
             # LR-Scheduler auf Validation Loss anwenden
             scheduler.step(epoch_val_loss)
@@ -275,6 +293,8 @@ def main():
             epoch_count.append(epoch)
             train_losses.append(epoch_train_loss)
             val_losses.append(epoch_val_loss)
+            train_r2s.append(epoch_train_r2)
+            val_r2s.append(epoch_val_r2)
 
             # Konsolenausgabe nur alle 10 Epochen, um die Logs übersichtlich zu halten
             if epoch % 10 == 0:
@@ -293,6 +313,18 @@ def main():
 
         train_duration = time.time() - start_time
         print(f"Trainingszeit: {train_duration:.1f}s")
+
+        # Trainingsverlauf als CSV speichern (Ruecktransformation in Fahrzeuge/h)
+        y_std = float(y_scaler.scale_[0])
+        pd.DataFrame({
+            "epoch":      epoch_count,
+            "train_mse":  [l * y_std ** 2 for l in train_losses],
+            "val_mse":    [l * y_std ** 2 for l in val_losses],
+            "train_rmse": [np.sqrt(l) * y_std for l in train_losses],
+            "val_rmse":   [np.sqrt(l) * y_std for l in val_losses],
+            "train_r2":   train_r2s,
+            "val_r2":     val_r2s,
+        }).to_csv(RESULTS_DIR / "training_history" / f"training_history_{name}.csv", index=False)
 
         # Bestes Modell laden für Evaluation (nicht letztes!)
         model.load_state_dict({k: v.to(device) for k, v in best_weights.items()})
