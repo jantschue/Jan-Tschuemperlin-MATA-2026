@@ -8,6 +8,8 @@ Um den Einfluss der Corona-Anomalie auf die Modellgüte zu testen, werden beide 
 
 Eine dritte Variante (`v7`) verfeinert die Feiertagskodierung: Statt eines einzigen `is_holiday`-Flags (Kanton Schwyz) erhält das MLP **26 kantonsspezifische Feiertagsspalten** (`holiday_AG … holiday_ZH`), um zu prüfen, ob diese zusätzliche Information die Vorhersage verbessert. Die Hyperparameter des v7-MLP wurden separat per Optuna getunt (das Feature-Set hat sich geändert).
 
+Eine vierte Variante (`v8`) baut auf v7 auf und fügt zusätzlich **26 kantonsspezifische Schulferienspalten** (`schoolholiday_AG … schoolholiday_ZH`) hinzu. Auch dieses Modell wurde mit Optuna neu getunt, da der Feature-Satz auf 67 Spalten anwuchs.
+
 ## Interaktive Webapp
 
 Die Ergebnisse sind als interaktive Web-Applikation verfügbar:
@@ -51,16 +53,17 @@ Die Rohdaten durchlaufen mehrere Verarbeitungsstufen, bevor sie für das Modellt
 | `data/v5/` | Fertige ML-Features: zyklische Zeitkodierung, Wetterklassen, alle 16 Feature-Spalten |
 | `data/v6/` | `v5` ohne den Corona-Anomaliebereich (2020-03-16 bis 2021-02-28) |
 | `data/v7/` | `v6` mit 26 kantonsspezifischen Feiertagsspalten (holiday_AG … holiday_ZH) statt binärem `is_holiday` |
+| `data/v8/` | `v7` mit zusätzlichen 26 kantonsspezifischen Schulferienspalten (schoolholiday_AG … schoolholiday_ZH) |
 
-**Warum `data/weather/` und `data/holidays/` separat?** Wetter- und Feiertagsdaten stammen aus externen Quellen (MeteoSchweiz, Python-`holidays`-Modul) und sind unabhängig von der ASTRA-Verkehrs-Verarbeitungskette. Sie liegen daher in eigenen Ordnern. Die Trennung macht den Datenfluss klarer: Das `v1 → … → v7`-Schema enthält ausschliesslich ASTRA-Verkehrsdaten, `weather/` und `holidays/` die externen Datenquellen.
+**Warum `data/weather/` und `data/holidays/` separat?** Wetter- und Feiertagsdaten stammen aus externen Quellen (MeteoSchweiz, Python-`holidays`-Modul, kantonale Schulferien-CSVs) und sind unabhängig von der ASTRA-Verkehrs-Verarbeitungskette. Sie liegen daher in eigenen Ordnern. Die Trennung macht den Datenfluss klarer: Das `v1 → … → v8`-Schema enthält ausschliesslich ASTRA-Verkehrsdaten, `weather/` und `holidays/` die externen Datenquellen.
 
 ### Ordnerübersicht
 
 | Ordner | Inhalt |
 |---|---|
-| `scripts/` | Python-Skripte für die Datenverarbeitung (v1 → v7), die Corona-Bereinigung (v6), den v7-Aufbau, explorative Analysen sowie die Parameter-vs-Performance-Studien (v6, v7) und den Trainingsverlauf-Plot (v7) |
-| `models/` | Trainings-Skripte für die ML-Modelle (Varianten für v5, v6 und v7) sowie Optuna-Tuning (v5 und v7) |
-| `results/model_results/` | Metriken, Plots und Vorhersage-Vergleiche pro Modell (separat für v5-, v6- und v7-Varianten) |
+| `scripts/` | Python-Skripte für die Datenverarbeitung (v1 → v8), die Corona-Bereinigung (v6), den v7/v8-Aufbau, explorative Analysen sowie die Parameter-vs-Performance-Studien (v6, v7, v8) und den Trainingsverlauf-Plot (v7) |
+| `models/` | Trainings-Skripte für die ML-Modelle (Varianten für v5, v6, v7, v8) sowie Optuna-Tuning (v5, v7, v8) |
+| `results/model_results/` | Metriken, Plots und Vorhersage-Vergleiche pro Modell (separat für v5-, v6-, v7- und v8-Varianten) |
 | `results/analysis/` | Output der explorativen Analyse-Skripte (Datensatz-Übersicht, COVID-Anomalie) |
 | `results/data_visualizations/` | Diagnostik der Datenpipeline: Korrelationsmatrizen, Tagesverlaufs-Plots und Lücken-Übersicht (`gaps.txt`) |
 | `webapp/` | Interaktive React-Webapp (Vite + Tailwind + Recharts); live unter [tschue.ch](https://tschue.ch) |
@@ -79,8 +82,10 @@ Die Rohdaten durchlaufen mehrere Verarbeitungsstufen, bevor sie für das Modellt
 | `models/mlp_v6.py` | Gleiches MLP (identische Hyperparameter), trainiert auf v6 zum direkten Vergleich |
 | `models/linear_regression_v7.py` | Lineare Baseline für v7 (26 kantonsspezifische Feiertagsspalten, 41 Features) zum direkten Vergleich mit dem v7-MLP. Dieselbe stationsspezifische Ausnahme wie das v7-MLP (siehe unten). |
 | `models/mlp_v7.py` | MLP auf v7-Daten (26 kantonsspezifische Feiertagsspalten statt `is_holiday`, 41 Features), mit separat getunten Hyperparametern. **Stationsspezifische Ausnahme:** Für `171_Sattel_R1` und `171_Sattel_R2` wird das `Year`-Feature entfernt (siehe Abschnitt [Stationsspezifische Ausnahme](#stationsspezifische-ausnahme-sattel)). |
+| `models/mlp_v8.py` | MLP auf v8-Daten (26 Feiertage + 26 Schulferien, 67 Features), mit separat getunten Hyperparametern. Dieselbe stationsspezifische Ausnahme wie bei v7. |
 | `models/mlp_tuning_v5.py` | Optuna-Hyperparameter-Tuning für das v5-MLP (optional, nicht Teil der Pipeline) |
 | `models/mlp_tuning_v7.py` | Optuna-Hyperparameter-Tuning für das v7-MLP (optional, nicht Teil der Pipeline) |
+| `models/mlp_tuning_v8.py` | Optuna-Hyperparameter-Tuning für das v8-MLP (optional, nicht Teil der Pipeline) |
 
 ### Analyse-Skripte
 
@@ -90,13 +95,15 @@ Die Rohdaten durchlaufen mehrere Verarbeitungsstufen, bevor sie für das Modellt
 | `scripts/covid_anomaly_analysis.py` | Pro Station 3 Plots: monatliches Durchschnittsvolumen mit COVID-Markierung, KW-Vergleich 2019–2022, prozentuale Abweichung 2020/2021 vs. Basisjahre | `results/analysis/covid_anomaly/` |
 | `scripts/build_v6.py` | Erzeugt aus `v5` den Corona-bereinigten Datensatz `v6` (entfernt 2020-03-16 bis 2021-02-28) | `data/v6/` |
 | `scripts/build_v7.py` | Erzeugt aus `v6` den v7-Datensatz: ersetzt `is_holiday` durch 26 kantonsspezifische Feiertagsspalten aus der zentralen Feiertags-DB | `data/v7/` |
+| `scripts/build_v8.py` | Erzeugt aus `v7` den v8-Datensatz: ergänzt 26 kantonsspezifische Schulferienspalten | `data/v8/` |
 | `scripts/parameter_vs_performance_v6.py` | Parameter-vs-Performance-Kurve einer Station (v6): variiert die MLP-Grösse und misst Train-/Test-RMSE und Test-R² → begründet die gewählte Architektur | `results/model_results/mlp_v6/analysen/` |
 | `scripts/parameter_vs_performance_v7.py` | Dasselbe für das v7-Modell (importiert Hyperparameter live aus `mlp_v7.py`) | `results/model_results/mlp_v7/analysen/` |
+| `scripts/parameter_vs_performance_v8.py` | Dasselbe für das v8-Modell | `results/model_results/mlp_v8/analysen/` |
 | `scripts/plot_trainingsverlauf.py` | Liest die pro Station von `mlp_v7.py` gespeicherten `training_history_*.csv`-Dateien und plottet je Station eine Kombination aus R²- und Verlustkurve (Trainings-/Validierungswerte) | `results/model_results/mlp_v7/plots/trainingsverlauf/abbildung_trainingsverlauf_v7_<station>.png` |
 
 ### Ergebnisse pro Modell
 
-Nach dem Training werden die Resultate unter `results/model_results/<modell>/` gespeichert (mit `<modell>` ∈ `linear_regression_v5`, `mlp_v5`, `linear_regression_v6`, `mlp_v6`, `linear_regression_v7`, `mlp_v7`):
+Nach dem Training werden die Resultate unter `results/model_results/<modell>/` gespeichert (mit `<modell>` ∈ `linear_regression_v5`, `mlp_v5`, `linear_regression_v6`, `mlp_v6`, `linear_regression_v7`, `mlp_v7`, `mlp_v8`):
 
 | Unterordner | Inhalt |
 |---|---|
@@ -182,9 +189,9 @@ Das Skript läuft in drei Phasen ab:
 | 14 | `plot_hourly_averages.py` | `v5/` → `results/data_visualizations/` |
 | 15 | `create_correlation_matrix_engineered.py` | `v5/` → `results/data_visualizations/` |
 
-**Phase 2 – Analyse + Corona-Bereinigung + v7 (4 Skripte):** `dataset_overview.py` und `covid_anomaly_analysis.py` erzeugen die Diagnostik unter `results/analysis/`; `build_v6.py` schreibt den Corona-bereinigten Datensatz nach `data/v6/`; `build_v7.py` erweitert v6 mit 26 kantonsspezifischen Feiertagsspalten aus der zentralen Feiertags-DB nach `data/v7/`.
+**Phase 2 – Analyse + Corona-Bereinigung + v7/v8 (5 Skripte):** `dataset_overview.py` und `covid_anomaly_analysis.py` erzeugen die Diagnostik unter `results/analysis/`; `build_v6.py` schreibt den Corona-bereinigten Datensatz nach `data/v6/`; `build_v7.py` erweitert v6 mit 26 kantonsspezifischen Feiertagsspalten aus der zentralen Feiertags-DB nach `data/v7/`; `build_v8.py` fügt 26 Schulferienspalten hinzu und speichert nach `data/v8/`.
 
-**Phase 3 – Modelltraining (6 Skripte + 1 Plot):** `linear_regression_v5.py` und `mlp_v5.py` trainieren je 10 Modelle auf v5, `linear_regression_v6.py` und `mlp_v6.py` trainieren mit identischen Hyperparametern dieselben Modelle auf v6, und `linear_regression_v7.py` und `mlp_v7.py` trainieren Baseline und MLP auf den v7-Daten (26 kantonsspezifische Feiertagsspalten; das v7-MLP nutzt eigene getunte Hyperparameter). Direkt danach liest `scripts/plot_trainingsverlauf.py` die von `mlp_v7.py` erzeugten `training_history/training_history_*.csv`-Dateien ein und erstellt je Station eine R²-/Verlust-Trainingsverlauf-Abbildung unter `plots/trainingsverlauf/`.
+**Phase 3 – Modelltraining (7 Skripte + 1 Plot):** `linear_regression_v5.py` und `mlp_v5.py` trainieren je 10 Modelle auf v5, `linear_regression_v6.py` und `mlp_v6.py` trainieren mit identischen Hyperparametern dieselben Modelle auf v6. `linear_regression_v7.py` und `mlp_v7.py` trainieren Baseline und MLP auf den v7-Daten. `mlp_v8.py` trainiert auf den v8-Daten. Beide neuen MLPs (v7, v8) nutzen eigene getunte Hyperparameter. Direkt danach liest `scripts/plot_trainingsverlauf.py` die von `mlp_v7.py` erzeugten `training_history/training_history_*.csv`-Dateien ein und erstellt je Station eine R²-/Verlust-Trainingsverlauf-Abbildung unter `plots/trainingsverlauf/`.
 
 ### Schritt 2: Webapp-Daten exportieren
 
@@ -198,16 +205,18 @@ Dieser Schritt ist **nicht** Teil von `run_pipeline.py` und muss nach dem Traini
 
 ```bash
 python models/mlp_tuning_v5.py       # für mlp_v5.py (v5)
-python models/mlp_tuning_v7.py    # für mlp_v7.py (v7)
+python models/mlp_tuning_v7.py       # für mlp_v7.py (v7)
+python models/mlp_tuning_v8.py       # für mlp_v8.py (v8)
 ```
 
-Führt Optuna-Trials auf der Messstation Brunnen (R1) durch und gibt am Ende die besten Hyperparameter zur manuellen Übernahme in das jeweilige Trainingsskript (`mlp_v5.py` bzw. `mlp_v7.py`) aus. Die Resultate werden zusätzlich als `best_params.json` / `best_params_v7.json` im jeweiligen Modell-Ordner gespeichert. Beide Skripte laden den (kleinen) Datensatz einmalig komplett auf die GPU, um den Tuning-Durchlauf zu beschleunigen. Dieser Schritt ist nicht Teil von `run_pipeline.py`.
+Führt Optuna-Trials auf der Messstation Brunnen (R1) durch und gibt am Ende die besten Hyperparameter zur manuellen Übernahme in das jeweilige Trainingsskript (`mlp_v5.py` bzw. `mlp_v7.py` / `mlp_v8.py`) aus. Die Resultate werden zusätzlich als `best_params.json` / `best_params_v7.json` / `best_params_v8.json` im jeweiligen Modell-Ordner gespeichert. Beide Skripte laden den (kleinen) Datensatz einmalig komplett auf die GPU, um den Tuning-Durchlauf zu beschleunigen. Dieser Schritt ist nicht Teil von `run_pipeline.py`.
 
 ### Optionale Architektur-Analyse (Parameter vs. Performance)
 
 ```bash
 python scripts/parameter_vs_performance_v6.py       # v6-Modell
-python scripts/parameter_vs_performance_v7.py    # v7-Modell
+python scripts/parameter_vs_performance_v7.py       # v7-Modell
+python scripts/parameter_vs_performance_v8.py       # v8-Modell
 ```
 
 Variiert systematisch die MLP-Grösse für eine repräsentative Station und zeichnet Train-/Test-RMSE und Test-R² gegen die Parameterzahl auf. So lässt sich die gewählte Architektur begründen. Output (CSV + Plots) landet unter `results/model_results/<modell>/analysen/`. Nicht Teil von `run_pipeline.py`.

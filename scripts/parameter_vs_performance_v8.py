@@ -1,17 +1,20 @@
 """
 Dieses Skript erstellt eine Parameter-vs-Performance-Kurve fuer EINE repraesentative
-Station aus den Corona-bereinigten v6-Daten. Es variiert ausschliesslich die Groesse
-des MLP (ueber einen gemeinsamen Multiplikator auf die Schichtproportionen) und misst,
-wie sich Trainings-/Test-RMSE und Test-R2 mit der Parameterzahl entwickeln. So laesst
-sich die fuer das Hauptmodell gewaehlte Architektur [256, 128, 128, 64] begruenden.
+Station aus den v8-Daten (v7 + 26 kantonsspezifische Schulferienspalten).
+Es variiert ausschliesslich die Groesse des MLP (ueber einen gemeinsamen Multiplikator
+auf die Schichtproportionen) und misst, wie sich Trainings-/Test-RMSE und Test-R2 mit
+der Parameterzahl entwickeln. So laesst sich die fuer das v8-Modell gewaehlte
+Architektur [512, 256, 256, 128] begruenden.
 
 Die gesamte Trainingslogik (Optimizer, LR-Scheduler, Early Stopping, Bestes-Modell-
-Wiederherstellung, Skalierung) wird 1:1 aus dem v6-Trainingsskript uebernommen, damit
-die Kurve mit den dort berichteten Metriken vergleichbar ist.
+Wiederherstellung, Skalierung) sowie alle Hyperparameter werden 1:1 aus dem
+v8-Trainingsskript uebernommen, damit die Kurve mit den dort berichteten Metriken
+vergleichbar ist. Aendert sich mlp_v8.py (z.B. neue Hyperparameter), zieht diese
+Analyse automatisch mit.
 
 Ausfuehren aus dem Projekt-Stammverzeichnis:
 
-    python scripts/parameter_vs_performance_v6.py
+    python scripts/parameter_vs_performance_v8.py
 
 (Das Skript wechselt zur Sicherheit selbst ins Projekt-Stammverzeichnis, damit die
 relativen Daten- und Resultatpfade aus dem Trainingsmodul korrekt aufgeloest werden.)
@@ -39,13 +42,11 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.metrics import mean_squared_error, r2_score
 
-# Hinweis zum Import-Modul: Die v6-Welt (Corona-bereinigte Daten, _v6-
-# DATASETS und der results/.../mlp_v6-Resultatbaum) ist im Trainingsskript
-# `mlp_v6.py` definiert – nicht in `mlp_v5.py`, das weiterhin auf die v5-Daten zeigt.
-# Es wird daher aus `mlp_v6` importiert, damit DATA_DIR/RESULTS_DIR/DATASETS
-# tatsaechlich auf die v6-Welt verweisen. Der Import ist gefahrlos, weil das
-# eigentliche Training dort nur unter dem __main__-Guard laeuft.
-from mlp_v6 import (  # noqa: E402  (Import bewusst nach os.chdir/sys.path)
+# Import aus `mlp_v8`: Damit verweisen DATA_DIR (data/v8), RESULTS_DIR
+# (results/.../mlp_v8), DATASETS (_v8.csv) und saemtliche Hyperparameter
+# tatsaechlich auf die v8-Welt. Der Import ist gefahrlos, weil das eigentliche
+# Training dort nur unter dem __main__-Guard laeuft.
+from mlp_v8 import (  # noqa: E402  (Import bewusst nach os.chdir/sys.path)
     MLP, VerkehrsDataset, FEATURES, DATASETS, DATA_DIR, RESULTS_DIR,
     DROPOUT, BATCH_SIZE, MAX_EPOCHS, LEARNING_RATE, WEIGHT_DECAY,
     LR_PATIENCE, LR_FACTOR, ES_PATIENCE, TRAIN_RATIO, VAL_RATIO,
@@ -53,16 +54,17 @@ from mlp_v6 import (  # noqa: E402  (Import bewusst nach os.chdir/sys.path)
 
 # ── Konfiguration ────────────────────────────────────────────────────────────
 # Repraesentative Station fuer die Kurve. MUSS einer der Eintraege in DATASETS
-# sein (die ..._v6.csv-Dateien). Wird beim Start validiert.
+# sein (die ..._v8.csv-Dateien). Wird beim Start validiert.
 # Gewaehlt: dieselbe Station wie beim Optuna-Tuning (050 Brunnen Mositunnel R1),
-# hier in der v6-Variante (_v6).
-STATION = "050_Brunnen_Mositunnel_R1_v6.csv"
+# hier in der v8-Variante. Brunnen ist stabil – fuer eine saubere Begruendung der
+# Architektur besser geeignet als z.B. Sattel (kleine, lueckenhafte Daten).
+STATION = "050_Brunnen_Mositunnel_R1_v8.csv"
 
-# Proportionen der gewaehlten Architektur [256, 128, 128, 64] = 64 * [4, 2, 2, 1].
+# Proportionen der gewaehlten v8-Architektur [512, 256, 256, 128] = 128 * [4, 2, 2, 1].
 BASE_SHAPE = [4, 2, 2, 1]
 
-# Multiplikatoren auf BASE_SHAPE. mult=64 reproduziert die gewaehlte Architektur exakt.
-MULTIPLIERS = [2, 4, 8, 16, 32, 48, 64, 96, 128]
+# Multiplikatoren auf BASE_SHAPE. mult=128 reproduziert die gewaehlte Architektur exakt.
+MULTIPLIERS = [4, 8, 16, 32, 48, 64, 96, 128, 192]
 
 # Anzahl Seeds pro Punkt (Seeds 0..N_SEEDS-1). Fuer einen schnellen Test reduzieren.
 N_SEEDS = 5
@@ -72,9 +74,9 @@ N_SEEDS = 5
 LR_TEST_RMSE = None
 
 # Multiplikator, der die gewaehlte Architektur markiert (offener roter Kreis im Plot).
-HIGHLIGHT_MULT = 64
+HIGHLIGHT_MULT = 128
 
-# Ausgabeverzeichnis im v6-Resultatbaum.
+# Ausgabeverzeichnis im v8-Resultatbaum.
 OUT_DIR = RESULTS_DIR / "analysen" / "parameter_vs_performance"
 
 # Toleranz fuer den Sanity-Check (relativer RMSE-Abstand zum gespeicherten Wert).
@@ -86,7 +88,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ── Datenvorbereitung (einmalig, seed-unabhaengig) ───────────────────────────
 def prepare_data():
-    """Laedt die Stationsdaten und bereitet sie exakt wie im v6-Training auf:
+    """Laedt die Stationsdaten und bereitet sie exakt wie im v8-Training auf:
     NaN droppen, datetime als sortierten Index, weather_cat encoden, chronologischer
     70/10/20-Split ohne Shuffle, StandardScaler nur auf dem Train-Split gefittet.
     y_train und y_test werden zusaetzlich in Originaleinheiten zurueckgegeben."""
@@ -150,7 +152,7 @@ def iterate_batches(X: torch.Tensor, y: torch.Tensor, batch_size: int):
         yield X[start:end], y[start:end]
 
 
-# ── Training (exakt wie in mlp_v6) ───────────────────────────────────────────
+# ── Training (exakt wie in mlp_v8) ───────────────────────────────────────────
 def train_model(hidden_dims, seed, data):
     """Trainiert ein MLP mit gegebener Architektur und Seed und gibt das Modell mit
     den nach Validierungs-Loss besten Gewichten zurueck. Nutzt GPU-Preload statt DataLoader."""
@@ -222,7 +224,7 @@ def count_parameters(n_features, hidden_dims):
 # ── Sanity-Check vor dem vollen Sweep ────────────────────────────────────────
 def sanity_check(data):
     """Trainiert die gewaehlte Architektur (mult=HIGHLIGHT_MULT) mit Seed 0 und
-    vergleicht den Test-RMSE mit dem im v6-Resultatbaum gespeicherten Wert. Weicht
+    vergleicht den Test-RMSE mit dem im v8-Resultatbaum gespeicherten Wert. Weicht
     er um mehr als SANITY_TOL ab, wird abgebrochen – dann stimmt die Replikation der
     Pipeline nicht und ein Sweep waere wertlos."""
     hidden = [b * HIGHLIGHT_MULT for b in BASE_SHAPE]
@@ -396,7 +398,7 @@ def main():
     # STATION validieren
     if STATION not in DATASETS:
         raise SystemExit(
-            "STATION ist ungueltig. Bitte oben im Skript eine der _v6.csv "
+            "STATION ist ungueltig. Bitte oben im Skript eine der _v8.csv "
             f"aus DATASETS setzen.\nAktuell: STATION = {STATION!r}\n"
             f"Gueltige Werte:\n  " + "\n  ".join(DATASETS)
         )

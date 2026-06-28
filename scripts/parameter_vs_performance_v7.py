@@ -125,33 +125,39 @@ def prepare_data():
     y_val_s = y_scaler.transform(y_val)
     # y_train, y_test bleiben in Originaleinheiten (Fahrzeuge/h) fuer die Metriken
 
+    # GPU-Preload: gesamten Datensatz einmalig auf die GPU laden, um den DataLoader-Overhead zu vermeiden
+    X_train_g = torch.tensor(X_train_s, dtype=torch.float32, device=device)
+    y_train_g = torch.tensor(y_train_s, dtype=torch.float32, device=device)
+    X_val_g = torch.tensor(X_val_s, dtype=torch.float32, device=device)
+    y_val_g = torch.tensor(y_val_s, dtype=torch.float32, device=device)
+    X_test_g = torch.tensor(X_test_s, dtype=torch.float32, device=device)
+
     return {
         "feature_cols": feature_cols,
         "X_train_s": X_train_s, "X_val_s": X_val_s, "X_test_s": X_test_s,
         "y_train_s": y_train_s, "y_val_s": y_val_s,
         "y_train": y_train, "y_test": y_test,
+        "X_train_g": X_train_g, "y_train_g": y_train_g,
+        "X_val_g": X_val_g, "y_val_g": y_val_g,
+        "X_test_g": X_test_g,
         "y_scaler": y_scaler,
         "n_train": len(y_train), "n_val": len(y_val), "n_test": len(y_test),
     }
+
+def iterate_batches(X: torch.Tensor, y: torch.Tensor, batch_size: int):
+    """Liefert aufeinanderfolgende Batches direkt aus bereits auf der GPU liegenden Tensoren."""
+    n = X.shape[0]
+    for start in range(0, n, batch_size):
+        end = start + batch_size
+        yield X[start:end], y[start:end]
 
 
 # ── Training (exakt wie in mlp_v7) ───────────────────────────────────────────
 def train_model(hidden_dims, seed, data):
     """Trainiert ein MLP mit gegebener Architektur und Seed und gibt das Modell mit
-    den nach Validierungs-Loss besten Gewichten zurueck. Die Trainingsschleife ist
-    identisch zu mlp_v7: Adam mit Weight-Decay, ReduceLROnPlateau auf dem Val-Loss,
-    Early Stopping nach ES_PATIENCE Epochen, Wiederherstellung der besten Gewichte."""
+    den nach Validierungs-Loss besten Gewichten zurueck. Nutzt GPU-Preload statt DataLoader."""
     torch.manual_seed(seed)
     np.random.seed(seed)
-
-    train_loader = DataLoader(
-        VerkehrsDataset(data["X_train_s"], data["y_train_s"]),
-        batch_size=BATCH_SIZE, shuffle=False,
-    )
-    val_loader = DataLoader(
-        VerkehrsDataset(data["X_val_s"], data["y_val_s"]),
-        batch_size=BATCH_SIZE, shuffle=False,
-    )
 
     model = MLP(len(data["feature_cols"]), hidden_dims, DROPOUT).to(device)
     loss_fn = nn.MSELoss()
@@ -169,8 +175,7 @@ def train_model(hidden_dims, seed, data):
     for epoch in range(MAX_EPOCHS):
         # Training
         model.train()
-        for X_batch, y_batch in train_loader:
-            X_batch, y_batch = X_batch.to(device), y_batch.to(device)
+        for X_batch, y_batch in iterate_batches(data["X_train_g"], data["y_train_g"], BATCH_SIZE):
             y_pred = model(X_batch)
             loss = loss_fn(y_pred, y_batch)
             optimizer.zero_grad()
@@ -181,10 +186,9 @@ def train_model(hidden_dims, seed, data):
         model.eval()
         with torch.inference_mode():
             epoch_val_loss = 0.0
-            for X_batch, y_batch in val_loader:
-                X_batch, y_batch = X_batch.to(device), y_batch.to(device)
+            for X_batch, y_batch in iterate_batches(data["X_val_g"], data["y_val_g"], BATCH_SIZE):
                 epoch_val_loss += loss_fn(model(X_batch), y_batch).item() * len(X_batch)
-            epoch_val_loss /= len(val_loader.dataset)
+            epoch_val_loss /= data["n_val"]
 
         scheduler.step(epoch_val_loss)
 
@@ -203,13 +207,11 @@ def train_model(hidden_dims, seed, data):
     return model
 
 
-def predict_original(model, X_scaled, y_scaler):
-    """Vorhersage in Originaleinheiten (Fahrzeuge/h) via Ruecktransformation des y-Scalers."""
+def predict_original(model, X_scaled_g, y_scaler):
+    """Vorhersage in Originaleinheiten (Fahrzeuge/h) mit Tensoren, die schon auf der GPU sind."""
     model.eval()
     with torch.inference_mode():
-        preds_scaled = model(
-            torch.tensor(X_scaled, dtype=torch.float32).to(device)
-        ).cpu().numpy()
+        preds_scaled = model(X_scaled_g).cpu().numpy()
     return y_scaler.inverse_transform(preds_scaled)
 
 
@@ -227,7 +229,7 @@ def sanity_check(data):
     Pipeline nicht und ein Sweep waere wertlos."""
     hidden = [b * HIGHLIGHT_MULT for b in BASE_SHAPE]
     model = train_model(hidden, 0, data)
-    preds_test = predict_original(model, data["X_test_s"], data["y_scaler"])
+    preds_test = predict_original(model, data["X_test_g"], data["y_scaler"])
     rmse = float(np.sqrt(mean_squared_error(data["y_test"], preds_test)))
 
     metrics_csv = RESULTS_DIR / "metrics" / "all_metrics.csv"
@@ -269,8 +271,8 @@ def run_sweep(data):
         train_rmses, test_rmses, test_r2s = [], [], []
         for seed in range(N_SEEDS):
             model = train_model(hidden, seed, data)
-            preds_train = predict_original(model, data["X_train_s"], data["y_scaler"])
-            preds_test = predict_original(model, data["X_test_s"], data["y_scaler"])
+            preds_train = predict_original(model, data["X_train_g"], data["y_scaler"])
+            preds_test = predict_original(model, data["X_test_g"], data["y_scaler"])
             train_rmses.append(np.sqrt(mean_squared_error(data["y_train"], preds_train)))
             test_rmses.append(np.sqrt(mean_squared_error(data["y_test"], preds_test)))
             test_r2s.append(r2_score(data["y_test"], preds_test))

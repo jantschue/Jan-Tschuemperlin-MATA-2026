@@ -2,8 +2,8 @@
 Master-Skript, um das gesamte Projekt vollstaendig reproduzieren zu koennen.
 Die Pipeline laeuft in drei Phasen:
     Phase 1: Datenverarbeitung (Rohdaten -> v5_engineered)
-    Phase 2: Analyse + v6 (Corona-bereinigter Datensatz) + v7
-    Phase 3: Modelltraining (Lineare Regression & MLP auf v5 und v6, MLP auf v7)
+    Phase 2: Analyse + v6 (Corona-bereinigter Datensatz) + v7 + v8
+    Phase 3: Modelltraining (Lineare Regression & MLP auf v5/v6, MLP auf v7/v8)
 Alle Schritte werden in der korrekten Reihenfolge ausgefuehrt.
 
 Zentrale Feiertags-Datenbank: data/holidays/swiss_holidays_2015_2025.csv
@@ -42,16 +42,17 @@ def main():
         "create_correlation_matrix_engineered.py",
     ]
 
-    # Phase 2: Analyse + v6 + v7 (kantonsspezifische Feiertage)
+    # Phase 2: Analyse + v6 + v7 + v8 (kantonsspezifische Feiertage & Schulferien)
     analysis_scripts = [
         "dataset_overview.py",
         "covid_anomaly_analysis.py",
         "build_v6.py",
         "build_v7.py",                   # v6 + 26 Feiertagsspalten -> v7
+        "build_v8.py",                   # v7 + 26 Schulferienspalten -> v8
     ]
 
-    # Phase 3: Modelltraining (v5 + v6 + v7)
-    # Jede Datenvariante hat eine lineare Baseline und ein MLP (gleiche Reihenfolge).
+    # Phase 3: Modelltraining (v5 + v6 + v7 + v8)
+    # Jede Datenvariante hat eine lineare Baseline und ein MLP (ausser v7/v8 nur MLP aktuell)
     training_scripts = [
         "linear_regression_v5.py",
         "mlp_v5.py",
@@ -59,6 +60,7 @@ def main():
         "mlp_v6.py",
         "linear_regression_v7.py",
         "mlp_v7.py",
+        "mlp_v8.py",
     ]
 
     total_steps = len(data_scripts) + len(analysis_scripts) + len(training_scripts) + 1
@@ -89,13 +91,13 @@ def main():
     for name in data_scripts:
         run_step(os.path.join(scripts_dir, name), name)
 
-    # --- Phase 2: Analyse + v6 + v7 ---
-    print("\n--- Phase 2: Analyse + Corona-Bereinigung (v6) + v7-Aufbau ---")
+    # --- Phase 2: Analyse + v6 + v7 + v8 ---
+    print("\n--- Phase 2: Analyse + Corona-Bereinigung (v6) + v7/v8-Aufbau ---")
     for name in analysis_scripts:
         run_step(os.path.join(scripts_dir, name), name)
 
-    # --- Phase 3: Modelltraining (v5 + v6 + v7) ---
-    print("\n--- Phase 3: Modelltraining (Lineare Regression & MLP auf v5/v6, MLP auf v7) ---")
+    # --- Phase 3: Modelltraining (v5 + v6 + v7 + v8) ---
+    print("\n--- Phase 3: Modelltraining (Lineare Regression & MLP auf v5/v6, MLP auf v7/v8) ---")
     for name in training_scripts:
         run_step(os.path.join(models_dir, name), f"models/{name}")
 
