@@ -1,14 +1,14 @@
 /**
  * Modell-Vorwärtsdurchläufe für MLP und Lineare Regression. Die Implementierung
- * spiegelt exakt die in models/mlp_v7.py und models/linear_regression_v7.py
+ * spiegelt exakt die in models/mlp_v8.py und models/linear_regression_v8.py
  * definierte Architektur wider:
  *
- * MLP (mlp.py):
+ * MLP (mlp_v8.py):
  *   Pro Hidden-Block: Linear -> BatchNorm1d -> ReLU -> (Dropout)
  *   Output: Linear (1 Neuron, keine Aktivierung)
  *   Dropout fällt im Eval-Modus weg und wird daher nicht im JSON exportiert.
  *
- * LinearRegressionModel (linear_regression.py):
+ * LinearRegressionModel (linear_regression_v8.py):
  *   y = W·x + b mit einem einzigen nn.Linear(input_dim, 1)
  *
  * In beiden Fällen wird sowohl die Eingabe als auch das Ziel mit einem

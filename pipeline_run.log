@@ -1,0 +1,320 @@
+Erstellt: 050_Brunnen_Mositunnel_R1.csv und 050_Brunnen_Mositunnel_R2.csv
+Erstellt: 171_Sattel_R1.csv und 171_Sattel_R2.csv
+Erstellt: 216_Wangen_SZ_R1.csv und 216_Wangen_SZ_R2.csv
+Erstellt: 299_Wollerau_Blatttunnel_R1.csv und 299_Wollerau_Blatttunnel_R2.csv
+Erstellt: 720_Schwyz_R1.csv und 720_Schwyz_R2.csv
+Verarbeite: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v2\050_Brunnen_Mositunnel_R1.csv
+  -> Erstellt: 050_Brunnen_Mositunnel_R1_v2.csv und Original gelöscht (96432 Zeilen)
+Verarbeite: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v2\050_Brunnen_Mositunnel_R2.csv
+  -> Erstellt: 050_Brunnen_Mositunnel_R2_v2.csv und Original gelöscht (96432 Zeilen)
+Verarbeite: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v2\171_Sattel_R1.csv
+  -> Erstellt: 171_Sattel_R1_v2.csv und Original gelöscht (96432 Zeilen)
+Verarbeite: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v2\171_Sattel_R2.csv
+  -> Erstellt: 171_Sattel_R2_v2.csv und Original gelöscht (96432 Zeilen)
+Verarbeite: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v2\216_Wangen_SZ_R1.csv
+  -> Erstellt: 216_Wangen_SZ_R1_v2.csv und Original gelöscht (96432 Zeilen)
+Verarbeite: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v2\216_Wangen_SZ_R2.csv
+  -> Erstellt: 216_Wangen_SZ_R2_v2.csv und Original gelöscht (96432 Zeilen)
+Verarbeite: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v2\299_Wollerau_Blatttunnel_R1.csv
+  -> Erstellt: 299_Wollerau_Blatttunnel_R1_v2.csv und Original gelöscht (96432 Zeilen)
+Verarbeite: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v2\299_Wollerau_Blatttunnel_R2.csv
+  -> Erstellt: 299_Wollerau_Blatttunnel_R2_v2.csv und Original gelöscht (96432 Zeilen)
+Verarbeite: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v2\720_Schwyz_R1.csv
+  -> Erstellt: 720_Schwyz_R1_v2.csv und Original gelöscht (96432 Zeilen)
+Verarbeite: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v2\720_Schwyz_R2.csv
+  -> Erstellt: 720_Schwyz_R2_v2.csv und Original gelöscht (96432 Zeilen)
+
+Fertig!
+286 Feiertagsdaten geschrieben nach C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\holidays\swiss_holidays_2015_2025.csv
+Lade Daten von C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\weather\raw\Luzern\weather_luzern_2010-2019.csv...
+Lade Daten von C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\weather\raw\Luzern\weather_luzern_2020-2026.csv...
+Füge Daten zusammen...
+Konvertiere Zeitstempel zu ISO 8601 und benenne Spalten um...
+Speichere gefilterte Daten unter C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\weather\processed\weather_luzern_2010-2026_filtered.csv...
+Abgeschlossen!
+Lade Daten von C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\weather\raw\Waedenswil\weather_waedenswil_2010-2026.csv...
+Konvertiere Zeitstempel zu ISO 8601 und benenne Spalten um...
+Speichere gefilterte Daten unter C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\weather\processed\weather_waedenswil_2010-2026_filtered.csv...
+Abgeschlossen!
+Verarbeite: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\weather\processed\weather_luzern_2010-2026_filtered.csv
+  -> snow_1h Spalte hinzugefügt und gespeichert (140256 Zeilen)
+Verarbeite: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\weather\processed\weather_waedenswil_2010-2026_filtered.csv
+  -> snow_1h Spalte hinzugefügt und gespeichert (140184 Zeilen)
+
+Fertig!
+Verarbeite: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\weather\processed\weather_luzern_2010-2026_filtered.csv
+  -> Erstellt: weather_luzern_2010-2026_categorized.csv und Original gelöscht (140256 Zeilen)
+     Verteilung:
+       Night   :   57187  (40.8%)
+       Cloudy  :   44030  (31.4%)
+       Clear   :   24311  (17.3%)
+       Rain    :   14650  (10.4%)
+       Snow    :      78  (0.1%)
+
+Verarbeite: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\weather\processed\weather_waedenswil_2010-2026_filtered.csv
+  -> Erstellt: weather_waedenswil_2010-2026_categorized.csv und Original gelöscht (140184 Zeilen)
+     Verteilung:
+       Night   :   52929  (37.8%)
+       Cloudy  :   39021  (27.8%)
+       Clear   :   24007  (17.1%)
+       Rain    :   14201  (10.1%)
+       Snow    :   10026  (7.2%)
+
+Fertig!
+snowheight entfernt: weather_luzern_2010-2026_categorized.csv
+snowheight entfernt: weather_waedenswil_2010-2026_categorized.csv
+Lade Wetterdaten: weather_waedenswil_2010-2026_categorized.csv
+Lade Feiertagsdaten: swiss_holidays_2015_2025.csv
+
+10 Verkehrsdateien gefunden.
+
+Verarbeite: 050_Brunnen_Mositunnel_R1_v2.csv
+  -> 050_Brunnen_Mositunnel_R1_v3.csv  (96432 Zeilen)
+     [!] 24 Zeilen ohne Wetterdaten
+Verarbeite: 050_Brunnen_Mositunnel_R2_v2.csv
+  -> 050_Brunnen_Mositunnel_R2_v3.csv  (96432 Zeilen)
+     [!] 24 Zeilen ohne Wetterdaten
+Verarbeite: 171_Sattel_R1_v2.csv
+  -> 171_Sattel_R1_v3.csv  (96432 Zeilen)
+     [!] 24 Zeilen ohne Wetterdaten
+Verarbeite: 171_Sattel_R2_v2.csv
+  -> 171_Sattel_R2_v3.csv  (96432 Zeilen)
+     [!] 24 Zeilen ohne Wetterdaten
+Verarbeite: 216_Wangen_SZ_R1_v2.csv
+  -> 216_Wangen_SZ_R1_v3.csv  (96432 Zeilen)
+     [!] 24 Zeilen ohne Wetterdaten
+Verarbeite: 216_Wangen_SZ_R2_v2.csv
+  -> 216_Wangen_SZ_R2_v3.csv  (96432 Zeilen)
+     [!] 24 Zeilen ohne Wetterdaten
+Verarbeite: 299_Wollerau_Blatttunnel_R1_v2.csv
+  -> 299_Wollerau_Blatttunnel_R1_v3.csv  (96432 Zeilen)
+     [!] 24 Zeilen ohne Wetterdaten
+Verarbeite: 299_Wollerau_Blatttunnel_R2_v2.csv
+  -> 299_Wollerau_Blatttunnel_R2_v3.csv  (96432 Zeilen)
+     [!] 24 Zeilen ohne Wetterdaten
+Verarbeite: 720_Schwyz_R1_v2.csv
+  -> 720_Schwyz_R1_v3.csv  (96432 Zeilen)
+     [!] 24 Zeilen ohne Wetterdaten
+Verarbeite: 720_Schwyz_R2_v2.csv
+  -> 720_Schwyz_R2_v3.csv  (96432 Zeilen)
+     [!] 24 Zeilen ohne Wetterdaten
+
+Fertig! Alle Datensets wurden in 'data/v3/' gespeichert.
+Gaps-Datei gespeichert: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\scripts\..\results\gaps.txt
+050_Brunnen_Mositunnel_R1_v3.csv: 96432 -> 58438 Zeilen (37994 entfernt)
+050_Brunnen_Mositunnel_R2_v3.csv: 96432 -> 58438 Zeilen (37994 entfernt)
+171_Sattel_R1_v3.csv: 96432 -> 36428 Zeilen (60004 entfernt)
+171_Sattel_R2_v3.csv: 96432 -> 36428 Zeilen (60004 entfernt)
+216_Wangen_SZ_R1_v3.csv: 96432 -> 85436 Zeilen (10996 entfernt)
+216_Wangen_SZ_R2_v3.csv: 96432 -> 85436 Zeilen (10996 entfernt)
+299_Wollerau_Blatttunnel_R1_v3.csv: 96432 -> 89088 Zeilen (7344 entfernt)
+299_Wollerau_Blatttunnel_R2_v3.csv: 96432 -> 89088 Zeilen (7344 entfernt)
+720_Schwyz_R1_v3.csv: 96432 -> 40944 Zeilen (55488 entfernt)
+720_Schwyz_R2_v3.csv: 96432 -> 40944 Zeilen (55488 entfernt)
+
+Alle Dateien bereinigt und in data/merged_gapless gespeichert.
+050_Brunnen_Mositunnel_R1_v4.csv: 58438 Zeilen, 6 Zeit-Features hinzugefuegt -> 050_Brunnen_Mositunnel_R1_v5_time.csv
+050_Brunnen_Mositunnel_R2_v4.csv: 58438 Zeilen, 6 Zeit-Features hinzugefuegt -> 050_Brunnen_Mositunnel_R2_v5_time.csv
+171_Sattel_R1_v4.csv: 36428 Zeilen, 6 Zeit-Features hinzugefuegt -> 171_Sattel_R1_v5_time.csv
+171_Sattel_R2_v4.csv: 36428 Zeilen, 6 Zeit-Features hinzugefuegt -> 171_Sattel_R2_v5_time.csv
+216_Wangen_SZ_R1_v4.csv: 85436 Zeilen, 6 Zeit-Features hinzugefuegt -> 216_Wangen_SZ_R1_v5_time.csv
+216_Wangen_SZ_R2_v4.csv: 85436 Zeilen, 6 Zeit-Features hinzugefuegt -> 216_Wangen_SZ_R2_v5_time.csv
+299_Wollerau_Blatttunnel_R1_v4.csv: 89088 Zeilen, 6 Zeit-Features hinzugefuegt -> 299_Wollerau_Blatttunnel_R1_v5_time.csv
+299_Wollerau_Blatttunnel_R2_v4.csv: 89088 Zeilen, 6 Zeit-Features hinzugefuegt -> 299_Wollerau_Blatttunnel_R2_v5_time.csv
+720_Schwyz_R1_v4.csv: 40944 Zeilen, 6 Zeit-Features hinzugefuegt -> 720_Schwyz_R1_v5_time.csv
+720_Schwyz_R2_v4.csv: 40944 Zeilen, 6 Zeit-Features hinzugefuegt -> 720_Schwyz_R2_v5_time.csv
+
+Alle Dateien in data/v5 gespeichert.
+050_Brunnen_Mositunnel_R1_v5_time.csv verarbeitet -> 050_Brunnen_Mositunnel_R1_v5.csv und Original gelöscht
+050_Brunnen_Mositunnel_R2_v5_time.csv verarbeitet -> 050_Brunnen_Mositunnel_R2_v5.csv und Original gelöscht
+171_Sattel_R1_v5_time.csv verarbeitet -> 171_Sattel_R1_v5.csv und Original gelöscht
+171_Sattel_R2_v5_time.csv verarbeitet -> 171_Sattel_R2_v5.csv und Original gelöscht
+216_Wangen_SZ_R1_v5_time.csv verarbeitet -> 216_Wangen_SZ_R1_v5.csv und Original gelöscht
+216_Wangen_SZ_R2_v5_time.csv verarbeitet -> 216_Wangen_SZ_R2_v5.csv und Original gelöscht
+299_Wollerau_Blatttunnel_R1_v5_time.csv verarbeitet -> 299_Wollerau_Blatttunnel_R1_v5.csv und Original gelöscht
+299_Wollerau_Blatttunnel_R2_v5_time.csv verarbeitet -> 299_Wollerau_Blatttunnel_R2_v5.csv und Original gelöscht
+720_Schwyz_R1_v5_time.csv verarbeitet -> 720_Schwyz_R1_v5.csv und Original gelöscht
+720_Schwyz_R2_v5_time.csv verarbeitet -> 720_Schwyz_R2_v5.csv und Original gelöscht
+
+Alle neuen Datensätze im Ordner "data/v5" gespeichert.
+Verarbeite Datensatz: 050_Brunnen_Mositunnel_R1_v5.csv...
+Verarbeite Datensatz: 050_Brunnen_Mositunnel_R2_v5.csv...
+Verarbeite Datensatz: 171_Sattel_R1_v5.csv...
+Verarbeite Datensatz: 171_Sattel_R2_v5.csv...
+Verarbeite Datensatz: 216_Wangen_SZ_R1_v5.csv...
+Verarbeite Datensatz: 216_Wangen_SZ_R2_v5.csv...
+Verarbeite Datensatz: 299_Wollerau_Blatttunnel_R1_v5.csv...
+Verarbeite Datensatz: 299_Wollerau_Blatttunnel_R2_v5.csv...
+Verarbeite Datensatz: 720_Schwyz_R1_v5.csv...
+Verarbeite Datensatz: 720_Schwyz_R2_v5.csv...
+Fertig! Erfolgreich 10 Plots generiert und in 'C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\results\hourly_plots' gespeichert.
+Verarbeite Datensatz: 050_Brunnen_Mositunnel_R1_v5.csv...
+Verarbeite Datensatz: 050_Brunnen_Mositunnel_R2_v5.csv...
+Verarbeite Datensatz: 171_Sattel_R1_v5.csv...
+Verarbeite Datensatz: 171_Sattel_R2_v5.csv...
+Verarbeite Datensatz: 216_Wangen_SZ_R1_v5.csv...
+Verarbeite Datensatz: 216_Wangen_SZ_R2_v5.csv...
+Verarbeite Datensatz: 299_Wollerau_Blatttunnel_R1_v5.csv...
+Verarbeite Datensatz: 299_Wollerau_Blatttunnel_R2_v5.csv...
+Verarbeite Datensatz: 720_Schwyz_R1_v5.csv...
+Verarbeite Datensatz: 720_Schwyz_R2_v5.csv...
+
+Fertig! Erfolgreich 10 Matrizen generiert und in 'C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\results\correlation_analysis' gespeichert.
+Analysiere 10 Datei(en) aus C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v5 ...
+
+=============================================================================================================================================
+DATENSATZ-UEBERSICHT (Engineered Files)
+=============================================================================================================================================
+Datei                                      |   Zeilen |  Erwartet |  Fehlend | Erster Zeitstempel  | Letzter Zeitstempel |   COVID |  COVID %
+---------------------------------------------------------------------------------------------------------------------------------------------
+050_Brunnen_Mositunnel_R1_v5.csv           |    58438 |     96432 |    37994 | 2015-01-01 00:00    | 2025-12-31 23:00    |    4344 |    7.43%
+050_Brunnen_Mositunnel_R2_v5.csv           |    58438 |     96432 |    37994 | 2015-01-01 00:00    | 2025-12-31 23:00    |    4344 |    7.43%
+171_Sattel_R1_v5.csv                       |    36428 |     96432 |    60004 | 2015-01-01 00:00    | 2025-12-31 23:00    |    1104 |    3.03%
+171_Sattel_R2_v5.csv                       |    36428 |     96432 |    60004 | 2015-01-01 00:00    | 2025-12-31 23:00    |    1104 |    3.03%
+216_Wangen_SZ_R1_v5.csv                    |    85436 |     96432 |    10996 | 2015-01-01 00:00    | 2025-12-31 23:00    |    9840 |   11.52%
+216_Wangen_SZ_R2_v5.csv                    |    85436 |     96432 |    10996 | 2015-01-01 00:00    | 2025-12-31 23:00    |    9840 |   11.52%
+299_Wollerau_Blatttunnel_R1_v5.csv         |    89088 |     96432 |     7344 | 2015-01-01 00:00    | 2025-12-31 23:00    |   10608 |   11.91%
+299_Wollerau_Blatttunnel_R2_v5.csv         |    89088 |     96432 |     7344 | 2015-01-01 00:00    | 2025-12-31 23:00    |   10608 |   11.91%
+720_Schwyz_R1_v5.csv                       |    40944 |     40944 |        0 | 2021-05-01 00:00    | 2025-12-31 23:00    |    1464 |    3.58%
+720_Schwyz_R2_v5.csv                       |    40944 |     40944 |        0 | 2021-05-01 00:00    | 2025-12-31 23:00    |    1464 |    3.58%
+=============================================================================================================================================
+
+====================================================================================================
+LUECKEN > 24 STUNDEN
+====================================================================================================
+
+050_Brunnen_Mositunnel_R1_v5.csv:
+  Luecken-Start       -> Luecken-Ende        |  Dauer (h)
+  -------------------    -------------------   ----------
+  2016-08-31 23:00    -> 2021-01-01 00:00    |      37992
+
+050_Brunnen_Mositunnel_R2_v5.csv:
+  Luecken-Start       -> Luecken-Ende        |  Dauer (h)
+  -------------------    -------------------   ----------
+  2016-08-31 23:00    -> 2021-01-01 00:00    |      37992
+
+171_Sattel_R1_v5.csv:
+  Luecken-Start       -> Luecken-Ende        |  Dauer (h)
+  -------------------    -------------------   ----------
+  2016-08-31 23:00    -> 2016-11-01 00:00    |       1464
+  2018-04-30 23:00    -> 2018-06-01 00:00    |        744
+  2018-07-31 23:00    -> 2019-10-01 00:00    |      10224
+  2020-04-30 23:00    -> 2025-02-01 00:00    |      41688
+  2025-02-28 23:00    -> 2025-11-01 00:00    |       5880
+
+171_Sattel_R2_v5.csv:
+  Luecken-Start       -> Luecken-Ende        |  Dauer (h)
+  -------------------    -------------------   ----------
+  2016-08-31 23:00    -> 2016-11-01 00:00    |       1464
+  2018-04-30 23:00    -> 2018-06-01 00:00    |        744
+  2018-07-31 23:00    -> 2019-10-01 00:00    |      10224
+  2020-04-30 23:00    -> 2025-02-01 00:00    |      41688
+  2025-02-28 23:00    -> 2025-11-01 00:00    |       5880
+
+216_Wangen_SZ_R1_v5.csv:
+  Luecken-Start       -> Luecken-Ende        |  Dauer (h)
+  -------------------    -------------------   ----------
+  2015-05-31 23:00    -> 2015-09-01 00:00    |       2208
+  2018-09-30 23:00    -> 2018-12-01 00:00    |       1464
+  2019-01-31 23:00    -> 2019-04-01 00:00    |       1416
+  2019-04-30 23:00    -> 2019-11-01 00:00    |       4416
+  2020-06-30 23:00    -> 2020-09-01 00:00    |       1488
+
+216_Wangen_SZ_R2_v5.csv:
+  Luecken-Start       -> Luecken-Ende        |  Dauer (h)
+  -------------------    -------------------   ----------
+  2015-05-31 23:00    -> 2015-09-01 00:00    |       2208
+  2018-09-30 23:00    -> 2018-12-01 00:00    |       1464
+  2019-01-31 23:00    -> 2019-04-01 00:00    |       1416
+  2019-04-30 23:00    -> 2019-11-01 00:00    |       4416
+  2020-06-30 23:00    -> 2020-09-01 00:00    |       1488
+
+299_Wollerau_Blatttunnel_R1_v5.csv:
+  Luecken-Start       -> Luecken-Ende        |  Dauer (h)
+  -------------------    -------------------   ----------
+  2019-04-30 23:00    -> 2020-02-01 00:00    |       6624
+  2020-03-31 23:00    -> 2020-05-01 00:00    |        720
+
+299_Wollerau_Blatttunnel_R2_v5.csv:
+  Luecken-Start       -> Luecken-Ende        |  Dauer (h)
+  -------------------    -------------------   ----------
+  2019-04-30 23:00    -> 2020-02-01 00:00    |       6624
+  2020-03-31 23:00    -> 2020-05-01 00:00    |        720
+
+720_Schwyz_R1_v5.csv:
+  Keine Luecken laenger als der Schwellwert.
+
+720_Schwyz_R2_v5.csv:
+  Keine Luecken laenger als der Schwellwert.
+====================================================================================================
+
+Ergebnisse gespeichert unter: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\results\analysis\dataset_overview
+Verarbeite 050_Brunnen_Mositunnel_R1_v4 ...
+Verarbeite 050_Brunnen_Mositunnel_R2_v4 ...
+Verarbeite 171_Sattel_R1_v4 ...
+Verarbeite 171_Sattel_R2_v4 ...
+Verarbeite 216_Wangen_SZ_R1_v4 ...
+Verarbeite 216_Wangen_SZ_R2_v4 ...
+Verarbeite 299_Wollerau_Blatttunnel_R1_v4 ...
+Verarbeite 299_Wollerau_Blatttunnel_R2_v4 ...
+Verarbeite 720_Schwyz_R1_v4 ...
+Verarbeite 720_Schwyz_R2_v4 ...
+
+====================================================================================================================================
+ZUSAMMENFASSUNG COVID-ANOMALIE
+====================================================================================================================================
+Station                                       |  % Zeilen COVID |  Volumen-Drop COVID vs Basis (%) |  Schlechtester Monat |     Vol.
+------------------------------------------------------------------------------------------------------------------------------------
+050_Brunnen_Mositunnel_R1_v4                  |           7.39% |                          -16.88% |              2021-01 |    181.3
+050_Brunnen_Mositunnel_R2_v4                  |           7.39% |                          -14.90% |              2021-01 |    194.7
+171_Sattel_R1_v4                              |           3.03% |                          -32.62% |              2020-04 |    159.9
+171_Sattel_R2_v4                              |           3.03% |                          -31.45% |              2020-04 |    163.9
+216_Wangen_SZ_R1_v4                           |          11.49% |                          -15.18% |              2020-04 |    505.9
+216_Wangen_SZ_R2_v4                           |          11.49% |                          -15.52% |              2020-04 |    506.8
+299_Wollerau_Blatttunnel_R1_v4                |          11.88% |                           -8.28% |              2021-01 |    833.9
+299_Wollerau_Blatttunnel_R2_v4                |          11.88% |                           -7.18% |              2021-01 |    892.4
+720_Schwyz_R1_v4                              |           3.52% |                            3.16% |              2022-01 |    357.4
+720_Schwyz_R2_v4                              |           3.52% |                            1.08% |              2021-12 |    366.8
+====================================================================================================================================
+
+Alle Plots gespeichert unter: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\results\analysis\covid_anomaly
+Bereinige 10 Datei(en) aus C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v5
+Ausschluss-Zeitraum: 2020-03-16 00:00:00 bis 2021-02-28 23:00:00 (inklusive)
+
+============================================================================================================================
+ZUSAMMENFASSUNG: Corona-Bereinigung (v5 -> v6)
+============================================================================================================================
+Datei                                      |  Original |  Entfernt |       Neu | Neuer Zeitraum (von -> bis)                
+----------------------------------------------------------------------------------------------------------------------------
+050_Brunnen_Mositunnel_R1_v6.csv           |     58438 |      1416 |     57022 | 2015-01-01 00:00 -> 2025-12-31 23:00       
+050_Brunnen_Mositunnel_R2_v6.csv           |     58438 |      1416 |     57022 | 2015-01-01 00:00 -> 2025-12-31 23:00       
+171_Sattel_R1_v6.csv                       |     36428 |      1104 |     35324 | 2015-01-01 00:00 -> 2025-12-31 23:00       
+171_Sattel_R2_v6.csv                       |     36428 |      1104 |     35324 | 2015-01-01 00:00 -> 2025-12-31 23:00       
+216_Wangen_SZ_R1_v6.csv                    |     85436 |      6912 |     78524 | 2015-01-01 00:00 -> 2025-12-31 23:00       
+216_Wangen_SZ_R2_v6.csv                    |     85436 |      6912 |     78524 | 2015-01-01 00:00 -> 2025-12-31 23:00       
+299_Wollerau_Blatttunnel_R1_v6.csv         |     89088 |      7680 |     81408 | 2015-01-01 00:00 -> 2025-12-31 23:00       
+299_Wollerau_Blatttunnel_R2_v6.csv         |     89088 |      7680 |     81408 | 2015-01-01 00:00 -> 2025-12-31 23:00       
+720_Schwyz_R1_v6.csv                       |     40944 |         0 |     40944 | 2021-05-01 00:00 -> 2025-12-31 23:00       
+720_Schwyz_R2_v6.csv                       |     40944 |         0 |     40944 | 2021-05-01 00:00 -> 2025-12-31 23:00       
+============================================================================================================================
+
+Gespeichert unter: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v6
+Geschrieben: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v7\050_Brunnen_Mositunnel_R1_v7.csv  (57022 Zeilen, 43 Spalten)
+Geschrieben: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v7\050_Brunnen_Mositunnel_R2_v7.csv  (57022 Zeilen, 43 Spalten)
+Geschrieben: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v7\171_Sattel_R1_v7.csv  (35324 Zeilen, 43 Spalten)
+Geschrieben: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v7\171_Sattel_R2_v7.csv  (35324 Zeilen, 43 Spalten)
+Geschrieben: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v7\216_Wangen_SZ_R1_v7.csv  (78524 Zeilen, 43 Spalten)
+Geschrieben: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v7\216_Wangen_SZ_R2_v7.csv  (78524 Zeilen, 43 Spalten)
+Geschrieben: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v7\299_Wollerau_Blatttunnel_R1_v7.csv  (81408 Zeilen, 43 Spalten)
+Geschrieben: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v7\299_Wollerau_Blatttunnel_R2_v7.csv  (81408 Zeilen, 43 Spalten)
+Geschrieben: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v7\720_Schwyz_R1_v7.csv  (40944 Zeilen, 43 Spalten)
+Geschrieben: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MATA-2026\data\v7\720_Schwyz_R2_v7.csv  (40944 Zeilen, 43 Spalten)
+
+-- Sanity-Check: 050_Brunnen_Mositunnel_R1_v7.csv --
+  Zeilen gesamt              : 57022
+  Zeilen mit mind. 1 Feiertag: 4056
+  3 Beispielzeilen holiday_SZ=1:
+           datetime  holiday_SZ  holiday_ZH  holiday_AG
+2015-01-01 00:00:00           1           1           1
+2015-01-01 01:00:00           1           1           1
+2015-01-01 02:00:00           1           1           1

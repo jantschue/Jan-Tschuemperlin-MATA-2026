@@ -242,6 +242,19 @@ export default function FeatureSensitivitaet({ station }) {
                 <span className="slider" />
               </label>
             </div>
+            <div>
+              <Label>Schulferien</Label>
+              <label className="toggle">
+                <input
+                  type="checkbox"
+                  checked={inputs.isSchoolHoliday}
+                  onChange={(e) =>
+                    setInputs((s) => ({ ...s, isSchoolHoliday: e.target.checked }))
+                  }
+                />
+                <span className="slider" />
+              </label>
+            </div>
           </div>
         )}
       </div>

@@ -18,10 +18,10 @@ Die Ergebnisse sind als interaktive Web-Applikation verfügbar:
 
 Die Webapp ermöglicht:
 - **Stationskarte** – Übersicht aller 5 Messstationen mit MLP-Vorhersagegüte (R²) farbcodiert auf einer Leaflet-Karte
-- **Live-Vorhersage** – MLP und lineare Regression rechnen Prognosen live im Browser (aktuelle Wetterdaten via Open-Meteo, automatische Feiertagserkennung für Kt. Schwyz)
+- **Live-Vorhersage** – MLP und lineare Regression rechnen Prognosen live im Browser (aktuelle Wetterdaten via Open-Meteo, automatische Feiertagserkennung für Kt. Schwyz, manueller Schulferien-Schalter)
 - **Datums-Analyse** – Tagesverlauf eines beliebigen Datums im Testset: Ist-Werte vs. MLP- und LR-Vorhersagen
-- **Feiertags-Analyse** – Zeigt für jeden Schwyzer Feiertag im Testset, wie stark der Verkehr vom Wochentags-Durchschnitt abweicht, wie gut das Modell diesen Tag vorhersagt und welchen isolierten Effekt das `is_holiday`-Flag hat (Counterfactual: selber Stunden-Vektor mit `is_holiday=0` vs. `is_holiday=1`)
-- **Feature-Sensitivität** – Wie stark verändern Uhrzeit, Temperatur, Niederschlag und Sonnenstunden die Vorhersage (Sweep über den vollen Wertebereich, beide Modelle)
+- **Feiertags-Analyse** – Zeigt für jeden Schwyzer Feiertag im Testset, wie stark der Verkehr vom Wochentags-Durchschnitt abweicht, wie gut das Modell diesen Tag vorhersagt und welchen isolierten Effekt die Feiertagskodierung hat (Counterfactual: selber Stunden-Vektor mit allen `holiday_*`-Spalten auf 0 vs. dem realen Feiertag)
+- **Feature-Sensitivität** – Wie stark verändern Uhrzeit, Temperatur, Niederschlag und Sonnenstunden die Vorhersage (Sweep über den vollen Wertebereich, beide Modelle); Feiertag und Schulferien als Basislinien-Schalter
 - **Ausreisseranalyse** – Durchsucht alle stündlichen Ergebnisse nach grossen Fehlern, Peak-Versagen und Wochentag-Mustern; Export als CSV
 
 Der Quellcode der Webapp liegt unter `webapp/`. Die Webapp wird via Vercel deployed.
@@ -74,7 +74,7 @@ Die Rohdaten durchlaufen mehrere Verarbeitungsstufen, bevor sie für das Modellt
 
 | Skript | Beschreibung |
 |---|---|
-| `run_pipeline.py` | Führt die gesamte Pipeline in einem Schritt aus (Datenverarbeitung + Analyse + Modelltraining v5, v6 und v7) |
+| `run_pipeline.py` | Führt die gesamte Pipeline in einem Schritt aus (Datenverarbeitung + Analyse + Modelltraining v5, v6, v7 und v8) |
 | `export_weights.py` | Exportiert trainierte Modellgewichte, Test-Vorhersagen und Feiertags-Feature-Vektoren als JSON für die Webapp |
 | `models/linear_regression_v5.py` | Lineares Regressionsmodell als Baseline, trainiert auf v5-Daten (10 Datensätze = 5 Stationen × 2 Richtungen) |
 | `models/mlp_v5.py` | MLP-Hauptmodell mit Early Stopping, Learning Rate Scheduler und Batch-Normalisierung, trainiert auf v5-Daten |
@@ -82,6 +82,7 @@ Die Rohdaten durchlaufen mehrere Verarbeitungsstufen, bevor sie für das Modellt
 | `models/mlp_v6.py` | Gleiches MLP (identische Hyperparameter), trainiert auf v6 zum direkten Vergleich |
 | `models/linear_regression_v7.py` | Lineare Baseline für v7 (26 kantonsspezifische Feiertagsspalten, 41 Features) zum direkten Vergleich mit dem v7-MLP. Dieselbe stationsspezifische Ausnahme wie das v7-MLP (siehe unten). |
 | `models/mlp_v7.py` | MLP auf v7-Daten (26 kantonsspezifische Feiertagsspalten statt `is_holiday`, 41 Features), mit separat getunten Hyperparametern. **Stationsspezifische Ausnahme:** Für `171_Sattel_R1` und `171_Sattel_R2` wird das `Year`-Feature entfernt (siehe Abschnitt [Stationsspezifische Ausnahme](#stationsspezifische-ausnahme-sattel)). |
+| `models/linear_regression_v8.py` | Lineare Baseline für v8 (26 Feiertage + 26 Schulferien, 67 Features) zum direkten Vergleich mit dem v8-MLP. Dieselbe stationsspezifische Ausnahme wie das v8-MLP. |
 | `models/mlp_v8.py` | MLP auf v8-Daten (26 Feiertage + 26 Schulferien, 67 Features), mit separat getunten Hyperparametern. Dieselbe stationsspezifische Ausnahme wie bei v7. |
 | `models/mlp_tuning_v5.py` | Optuna-Hyperparameter-Tuning für das v5-MLP (optional, nicht Teil der Pipeline) |
 | `models/mlp_tuning_v7.py` | Optuna-Hyperparameter-Tuning für das v7-MLP (optional, nicht Teil der Pipeline) |
@@ -103,7 +104,7 @@ Die Rohdaten durchlaufen mehrere Verarbeitungsstufen, bevor sie für das Modellt
 
 ### Ergebnisse pro Modell
 
-Nach dem Training werden die Resultate unter `results/model_results/<modell>/` gespeichert (mit `<modell>` ∈ `linear_regression_v5`, `mlp_v5`, `linear_regression_v6`, `mlp_v6`, `linear_regression_v7`, `mlp_v7`, `mlp_v8`):
+Nach dem Training werden die Resultate unter `results/model_results/<modell>/` gespeichert (mit `<modell>` ∈ `linear_regression_v5`, `mlp_v5`, `linear_regression_v6`, `mlp_v6`, `linear_regression_v7`, `mlp_v7`, `linear_regression_v8`, `mlp_v8`):
 
 | Unterordner | Inhalt |
 |---|---|
@@ -117,15 +118,15 @@ Nach dem Training werden die Resultate unter `results/model_results/<modell>/` g
 | `plots/tagesverlauf/` | Durchschnittlicher Tagesverlauf: Ist-Werte vs. Vorhersage |
 | `plots/trainingsverlauf/` | Nur beim v7-MLP: Kombination aus R²- und Verlustkurve pro Station (`abbildung_trainingsverlauf_v7_<station>.png`) |
 | `summary/` | R²-Übersichtsplot über alle Stationen + Split-Infos pro Station |
-| `training_history/` | Nur beim v7-MLP: `training_history_<station>.csv` mit Spalten `epoch,train_mse,val_mse,train_rmse,val_rmse,train_r2,val_r2` (MSE/RMSE in Fahrzeuge/h zurücktransformiert, R² pro Epoche auf Trainings- bzw. Validierungsbatches) |
+| `training_history/` | Beim v7- und v8-MLP: `training_history_<station>.csv` mit Spalten `epoch,train_mse,val_mse,train_rmse,val_rmse,train_r2,val_r2` (MSE/RMSE in Fahrzeuge/h zurücktransformiert, R² pro Epoche auf Trainings- bzw. Validierungsbatches) |
 
-Beim v7-MLP speichert `mlp_v7.py` zusätzlich pro Station `training_history/training_history_<station>.csv`. Daraus erzeugt `scripts/plot_trainingsverlauf.py` je Station eine Trainingsverlauf-Abbildung in `plots/trainingsverlauf/` (R² links, MSE rechts, je Trainings- und Validierungskurve).
+Sowohl `mlp_v7.py` als auch `mlp_v8.py` speichern zusätzlich pro Station `training_history/training_history_<station>.csv`. Daraus erzeugt `scripts/plot_trainingsverlauf.py` (liest nur `mlp_v7`) je Station eine Trainingsverlauf-Abbildung in `plots/trainingsverlauf/` (R² links, MSE rechts, je Trainings- und Validierungskurve).
 
 Bei getunten Modellen liegt zusätzlich `best_params.json` (bzw. `best_params_v7.json`) im Modell-Ordner (Output des Optuna-Tunings), und die Parameter-vs-Performance-Studien schreiben nach `<modell>/analysen/`.
 
 ### Webapp-Datenpfade
 
-Die Webapp nutzt die **v7-Modelle** (MLP + lineare Baseline). Sie liest ausschliesslich aus `webapp/public/data/`. Diese Dateien werden von `export_weights.py` erzeugt und sind im Repository eingecheckt. Der Live-Forward-Pass im Browser baut den Feature-Vektor pro Station anhand der exportierten `features`-Liste auf (41 Features mit 26 Feiertagsspalten; Sattel R1/R2 ohne `Year` → 40), sodass die [stationsspezifische Ausnahme](#stationsspezifische-ausnahme-sattel) automatisch berücksichtigt wird. Der einzelne „Feiertag"-Schalter der Live-Vorhersage wird als Schwyzer Feiertag interpretiert (`holiday_SZ`):
+Die Webapp nutzt die **v8-Modelle** (MLP + lineare Baseline). Sie liest ausschliesslich aus `webapp/public/data/`. Diese Dateien werden von `export_weights.py` erzeugt und sind im Repository eingecheckt. Der Live-Forward-Pass im Browser baut den Feature-Vektor pro Station anhand der exportierten `features`-Liste auf (67 Features mit 26 Feiertags- und 26 Schulferienspalten; Sattel R1/R2 ohne `Year` → 66), sodass die [stationsspezifische Ausnahme](#stationsspezifische-ausnahme-sattel) automatisch berücksichtigt wird. Der „Feiertag"-Schalter der Live-Vorhersage wird als Schwyzer Feiertag interpretiert (`holiday_SZ`), der „Schulferien"-Schalter als Schwyzer Schulferien (`schoolholiday_SZ`):
 
 | Pfad | Inhalt | Erzeugt von |
 |---|---|---|
@@ -133,7 +134,7 @@ Die Webapp nutzt die **v7-Modelle** (MLP + lineare Baseline). Sie liest ausschli
 | `webapp/public/data/weights/{id}_mlp.json` | MLP-Gewichte als JSON (Forward Pass im Browser) | `export_weights.py` |
 | `webapp/public/data/weights/{id}_linear.json` | LR-Gewichte als JSON | `export_weights.py` |
 | `webapp/public/data/results/{id}_daily.json` | Stündliche Test-Vorhersagen (actual, pred_mlp, pred_linear) | `export_weights.py` |
-| `webapp/public/data/features/{id}_holidays.json` | Rohe 16-Feature-Vektoren aller Feiertags-Stunden im Testset (für Counterfactual) | `export_weights.py` |
+| `webapp/public/data/features/{id}_holidays.json` | Rohe Feature-Vektoren (67 bzw. 66 bei Sattel) aller Feiertags-Stunden im Testset (für Counterfactual) | `export_weights.py` |
 
 ## Installation
 
@@ -191,7 +192,7 @@ Das Skript läuft in drei Phasen ab:
 
 **Phase 2 – Analyse + Corona-Bereinigung + v7/v8 (5 Skripte):** `dataset_overview.py` und `covid_anomaly_analysis.py` erzeugen die Diagnostik unter `results/analysis/`; `build_v6.py` schreibt den Corona-bereinigten Datensatz nach `data/v6/`; `build_v7.py` erweitert v6 mit 26 kantonsspezifischen Feiertagsspalten aus der zentralen Feiertags-DB nach `data/v7/`; `build_v8.py` fügt 26 Schulferienspalten hinzu und speichert nach `data/v8/`.
 
-**Phase 3 – Modelltraining (7 Skripte + 1 Plot):** `linear_regression_v5.py` und `mlp_v5.py` trainieren je 10 Modelle auf v5, `linear_regression_v6.py` und `mlp_v6.py` trainieren mit identischen Hyperparametern dieselben Modelle auf v6. `linear_regression_v7.py` und `mlp_v7.py` trainieren Baseline und MLP auf den v7-Daten. `mlp_v8.py` trainiert auf den v8-Daten. Beide neuen MLPs (v7, v8) nutzen eigene getunte Hyperparameter. Direkt danach liest `scripts/plot_trainingsverlauf.py` die von `mlp_v7.py` erzeugten `training_history/training_history_*.csv`-Dateien ein und erstellt je Station eine R²-/Verlust-Trainingsverlauf-Abbildung unter `plots/trainingsverlauf/`.
+**Phase 3 – Modelltraining (8 Skripte + 1 Plot):** `linear_regression_v5.py` und `mlp_v5.py` trainieren je 10 Modelle auf v5, `linear_regression_v6.py` und `mlp_v6.py` trainieren mit identischen Hyperparametern dieselben Modelle auf v6. `linear_regression_v7.py` und `mlp_v7.py` trainieren Baseline und MLP auf den v7-Daten, `linear_regression_v8.py` und `mlp_v8.py` dieselben auf den v8-Daten. Beide neuen MLPs (v7, v8) nutzen eigene getunte Hyperparameter. Direkt danach liest `scripts/plot_trainingsverlauf.py` die von `mlp_v7.py` erzeugten `training_history/training_history_*.csv`-Dateien ein und erstellt je Station eine R²-/Verlust-Trainingsverlauf-Abbildung unter `plots/trainingsverlauf/`.
 
 ### Schritt 2: Webapp-Daten exportieren
 
@@ -199,7 +200,7 @@ Das Skript läuft in drei Phasen ab:
 python export_weights.py
 ```
 
-Dieser Schritt ist **nicht** Teil von `run_pipeline.py` und muss nach dem Training separat ausgeführt werden. Er liest die trainierten `.pt`-Gewichte und die Test-Vorhersagen der **v7-Modelle** (`mlp_v7`, `linear_regression_v7`) aus `results/` und schreibt alle für die Webapp nötigen JSON-Dateien nach `webapp/public/data/`. Dabei werden auch die rohen Feature-Vektoren aller Feiertags-Stunden im Testset exportiert (für das Counterfactual in der Feiertags-Analyse-Seite).
+Dieser Schritt ist **nicht** Teil von `run_pipeline.py` und muss nach dem Training separat ausgeführt werden. Er liest die trainierten `.pt`-Gewichte und die Test-Vorhersagen der **v8-Modelle** (`mlp_v8`, `linear_regression_v8`) aus `results/` und schreibt alle für die Webapp nötigen JSON-Dateien nach `webapp/public/data/`. Dabei werden auch die rohen Feature-Vektoren aller Feiertags-Stunden im Testset exportiert (für das Counterfactual in der Feiertags-Analyse-Seite). Die aktive Modellversion ist über die Konstante `VERSION` am Anfang von `export_weights.py` gesteuert.
 
 ### Optionales Hyperparameter-Tuning (MLP)
 
@@ -225,7 +226,7 @@ Variiert systematisch die MLP-Grösse für eine repräsentative Station und zeic
 
 Damit die Ergebnisse reproduzierbar sind, habe ich auf folgende Punkte geachtet:
 
-- **Feste Seeds:** Beide Modelle setzen `torch.manual_seed(42)` und `numpy.random.seed(42)`. Die v7-Skripte (`mlp_v7.py`, `linear_regression_v7.py`) setzen den Seed zusätzlich **vor jeder Station neu**, damit jede Station unabhängig reproduzierbar ist (siehe [Stationsspezifische Ausnahme](#stationsspezifische-ausnahme-sattel)).
+- **Feste Seeds:** Beide Modelle setzen `torch.manual_seed(42)` und `numpy.random.seed(42)`. Die v7-/v8-Skripte (`mlp_v7.py`, `linear_regression_v7.py`, `mlp_v8.py`, `linear_regression_v8.py`) setzen den Seed zusätzlich **vor jeder Station neu**, damit jede Station unabhängig reproduzierbar ist (siehe [Stationsspezifische Ausnahme](#stationsspezifische-ausnahme-sattel)).
 - **Kein Datenleck:** Der `StandardScaler` wird ausschliesslich auf den Trainingsdaten gefittet und danach auf Validierungs- und Testdaten angewendet.
 - **Chronologischer Split:** Die Daten werden immer zeitlich geordnet aufgeteilt — kein `shuffle` (Linear: 80/20, MLP: 70/10/20).
 - **Kein `shuffle` im DataLoader:** Die zeitliche Reihenfolge bleibt auch während des Trainings erhalten.
@@ -239,7 +240,7 @@ Die Messstation **Sattel** (`171`, beide Richtungen R1 und R2) hat ein ungewöhn
 
 Davon ist als einziges das absolute `Year`-Feature betroffen: Der `StandardScaler` kennt aus dem Training nur die Jahre 2015–2017, für 2025 liegt der skalierte Wert weit ausserhalb dieses Bereichs. Das MLP (und die lineare Baseline) extrapolieren `Year` dann unkontrolliert und überschätzen das Volumen massiv. Im v7-MLP — dessen Hyperparameter separat nur auf Station 050 (Brunnen, ohne dieses Extrapolationsproblem) getunt wurden — kollabiert dadurch besonders das 2025-Segment.
 
-**Lösung:** Für `171_Sattel_R1` und `171_Sattel_R2` wird das `Year`-Feature in den v7-Modellen (`mlp_v7.py` und `linear_regression_v7.py`) über das `FEATURE_EXCLUDE`-Dict aus dem Feature-Satz entfernt. Alle übrigen, zeitlich stabilen Features (Tageszeit, Wochentag, Saison, Wetter, Feiertage) bleiben erhalten und müssen nicht extrapoliert werden. Damit diese stationsspezifische Änderung die übrigen Stationen nicht über die fortlaufende Zufalls-Kette beeinflusst, setzen die v7-Skripte den Seed **vor jeder Station neu**.
+**Lösung:** Für `171_Sattel_R1` und `171_Sattel_R2` wird das `Year`-Feature in den v7- und v8-Modellen (`mlp_v7.py`, `linear_regression_v7.py`, `mlp_v8.py`, `linear_regression_v8.py`) über das `FEATURE_EXCLUDE`-Dict aus dem Feature-Satz entfernt. Alle übrigen, zeitlich stabilen Features (Tageszeit, Wochentag, Saison, Wetter, Feiertage, Schulferien) bleiben erhalten und müssen nicht extrapoliert werden. Damit diese stationsspezifische Änderung die übrigen Stationen nicht über die fortlaufende Zufalls-Kette beeinflusst, setzen die Skripte den Seed **vor jeder Station neu**.
 
 Wirkung auf das v7-MLP:
 

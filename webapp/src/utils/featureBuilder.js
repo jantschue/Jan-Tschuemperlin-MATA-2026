@@ -1,20 +1,24 @@
 /**
- * Wandelt die UI-Eingaben in den Feature-Vektor des v7-Modells um. v7 ersetzt
- * das binäre is_holiday durch 26 kantonsspezifische Feiertagsspalten
- * (holiday_AG … holiday_ZH); der volle Feature-Satz hat damit 41 Spalten:
+ * Wandelt die UI-Eingaben in den Feature-Vektor des v8-Modells um. v8 baut auf
+ * v7 auf (26 kantonsspezifische Feiertagsspalten holiday_AG … holiday_ZH statt
+ * binärem is_holiday) und ergänzt zusätzlich 26 kantonsspezifische
+ * Schulferienspalten (schoolholiday_AG … schoolholiday_ZH); der volle
+ * Feature-Satz hat damit 67 Spalten:
  *
  *   Year, Hour_sin/cos, DayOfWeek_sin/cos, Month_sin/cos, DayOfYear_sin/cos,
- *   is_weekend, holiday_AG … holiday_ZH (26), temp, rain_1h, sun_1h, snow_1h,
+ *   is_weekend, holiday_AG … holiday_ZH (26), schoolholiday_AG … schoolholiday_ZH
+ *   (26), temp, rain_1h, sun_1h, snow_1h,
  *   weather_cat (LabelEncoded: 0=Clear, 1=Cloudy, 2=Night, 3=Rain, 4=Snow)
  *
  * Wichtig: Der Vektor wird NICHT in fester Reihenfolge gebaut, sondern anhand
  * der pro Station exportierten `features`-Liste zusammengesetzt. Damit passt er
  * automatisch auch für Stationen mit Ausnahmen (Sattel R1/R2 enthalten kein
- * `Year`, siehe FEATURE_EXCLUDE in models/mlp_v7.py → 40 statt 41 Features).
+ * `Year`, siehe FEATURE_EXCLUDE in models/mlp_v8.py → 66 statt 67 Features).
  *
- * Feiertage: Die Live-UI kennt nur einen einzigen "Feiertag"-Schalter. Da das
- * Projektgebiet im Kanton Schwyz liegt, wird dieser als Schwyzer Feiertag
- * interpretiert (holiday_SZ = 1, alle übrigen Kantone 0).
+ * Feiertage / Schulferien: Die Live-UI kennt je einen einzigen "Feiertag"- bzw.
+ * "Schulferien"-Schalter. Da das Projektgebiet im Kanton Schwyz liegt, werden
+ * diese als Schwyzer Feiertag (holiday_SZ = 1) bzw. Schwyzer Schulferien
+ * (schoolholiday_SZ = 1) interpretiert, alle übrigen Kantone bleiben 0.
  *
  * Encodings (Periode, Offset) müssen mit der Daten-Engineering-Pipeline
  * (scripts/add_time_features.py) übereinstimmen.
@@ -51,7 +55,8 @@ function cyclic(value, period) {
  *   day:        1..31 (Default 15),
  *   temp, rain, sun, snow,
  *   weatherCat: 0..4 (LabelEncoder-Index),
- *   isHoliday:  boolean (als Schwyzer Feiertag interpretiert)
+ *   isHoliday:       boolean (als Schwyzer Feiertag interpretiert),
+ *   isSchoolHoliday: boolean (als Schwyzer Schulferien interpretiert)
  * }
  * @param {string[]} featureNames - die pro Station exportierte `features`-Liste
  *   (aus dem Weights-JSON). Bestimmt Reihenfolge und Umfang des Vektors.
@@ -66,6 +71,7 @@ export function buildFeatureVector(inputs, featureNames) {
 
   const isWeekend = inputs.dayOfWeek >= 5 ? 1 : 0
   const isHoliday = inputs.isHoliday ? 1 : 0
+  const isSchoolHoliday = inputs.isSchoolHoliday ? 1 : 0
 
   // Benannte Feature-Map (Schlüssel = exakte Spaltennamen der Python-Pipeline)
   const map = {
@@ -83,6 +89,8 @@ export function buildFeatureVector(inputs, featureNames) {
   }
   // 26 Kantons-Feiertagsspalten: einziger UI-Schalter -> holiday_SZ
   for (const c of CANTONS) map[`holiday_${c}`] = c === 'SZ' ? isHoliday : 0
+  // 26 Kantons-Schulferienspalten (v8): einziger UI-Schalter -> schoolholiday_SZ
+  for (const c of CANTONS) map[`schoolholiday_${c}`] = c === 'SZ' ? isSchoolHoliday : 0
 
   // Vektor in der Reihenfolge der modellspezifischen Feature-Liste aufbauen.
   // Unbekannte/fehlende Namen (sollte nicht vorkommen) werden zu 0.
@@ -121,5 +129,6 @@ export const DEFAULT_INPUTS = {
   sun: 0.7,
   snow: 0,
   weatherCat: 0, // Clear
-  isHoliday: false
+  isHoliday: false,
+  isSchoolHoliday: false
 }

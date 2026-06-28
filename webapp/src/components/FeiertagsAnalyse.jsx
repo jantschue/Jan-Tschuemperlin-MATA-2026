@@ -2,9 +2,10 @@
  * Feiertags-Analyse: zeigt, welche Schwyzer Feiertage im Testzeitraum vorkommen,
  * wie das Modell an diesen Tagen abschneidet, wie stark es auf die Feiertags-
  * Features reagiert (Counterfactual) und welche Feiertage den Verkehr am stärksten
- * verändern. Das v7-Modell hat 26 kantonsspezifische Feiertagsspalten statt eines
- * is_holiday-Flags; das Counterfactual setzt für den gewählten Tag alle 26 Spalten
- * auf 0 ("ganz normaler Tag").
+ * verändern. Das v8-Modell hat 26 kantonsspezifische Feiertagsspalten statt eines
+ * is_holiday-Flags; das Counterfactual setzt für den gewählten Tag alle 26
+ * holiday_*-Spalten auf 0 ("ganz normaler Tag"). Die zusätzlichen v8-Schulferien-
+ * Spalten (schoolholiday_*) bleiben dabei unverändert.
  */
 import { useMemo, useState, useEffect } from 'react'
 import {

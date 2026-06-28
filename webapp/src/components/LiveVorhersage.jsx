@@ -360,6 +360,19 @@ export default function LiveVorhersage({ station, onGoToMap }) {
               <span className="slider" />
             </label>
           </Field>
+
+          <Field label="Schulferien">
+            <label className="toggle">
+              <input
+                type="checkbox"
+                checked={inputs.isSchoolHoliday}
+                onChange={(e) =>
+                  setInputs((s) => ({ ...s, isSchoolHoliday: e.target.checked }))
+                }
+              />
+              <span className="slider" />
+            </label>
+          </Field>
         </div>
       </aside>
 

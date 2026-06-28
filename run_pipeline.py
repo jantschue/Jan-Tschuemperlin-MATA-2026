@@ -52,7 +52,7 @@ def main():
     ]
 
     # Phase 3: Modelltraining (v5 + v6 + v7 + v8)
-    # Jede Datenvariante hat eine lineare Baseline und ein MLP (ausser v7/v8 nur MLP aktuell)
+    # Jede Datenvariante hat eine lineare Baseline und ein MLP.
     training_scripts = [
         "linear_regression_v5.py",
         "mlp_v5.py",
@@ -60,6 +60,7 @@ def main():
         "mlp_v6.py",
         "linear_regression_v7.py",
         "mlp_v7.py",
+        "linear_regression_v8.py",
         "mlp_v8.py",
     ]
 
