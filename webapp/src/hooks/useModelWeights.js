@@ -125,6 +125,82 @@ export function useHolidayFeatures(stationId) {
 }
 
 /**
+ * Lädt den gemeinsamen SZ-Schulferien-Kalender (benannte Perioden) aus
+ * export_weights.py. Jeder Eintrag: { name, start, end } (Datumsstrings).
+ * Wird in der Schulferien-Analyse genutzt, um Test-Tage einer Periode zuzuordnen.
+ */
+let scheduleCache = null
+
+export function useSchoolSchedule() {
+  const [state, setState] = useState({ loading: true })
+
+  useEffect(() => {
+    let cancelled = false
+    const load = async () => {
+      if (scheduleCache) {
+        if (!cancelled) setState({ loading: false, data: scheduleCache })
+        return
+      }
+      try {
+        const res = await fetch('/data/features/schoolholidays_sz.json')
+        if (!res.ok) throw new Error('missing')
+        const data = await res.json()
+        scheduleCache = data
+        if (!cancelled) setState({ loading: false, data })
+      } catch (err) {
+        if (!cancelled) setState({ loading: false, error: 'missing' })
+      }
+    }
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  return state
+}
+
+/**
+ * Lädt die Schulferien-Counterfactual-Werte einer Station (aus export_weights.py).
+ * Jeder Eintrag: { datetime, mlpNo } – Modellvorhersage mit allen
+ * `schoolholiday_*`-Spalten auf 0 ("keine Schulferien"). Wird für den isolierten
+ * Effekt des Schulferien-Flags gebraucht (Counterfactual).
+ */
+const schoolCache = new Map()
+
+export function useSchoolHolidayFeatures(stationId) {
+  const [state, setState] = useState({ loading: true })
+
+  useEffect(() => {
+    if (!stationId) return
+    let cancelled = false
+    setState({ loading: true })
+
+    const load = async () => {
+      if (schoolCache.has(stationId)) {
+        if (!cancelled) setState({ loading: false, data: schoolCache.get(stationId) })
+        return
+      }
+      try {
+        const res = await fetch(`/data/features/${stationId}_schoolholidays.json`)
+        if (!res.ok) throw new Error('missing')
+        const data = await res.json()
+        schoolCache.set(stationId, data)
+        if (!cancelled) setState({ loading: false, data })
+      } catch (err) {
+        if (!cancelled) setState({ loading: false, error: 'missing' })
+      }
+    }
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [stationId])
+
+  return state
+}
+
+/**
  * Lädt die täglichen Ergebnisse ALLER Stationen (für stationsübergreifende
  * Aggregationen). Lädt nur, wenn `enabled` true ist, und cached pro Station.
  * Liefert ein flaches Array mit ergänztem stationId-Feld.

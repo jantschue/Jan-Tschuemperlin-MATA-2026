@@ -318,3 +318,990 @@ Geschrieben: C:\Users\jants\Documents\Engineering\MATA Code\Jan-Tschuemperlin-MA
 2015-01-01 00:00:00           1           1           1
 2015-01-01 01:00:00           1           1           1
 2015-01-01 02:00:00           1           1           1
+Lade Schulferiendaten aus data/holidays/raw/schulferien_kantone_2015_2026.csv...
+
+Verarbeite 050_Brunnen_Mositunnel_R1_v7.csv...
+--- Qualitätskontrolle für 050_Brunnen_Mositunnel_R1_v8.csv ---
+Zeilen: v7=57022 vs v8=57022 (Identisch: True)
+Spaltenzahl: v7=43 + 26 = 69 (Korrekt: True)
+Zeilen ohne Join-Treffer (sollte 0 sein): 0
+Bestätigung: alle holiday_*-Spalten unverändert vorhanden und 26 neue schoolholiday_*-Spalten ergänzt.
+
+Verarbeite 050_Brunnen_Mositunnel_R2_v7.csv...
+--- Qualitätskontrolle für 050_Brunnen_Mositunnel_R2_v8.csv ---
+Zeilen: v7=57022 vs v8=57022 (Identisch: True)
+Spaltenzahl: v7=43 + 26 = 69 (Korrekt: True)
+Zeilen ohne Join-Treffer (sollte 0 sein): 0
+Bestätigung: alle holiday_*-Spalten unverändert vorhanden und 26 neue schoolholiday_*-Spalten ergänzt.
+
+Verarbeite 171_Sattel_R1_v7.csv...
+--- Qualitätskontrolle für 171_Sattel_R1_v8.csv ---
+Zeilen: v7=35324 vs v8=35324 (Identisch: True)
+Spaltenzahl: v7=43 + 26 = 69 (Korrekt: True)
+Zeilen ohne Join-Treffer (sollte 0 sein): 0
+Bestätigung: alle holiday_*-Spalten unverändert vorhanden und 26 neue schoolholiday_*-Spalten ergänzt.
+
+Verarbeite 171_Sattel_R2_v7.csv...
+--- Qualitätskontrolle für 171_Sattel_R2_v8.csv ---
+Zeilen: v7=35324 vs v8=35324 (Identisch: True)
+Spaltenzahl: v7=43 + 26 = 69 (Korrekt: True)
+Zeilen ohne Join-Treffer (sollte 0 sein): 0
+Bestätigung: alle holiday_*-Spalten unverändert vorhanden und 26 neue schoolholiday_*-Spalten ergänzt.
+
+Verarbeite 216_Wangen_SZ_R1_v7.csv...
+--- Qualitätskontrolle für 216_Wangen_SZ_R1_v8.csv ---
+Zeilen: v7=78524 vs v8=78524 (Identisch: True)
+Spaltenzahl: v7=43 + 26 = 69 (Korrekt: True)
+Zeilen ohne Join-Treffer (sollte 0 sein): 0
+Bestätigung: alle holiday_*-Spalten unverändert vorhanden und 26 neue schoolholiday_*-Spalten ergänzt.
+
+Verarbeite 216_Wangen_SZ_R2_v7.csv...
+--- Qualitätskontrolle für 216_Wangen_SZ_R2_v8.csv ---
+Zeilen: v7=78524 vs v8=78524 (Identisch: True)
+Spaltenzahl: v7=43 + 26 = 69 (Korrekt: True)
+Zeilen ohne Join-Treffer (sollte 0 sein): 0
+Bestätigung: alle holiday_*-Spalten unverändert vorhanden und 26 neue schoolholiday_*-Spalten ergänzt.
+
+Verarbeite 299_Wollerau_Blatttunnel_R1_v7.csv...
+--- Qualitätskontrolle für 299_Wollerau_Blatttunnel_R1_v8.csv ---
+Zeilen: v7=81408 vs v8=81408 (Identisch: True)
+Spaltenzahl: v7=43 + 26 = 69 (Korrekt: True)
+Zeilen ohne Join-Treffer (sollte 0 sein): 0
+Bestätigung: alle holiday_*-Spalten unverändert vorhanden und 26 neue schoolholiday_*-Spalten ergänzt.
+
+Verarbeite 299_Wollerau_Blatttunnel_R2_v7.csv...
+--- Qualitätskontrolle für 299_Wollerau_Blatttunnel_R2_v8.csv ---
+Zeilen: v7=81408 vs v8=81408 (Identisch: True)
+Spaltenzahl: v7=43 + 26 = 69 (Korrekt: True)
+Zeilen ohne Join-Treffer (sollte 0 sein): 0
+Bestätigung: alle holiday_*-Spalten unverändert vorhanden und 26 neue schoolholiday_*-Spalten ergänzt.
+
+Verarbeite 720_Schwyz_R1_v7.csv...
+--- Qualitätskontrolle für 720_Schwyz_R1_v8.csv ---
+Zeilen: v7=40944 vs v8=40944 (Identisch: True)
+Spaltenzahl: v7=43 + 26 = 69 (Korrekt: True)
+Zeilen ohne Join-Treffer (sollte 0 sein): 0
+Bestätigung: alle holiday_*-Spalten unverändert vorhanden und 26 neue schoolholiday_*-Spalten ergänzt.
+
+Verarbeite 720_Schwyz_R2_v7.csv...
+--- Qualitätskontrolle für 720_Schwyz_R2_v8.csv ---
+Zeilen: v7=40944 vs v8=40944 (Identisch: True)
+Spaltenzahl: v7=43 + 26 = 69 (Korrekt: True)
+Zeilen ohne Join-Treffer (sollte 0 sein): 0
+Bestätigung: alle holiday_*-Spalten unverändert vorhanden und 26 neue schoolholiday_*-Spalten ergänzt.
+
+Trainiere Modell 1/10: 050_Brunnen_Mositunnel_R1_v5
+LR: 0.01, Epochen: 200
+Finale Loss: 0.29
+Trainingszeit: 0.3s
+MAE: 96.83 | RMSE: 134.36 | R²: 0.6853
+
+Trainiere Modell 2/10: 050_Brunnen_Mositunnel_R2_v5
+LR: 0.01, Epochen: 200
+Finale Loss: 0.34
+Trainingszeit: 0.2s
+MAE: 101.31 | RMSE: 142.33 | R²: 0.6109
+
+Trainiere Modell 3/10: 171_Sattel_R1_v5
+LR: 0.01, Epochen: 200
+Finale Loss: 0.33
+Trainingszeit: 0.2s
+MAE: 75.29 | RMSE: 101.73 | R²: 0.6015
+
+Trainiere Modell 4/10: 171_Sattel_R2_v5
+LR: 0.01, Epochen: 200
+Finale Loss: 0.30
+Trainingszeit: 0.2s
+MAE: 75.49 | RMSE: 101.24 | R²: 0.6295
+
+Trainiere Modell 5/10: 216_Wangen_SZ_R1_v5
+LR: 0.01, Epochen: 200
+Finale Loss: 0.33
+Trainingszeit: 0.3s
+MAE: 263.10 | RMSE: 381.44 | R²: 0.6982
+
+Trainiere Modell 6/10: 216_Wangen_SZ_R2_v5
+LR: 0.01, Epochen: 200
+Finale Loss: 0.43
+Trainingszeit: 0.3s
+MAE: 304.42 | RMSE: 449.43 | R²: 0.5709
+
+Trainiere Modell 7/10: 299_Wollerau_Blatttunnel_R1_v5
+LR: 0.01, Epochen: 200
+Finale Loss: 0.28
+Trainingszeit: 0.2s
+MAE: 300.47 | RMSE: 399.80 | R²: 0.7512
+
+Trainiere Modell 8/10: 299_Wollerau_Blatttunnel_R2_v5
+LR: 0.01, Epochen: 200
+Finale Loss: 0.45
+Trainingszeit: 0.3s
+MAE: 369.64 | RMSE: 509.44 | R²: 0.6032
+
+Trainiere Modell 9/10: 720_Schwyz_R1_v5
+LR: 0.01, Epochen: 200
+Finale Loss: 0.27
+Trainingszeit: 0.2s
+MAE: 129.88 | RMSE: 174.94 | R²: 0.7434
+
+Trainiere Modell 10/10: 720_Schwyz_R2_v5
+LR: 0.01, Epochen: 200
+Finale Loss: 0.35
+Trainingszeit: 0.2s
+MAE: 143.43 | RMSE: 198.44 | R²: 0.6454
+
+Alle Modelle trainiert und Ergebnisse gespeichert.
+
+Trainiere Modell 1/10: 050_Brunnen_Mositunnel_R1_v5
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.3169 | Val Loss: 0.3020
+Epoch: 10 | Train Loss: 0.1775 | Val Loss: 0.2024
+Epoch: 20 | Train Loss: 0.1585 | Val Loss: 0.2010
+  Early Stop bei Epoche 23 (bester Val-Loss: 0.177376)
+Trainingszeit: 32.0s
+MAE: 63.66 | RMSE: 99.31 | R²: 0.8281
+
+Trainiere Modell 2/10: 050_Brunnen_Mositunnel_R2_v5
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.3756 | Val Loss: 0.2860
+Epoch: 10 | Train Loss: 0.1775 | Val Loss: 0.1797
+  Early Stop bei Epoche 16 (bester Val-Loss: 0.173302)
+Trainingszeit: 23.2s
+MAE: 58.31 | RMSE: 92.56 | R²: 0.8354
+
+Trainiere Modell 3/10: 171_Sattel_R1_v5
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.3259 | Val Loss: 0.2291
+Epoch: 10 | Train Loss: 0.1224 | Val Loss: 0.0696
+Epoch: 20 | Train Loss: 0.1058 | Val Loss: 0.0750
+  Early Stop bei Epoche 29 (bester Val-Loss: 0.062075)
+Trainingszeit: 24.9s
+MAE: 47.09 | RMSE: 68.84 | R²: 0.8175
+
+Trainiere Modell 4/10: 171_Sattel_R2_v5
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.3032 | Val Loss: 0.2004
+Epoch: 10 | Train Loss: 0.1138 | Val Loss: 0.0531
+Epoch: 20 | Train Loss: 0.0966 | Val Loss: 0.0580
+  Early Stop bei Epoche 20 (bester Val-Loss: 0.053084)
+Trainingszeit: 18.3s
+MAE: 45.79 | RMSE: 69.72 | R²: 0.8243
+
+Trainiere Modell 5/10: 216_Wangen_SZ_R1_v5
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.2776 | Val Loss: 0.2248
+Epoch: 10 | Train Loss: 0.1442 | Val Loss: 0.1558
+Epoch: 20 | Train Loss: 0.1393 | Val Loss: 0.1600
+  Early Stop bei Epoche 28 (bester Val-Loss: 0.147898)
+Trainingszeit: 55.6s
+MAE: 185.46 | RMSE: 269.98 | R²: 0.8488
+
+Trainiere Modell 6/10: 216_Wangen_SZ_R2_v5
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.2965 | Val Loss: 0.2271
+Epoch: 10 | Train Loss: 0.1424 | Val Loss: 0.1530
+  Early Stop bei Epoche 15 (bester Val-Loss: 0.136536)
+Trainingszeit: 34.4s
+MAE: 166.86 | RMSE: 249.74 | R²: 0.8675
+
+Trainiere Modell 7/10: 299_Wollerau_Blatttunnel_R1_v5
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.2163 | Val Loss: 0.1202
+Epoch: 10 | Train Loss: 0.0891 | Val Loss: 0.0591
+Epoch: 20 | Train Loss: 0.0825 | Val Loss: 0.0671
+  Early Stop bei Epoche 21 (bester Val-Loss: 0.058116)
+Trainingszeit: 46.7s
+MAE: 141.95 | RMSE: 205.89 | R²: 0.9340
+
+Trainiere Modell 8/10: 299_Wollerau_Blatttunnel_R2_v5
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.2532 | Val Loss: 0.0936
+Epoch: 10 | Train Loss: 0.0896 | Val Loss: 0.0646
+Epoch: 20 | Train Loss: 0.0815 | Val Loss: 0.0699
+  Early Stop bei Epoche 20 (bester Val-Loss: 0.064588)
+Trainingszeit: 41.1s
+MAE: 140.15 | RMSE: 224.48 | R²: 0.9229
+
+Trainiere Modell 9/10: 720_Schwyz_R1_v5
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.3007 | Val Loss: 0.2693
+Epoch: 10 | Train Loss: 0.1239 | Val Loss: 0.1707
+  Early Stop bei Epoche 15 (bester Val-Loss: 0.166052)
+Trainingszeit: 13.5s
+MAE: 81.27 | RMSE: 115.73 | R²: 0.8877
+
+Trainiere Modell 10/10: 720_Schwyz_R2_v5
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.3383 | Val Loss: 0.3514
+Epoch: 10 | Train Loss: 0.1262 | Val Loss: 0.1865
+  Early Stop bei Epoche 17 (bester Val-Loss: 0.176821)
+Trainingszeit: 15.9s
+MAE: 73.48 | RMSE: 107.26 | R²: 0.8964
+
+Alle Modelle trainiert und Ergebnisse gespeichert.
+
+Trainiere Modell 1/10: 050_Brunnen_Mositunnel_R1_v6
+LR: 0.01, Epochen: 200
+Finale Loss: 0.29
+Trainingszeit: 0.3s
+MAE: 96.81 | RMSE: 133.79 | R²: 0.6869
+
+Trainiere Modell 2/10: 050_Brunnen_Mositunnel_R2_v6
+LR: 0.01, Epochen: 200
+Finale Loss: 0.34
+Trainingszeit: 0.2s
+MAE: 101.82 | RMSE: 142.28 | R²: 0.6085
+
+Trainiere Modell 3/10: 171_Sattel_R1_v6
+LR: 0.01, Epochen: 200
+Finale Loss: 0.33
+Trainingszeit: 0.2s
+MAE: 71.06 | RMSE: 98.16 | R²: 0.6452
+
+Trainiere Modell 4/10: 171_Sattel_R2_v6
+LR: 0.01, Epochen: 200
+Finale Loss: 0.30
+Trainingszeit: 0.2s
+MAE: 71.55 | RMSE: 97.90 | R²: 0.6750
+
+Trainiere Modell 5/10: 216_Wangen_SZ_R1_v6
+LR: 0.01, Epochen: 200
+Finale Loss: 0.32
+Trainingszeit: 0.2s
+MAE: 266.90 | RMSE: 375.72 | R²: 0.7033
+
+Trainiere Modell 6/10: 216_Wangen_SZ_R2_v6
+LR: 0.01, Epochen: 200
+Finale Loss: 0.42
+Trainingszeit: 0.2s
+MAE: 310.97 | RMSE: 442.01 | R²: 0.5780
+
+Trainiere Modell 7/10: 299_Wollerau_Blatttunnel_R1_v6
+LR: 0.01, Epochen: 200
+Finale Loss: 0.28
+Trainingszeit: 0.2s
+MAE: 303.96 | RMSE: 398.15 | R²: 0.7526
+
+Trainiere Modell 8/10: 299_Wollerau_Blatttunnel_R2_v6
+LR: 0.01, Epochen: 200
+Finale Loss: 0.45
+Trainingszeit: 0.2s
+MAE: 373.68 | RMSE: 507.98 | R²: 0.6036
+
+Trainiere Modell 9/10: 720_Schwyz_R1_v6
+LR: 0.01, Epochen: 200
+Finale Loss: 0.27
+Trainingszeit: 0.2s
+MAE: 129.88 | RMSE: 174.94 | R²: 0.7434
+
+Trainiere Modell 10/10: 720_Schwyz_R2_v6
+LR: 0.01, Epochen: 200
+Finale Loss: 0.35
+Trainingszeit: 0.2s
+MAE: 143.43 | RMSE: 198.44 | R²: 0.6454
+
+Alle Modelle trainiert und Ergebnisse gespeichert.
+
+Trainiere Modell 1/10: 050_Brunnen_Mositunnel_R1_v6
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.3057 | Val Loss: 0.3246
+Epoch: 10 | Train Loss: 0.1661 | Val Loss: 0.1953
+  Early Stop bei Epoche 15 (bester Val-Loss: 0.176602)
+Trainingszeit: 17.8s
+MAE: 68.75 | RMSE: 103.15 | R²: 0.8139
+
+Trainiere Modell 2/10: 050_Brunnen_Mositunnel_R2_v6
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.3455 | Val Loss: 0.2987
+Epoch: 10 | Train Loss: 0.1712 | Val Loss: 0.1825
+  Early Stop bei Epoche 17 (bester Val-Loss: 0.181329)
+Trainingszeit: 19.8s
+MAE: 61.71 | RMSE: 95.72 | R²: 0.8228
+
+Trainiere Modell 3/10: 171_Sattel_R1_v6
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.3167 | Val Loss: 0.2601
+Epoch: 10 | Train Loss: 0.1208 | Val Loss: 0.1329
+  Early Stop bei Epoche 15 (bester Val-Loss: 0.123092)
+Trainingszeit: 10.4s
+MAE: 50.18 | RMSE: 72.68 | R²: 0.8055
+
+Trainiere Modell 4/10: 171_Sattel_R2_v6
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.3048 | Val Loss: 0.3244
+Epoch: 10 | Train Loss: 0.1093 | Val Loss: 0.0969
+Epoch: 20 | Train Loss: 0.0944 | Val Loss: 0.0890
+Epoch: 30 | Train Loss: 0.0862 | Val Loss: 0.0891
+  Early Stop bei Epoche 36 (bester Val-Loss: 0.081648)
+Trainingszeit: 23.6s
+MAE: 38.61 | RMSE: 61.20 | R²: 0.8730
+
+Trainiere Modell 5/10: 216_Wangen_SZ_R1_v6
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.2675 | Val Loss: 0.1736
+Epoch: 10 | Train Loss: 0.1309 | Val Loss: 0.1324
+  Early Stop bei Epoche 18 (bester Val-Loss: 0.127585)
+Trainingszeit: 26.5s
+MAE: 145.90 | RMSE: 229.20 | R²: 0.8896
+
+Trainiere Modell 6/10: 216_Wangen_SZ_R2_v6
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.3041 | Val Loss: 0.2046
+Epoch: 10 | Train Loss: 0.1248 | Val Loss: 0.1479
+  Early Stop bei Epoche 13 (bester Val-Loss: 0.135693)
+Trainingszeit: 23.6s
+MAE: 153.99 | RMSE: 244.43 | R²: 0.8709
+
+Trainiere Modell 7/10: 299_Wollerau_Blatttunnel_R1_v6
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.2218 | Val Loss: 0.1328
+Epoch: 10 | Train Loss: 0.0788 | Val Loss: 0.0812
+  Early Stop bei Epoche 15 (bester Val-Loss: 0.077666)
+Trainingszeit: 27.1s
+MAE: 156.78 | RMSE: 223.93 | R²: 0.9217
+
+Trainiere Modell 8/10: 299_Wollerau_Blatttunnel_R2_v6
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.2585 | Val Loss: 0.1115
+Epoch: 10 | Train Loss: 0.0822 | Val Loss: 0.1008
+  Early Stop bei Epoche 12 (bester Val-Loss: 0.075742)
+Trainingszeit: 23.3s
+MAE: 143.49 | RMSE: 229.63 | R²: 0.9190
+
+Trainiere Modell 9/10: 720_Schwyz_R1_v6
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.3026 | Val Loss: 0.2511
+Epoch: 10 | Train Loss: 0.1250 | Val Loss: 0.1741
+  Early Stop bei Epoche 14 (bester Val-Loss: 0.162725)
+Trainingszeit: 12.9s
+MAE: 78.23 | RMSE: 112.93 | R²: 0.8931
+
+Trainiere Modell 10/10: 720_Schwyz_R2_v6
+LR: 0.0003352, Max. Epochen: 500, Batch Size: 128
+Epoch: 0 | Train Loss: 0.3397 | Val Loss: 0.3618
+Epoch: 10 | Train Loss: 0.1254 | Val Loss: 0.1748
+  Early Stop bei Epoche 17 (bester Val-Loss: 0.174137)
+Trainingszeit: 16.0s
+MAE: 73.22 | RMSE: 106.88 | R²: 0.8971
+
+Alle Modelle trainiert und Ergebnisse gespeichert.
+
+Trainiere Modell 1/10: 050_Brunnen_Mositunnel_R1_v7
+LR: 0.01, Epochen: 200
+Finale Loss: 0.29
+Trainingszeit: 0.3s
+MAE: 97.00 | RMSE: 133.88 | R²: 0.6865
+
+Trainiere Modell 2/10: 050_Brunnen_Mositunnel_R2_v7
+LR: 0.01, Epochen: 200
+Finale Loss: 0.34
+Trainingszeit: 0.2s
+MAE: 101.61 | RMSE: 141.86 | R²: 0.6108
+  Hinweis: Fuer 171_Sattel_R1_v7 aus dem Feature-Satz entfernt: ['Year']
+
+Trainiere Modell 3/10: 171_Sattel_R1_v7
+LR: 0.01, Epochen: 200
+Finale Loss: 0.33
+Trainingszeit: 0.2s
+MAE: 68.22 | RMSE: 98.70 | R²: 0.6413
+  Hinweis: Fuer 171_Sattel_R2_v7 aus dem Feature-Satz entfernt: ['Year']
+
+Trainiere Modell 4/10: 171_Sattel_R2_v7
+LR: 0.01, Epochen: 200
+Finale Loss: 0.30
+Trainingszeit: 0.2s
+MAE: 68.36 | RMSE: 98.05 | R²: 0.6740
+
+Trainiere Modell 5/10: 216_Wangen_SZ_R1_v7
+LR: 0.01, Epochen: 200
+Finale Loss: 0.32
+Trainingszeit: 0.2s
+MAE: 266.05 | RMSE: 373.12 | R²: 0.7074
+
+Trainiere Modell 6/10: 216_Wangen_SZ_R2_v7
+LR: 0.01, Epochen: 200
+Finale Loss: 0.42
+Trainingszeit: 0.2s
+MAE: 309.90 | RMSE: 441.12 | R²: 0.5797
+
+Trainiere Modell 7/10: 299_Wollerau_Blatttunnel_R1_v7
+LR: 0.01, Epochen: 200
+Finale Loss: 0.28
+Trainingszeit: 0.2s
+MAE: 303.10 | RMSE: 396.65 | R²: 0.7544
+
+Trainiere Modell 8/10: 299_Wollerau_Blatttunnel_R2_v7
+LR: 0.01, Epochen: 200
+Finale Loss: 0.45
+Trainingszeit: 0.2s
+MAE: 372.80 | RMSE: 506.80 | R²: 0.6055
+
+Trainiere Modell 9/10: 720_Schwyz_R1_v7
+LR: 0.01, Epochen: 200
+Finale Loss: 0.27
+Trainingszeit: 0.2s
+MAE: 130.01 | RMSE: 175.03 | R²: 0.7431
+
+Trainiere Modell 10/10: 720_Schwyz_R2_v7
+LR: 0.01, Epochen: 200
+Finale Loss: 0.34
+Trainingszeit: 0.2s
+MAE: 143.32 | RMSE: 198.35 | R²: 0.6457
+
+Alle Modelle trainiert und Ergebnisse gespeichert.
+
+Trainiere Modell 1/10: 050_Brunnen_Mositunnel_R1_v7
+LR: 0.00024802759479437136, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.4168 | Val Loss: 0.3173
+Epoch: 10 | Train Loss: 0.1568 | Val Loss: 0.1944
+  Early Stop bei Epoche 18 (bester Val-Loss: 0.180046)
+Trainingszeit: 9.1s
+MAE: 65.60 | RMSE: 100.91 | R²: 0.8219
+
+Trainiere Modell 2/10: 050_Brunnen_Mositunnel_R2_v7
+LR: 0.00024802759479437136, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.4448 | Val Loss: 0.3510
+Epoch: 10 | Train Loss: 0.1655 | Val Loss: 0.1911
+Epoch: 20 | Train Loss: 0.1317 | Val Loss: 0.2085
+  Early Stop bei Epoche 21 (bester Val-Loss: 0.188758)
+Trainingszeit: 10.4s
+MAE: 59.91 | RMSE: 93.57 | R²: 0.8307
+  Hinweis: Fuer 171_Sattel_R1_v7 aus dem Feature-Satz entfernt: ['Year']
+
+Trainiere Modell 3/10: 171_Sattel_R1_v7
+LR: 0.00024802759479437136, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.6066 | Val Loss: 0.3940
+Epoch: 10 | Train Loss: 0.1366 | Val Loss: 0.0993
+Epoch: 20 | Train Loss: 0.1081 | Val Loss: 0.0870
+Epoch: 30 | Train Loss: 0.0938 | Val Loss: 0.0865
+Epoch: 40 | Train Loss: 0.0912 | Val Loss: 0.0856
+  Early Stop bei Epoche 44 (bester Val-Loss: 0.078412)
+Trainingszeit: 13.8s
+MAE: 31.96 | RMSE: 48.03 | R²: 0.9151
+  Hinweis: Fuer 171_Sattel_R2_v7 aus dem Feature-Satz entfernt: ['Year']
+
+Trainiere Modell 4/10: 171_Sattel_R2_v7
+LR: 0.00024802759479437136, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.5895 | Val Loss: 0.3650
+Epoch: 10 | Train Loss: 0.1285 | Val Loss: 0.0844
+Epoch: 20 | Train Loss: 0.1016 | Val Loss: 0.0791
+  Early Stop bei Epoche 27 (bester Val-Loss: 0.071756)
+Trainingszeit: 9.0s
+MAE: 30.99 | RMSE: 47.47 | R²: 0.9236
+
+Trainiere Modell 5/10: 216_Wangen_SZ_R1_v7
+LR: 0.00024802759479437136, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.3866 | Val Loss: 0.2894
+Epoch: 10 | Train Loss: 0.1278 | Val Loss: 0.1255
+Epoch: 20 | Train Loss: 0.1139 | Val Loss: 0.1213
+Epoch: 30 | Train Loss: 0.1096 | Val Loss: 0.1265
+Epoch: 40 | Train Loss: 0.1037 | Val Loss: 0.1369
+  Early Stop bei Epoche 41 (bester Val-Loss: 0.119585)
+Trainingszeit: 28.0s
+MAE: 145.03 | RMSE: 229.23 | R²: 0.8895
+
+Trainiere Modell 6/10: 216_Wangen_SZ_R2_v7
+LR: 0.00024802759479437136, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.4235 | Val Loss: 0.3048
+Epoch: 10 | Train Loss: 0.1189 | Val Loss: 0.1236
+Epoch: 20 | Train Loss: 0.1052 | Val Loss: 0.1221
+Epoch: 30 | Train Loss: 0.0996 | Val Loss: 0.1173
+  Early Stop bei Epoche 38 (bester Val-Loss: 0.117122)
+Trainingszeit: 27.3s
+MAE: 144.87 | RMSE: 223.81 | R²: 0.8918
+
+Trainiere Modell 7/10: 299_Wollerau_Blatttunnel_R1_v7
+LR: 0.00024802759479437136, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.3311 | Val Loss: 0.2045
+Epoch: 10 | Train Loss: 0.0719 | Val Loss: 0.0543
+Epoch: 20 | Train Loss: 0.0627 | Val Loss: 0.0529
+Epoch: 30 | Train Loss: 0.0627 | Val Loss: 0.0556
+  Early Stop bei Epoche 32 (bester Val-Loss: 0.050130)
+Trainingszeit: 22.0s
+MAE: 126.10 | RMSE: 183.88 | R²: 0.9472
+
+Trainiere Modell 8/10: 299_Wollerau_Blatttunnel_R2_v7
+LR: 0.00024802759479437136, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.4010 | Val Loss: 0.2050
+Epoch: 10 | Train Loss: 0.0713 | Val Loss: 0.0500
+Epoch: 20 | Train Loss: 0.0608 | Val Loss: 0.0513
+Epoch: 30 | Train Loss: 0.0597 | Val Loss: 0.0487
+  Early Stop bei Epoche 33 (bester Val-Loss: 0.046581)
+Trainingszeit: 23.7s
+MAE: 106.69 | RMSE: 177.75 | R²: 0.9515
+
+Trainiere Modell 9/10: 720_Schwyz_R1_v7
+LR: 0.00024802759479437136, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.4415 | Val Loss: 0.3524
+Epoch: 10 | Train Loss: 0.1231 | Val Loss: 0.1573
+Epoch: 20 | Train Loss: 0.0982 | Val Loss: 0.1479
+Epoch: 30 | Train Loss: 0.0882 | Val Loss: 0.1475
+Epoch: 40 | Train Loss: 0.0876 | Val Loss: 0.1480
+  Early Stop bei Epoche 43 (bester Val-Loss: 0.140978)
+Trainingszeit: 17.1s
+MAE: 80.03 | RMSE: 116.65 | R²: 0.8859
+
+Trainiere Modell 10/10: 720_Schwyz_R2_v7
+LR: 0.00024802759479437136, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.4832 | Val Loss: 0.4352
+Epoch: 10 | Train Loss: 0.1348 | Val Loss: 0.1847
+Epoch: 20 | Train Loss: 0.1000 | Val Loss: 0.1729
+  Early Stop bei Epoche 22 (bester Val-Loss: 0.171660)
+Trainingszeit: 7.8s
+MAE: 74.29 | RMSE: 105.41 | R²: 0.8999
+
+Alle Modelle trainiert und Ergebnisse gespeichert.
+
+Trainiere Modell 1/10: 050_Brunnen_Mositunnel_R1_v8
+LR: 0.01, Epochen: 200
+Finale Loss: 0.28
+Trainingszeit: 0.3s
+MAE: 97.89 | RMSE: 136.71 | R²: 0.6730
+
+Trainiere Modell 2/10: 050_Brunnen_Mositunnel_R2_v8
+LR: 0.01, Epochen: 200
+Finale Loss: 0.33
+Trainingszeit: 0.3s
+MAE: 102.55 | RMSE: 143.68 | R²: 0.6008
+  Hinweis: Fuer 171_Sattel_R1_v8 aus dem Feature-Satz entfernt: ['Year']
+
+Trainiere Modell 3/10: 171_Sattel_R1_v8
+LR: 0.01, Epochen: 200
+Finale Loss: 0.33
+Trainingszeit: 0.2s
+MAE: 68.25 | RMSE: 98.74 | R²: 0.6410
+  Hinweis: Fuer 171_Sattel_R2_v8 aus dem Feature-Satz entfernt: ['Year']
+
+Trainiere Modell 4/10: 171_Sattel_R2_v8
+LR: 0.01, Epochen: 200
+Finale Loss: 0.30
+Trainingszeit: 0.3s
+MAE: 68.41 | RMSE: 97.98 | R²: 0.6745
+
+Trainiere Modell 5/10: 216_Wangen_SZ_R1_v8
+LR: 0.01, Epochen: 200
+Finale Loss: 0.31
+Trainingszeit: 0.3s
+MAE: 265.57 | RMSE: 373.78 | R²: 0.7064
+
+Trainiere Modell 6/10: 216_Wangen_SZ_R2_v8
+LR: 0.01, Epochen: 200
+Finale Loss: 0.41
+Trainingszeit: 0.2s
+MAE: 310.97 | RMSE: 442.17 | R²: 0.5777
+
+Trainiere Modell 7/10: 299_Wollerau_Blatttunnel_R1_v8
+LR: 0.01, Epochen: 200
+Finale Loss: 0.27
+Trainingszeit: 0.3s
+MAE: 301.23 | RMSE: 396.81 | R²: 0.7542
+
+Trainiere Modell 8/10: 299_Wollerau_Blatttunnel_R2_v8
+LR: 0.01, Epochen: 200
+Finale Loss: 0.44
+Trainingszeit: 0.2s
+MAE: 372.02 | RMSE: 506.93 | R²: 0.6053
+
+Trainiere Modell 9/10: 720_Schwyz_R1_v8
+LR: 0.01, Epochen: 200
+Finale Loss: 0.26
+Trainingszeit: 0.2s
+MAE: 129.57 | RMSE: 175.76 | R²: 0.7410
+
+Trainiere Modell 10/10: 720_Schwyz_R2_v8
+LR: 0.01, Epochen: 200
+Finale Loss: 0.34
+Trainingszeit: 0.2s
+MAE: 143.02 | RMSE: 198.65 | R²: 0.6446
+
+Alle Modelle trainiert und Ergebnisse gespeichert.
+
+Trainiere Modell 1/10: 050_Brunnen_Mositunnel_R1_v8
+LR: 0.0001811350437176944, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.4658 | Val Loss: 0.3306
+Epoch: 10 | Train Loss: 0.1640 | Val Loss: 0.1805
+Epoch: 20 | Train Loss: 0.1197 | Val Loss: 0.1750
+Epoch: 30 | Train Loss: 0.0991 | Val Loss: 0.1607
+  Early Stop bei Epoche 39 (bester Val-Loss: 0.158835)
+Trainingszeit: 19.6s
+MAE: 62.41 | RMSE: 100.99 | R²: 0.8216
+
+Trainiere Modell 2/10: 050_Brunnen_Mositunnel_R2_v8
+LR: 0.0001811350437176944, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.4895 | Val Loss: 0.3451
+Epoch: 10 | Train Loss: 0.1666 | Val Loss: 0.1930
+Epoch: 20 | Train Loss: 0.1215 | Val Loss: 0.1827
+Epoch: 30 | Train Loss: 0.1017 | Val Loss: 0.1778
+Epoch: 40 | Train Loss: 0.0892 | Val Loss: 0.1737
+Epoch: 50 | Train Loss: 0.0802 | Val Loss: 0.1780
+  Early Stop bei Epoche 51 (bester Val-Loss: 0.173205)
+Trainingszeit: 28.8s
+MAE: 58.38 | RMSE: 93.58 | R²: 0.8307
+  Hinweis: Fuer 171_Sattel_R1_v8 aus dem Feature-Satz entfernt: ['Year']
+
+Trainiere Modell 3/10: 171_Sattel_R1_v8
+LR: 0.0001811350437176944, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.5384 | Val Loss: 0.3514
+Epoch: 10 | Train Loss: 0.1378 | Val Loss: 0.1270
+Epoch: 20 | Train Loss: 0.1065 | Val Loss: 0.1126
+Epoch: 30 | Train Loss: 0.0908 | Val Loss: 0.1023
+Epoch: 40 | Train Loss: 0.0820 | Val Loss: 0.0953
+  Early Stop bei Epoche 45 (bester Val-Loss: 0.091173)
+Trainingszeit: 15.1s
+MAE: 34.53 | RMSE: 48.87 | R²: 0.9120
+  Hinweis: Fuer 171_Sattel_R2_v8 aus dem Feature-Satz entfernt: ['Year']
+
+Trainiere Modell 4/10: 171_Sattel_R2_v8
+LR: 0.0001811350437176944, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.5268 | Val Loss: 0.3456
+Epoch: 10 | Train Loss: 0.1330 | Val Loss: 0.1149
+Epoch: 20 | Train Loss: 0.0968 | Val Loss: 0.0903
+Epoch: 30 | Train Loss: 0.0816 | Val Loss: 0.0736
+Epoch: 40 | Train Loss: 0.0737 | Val Loss: 0.0706
+Epoch: 50 | Train Loss: 0.0660 | Val Loss: 0.0669
+Epoch: 60 | Train Loss: 0.0596 | Val Loss: 0.0665
+Epoch: 70 | Train Loss: 0.0553 | Val Loss: 0.0655
+Epoch: 80 | Train Loss: 0.0507 | Val Loss: 0.0628
+  Early Stop bei Epoche 83 (bester Val-Loss: 0.061739)
+Trainingszeit: 29.3s
+MAE: 31.34 | RMSE: 46.52 | R²: 0.9266
+
+Trainiere Modell 5/10: 216_Wangen_SZ_R1_v8
+LR: 0.0001811350437176944, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.4416 | Val Loss: 0.2850
+Epoch: 10 | Train Loss: 0.1245 | Val Loss: 0.1182
+Epoch: 20 | Train Loss: 0.1018 | Val Loss: 0.1134
+  Early Stop bei Epoche 29 (bester Val-Loss: 0.111811)
+Trainingszeit: 22.0s
+MAE: 147.23 | RMSE: 223.48 | R²: 0.8950
+
+Trainiere Modell 6/10: 216_Wangen_SZ_R2_v8
+LR: 0.0001811350437176944, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.4770 | Val Loss: 0.3258
+Epoch: 10 | Train Loss: 0.1193 | Val Loss: 0.1296
+Epoch: 20 | Train Loss: 0.0972 | Val Loss: 0.1204
+Epoch: 30 | Train Loss: 0.0839 | Val Loss: 0.1159
+  Early Stop bei Epoche 39 (bester Val-Loss: 0.112680)
+Trainingszeit: 26.8s
+MAE: 140.26 | RMSE: 224.68 | R²: 0.8909
+
+Trainiere Modell 7/10: 299_Wollerau_Blatttunnel_R1_v8
+LR: 0.0001811350437176944, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.3879 | Val Loss: 0.2181
+Epoch: 10 | Train Loss: 0.0728 | Val Loss: 0.0550
+Epoch: 20 | Train Loss: 0.0556 | Val Loss: 0.0461
+Epoch: 30 | Train Loss: 0.0466 | Val Loss: 0.0440
+Epoch: 40 | Train Loss: 0.0412 | Val Loss: 0.0446
+Epoch: 50 | Train Loss: 0.0376 | Val Loss: 0.0439
+  Early Stop bei Epoche 54 (bester Val-Loss: 0.041366)
+Trainingszeit: 39.6s
+MAE: 116.32 | RMSE: 177.94 | R²: 0.9506
+
+Trainiere Modell 8/10: 299_Wollerau_Blatttunnel_R2_v8
+LR: 0.0001811350437176944, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.4675 | Val Loss: 0.2476
+Epoch: 10 | Train Loss: 0.0771 | Val Loss: 0.0612
+Epoch: 20 | Train Loss: 0.0559 | Val Loss: 0.0482
+Epoch: 30 | Train Loss: 0.0470 | Val Loss: 0.0443
+Epoch: 40 | Train Loss: 0.0424 | Val Loss: 0.0410
+  Early Stop bei Epoche 44 (bester Val-Loss: 0.040259)
+Trainingszeit: 34.6s
+MAE: 105.62 | RMSE: 170.10 | R²: 0.9556
+
+Trainiere Modell 9/10: 720_Schwyz_R1_v8
+LR: 0.0001811350437176944, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.4918 | Val Loss: 0.3076
+Epoch: 10 | Train Loss: 0.1315 | Val Loss: 0.1524
+Epoch: 20 | Train Loss: 0.1001 | Val Loss: 0.1445
+Epoch: 30 | Train Loss: 0.0830 | Val Loss: 0.1456
+Epoch: 40 | Train Loss: 0.0707 | Val Loss: 0.1345
+Epoch: 50 | Train Loss: 0.0625 | Val Loss: 0.1330
+Epoch: 60 | Train Loss: 0.0565 | Val Loss: 0.1312
+Epoch: 70 | Train Loss: 0.0533 | Val Loss: 0.1268
+Epoch: 80 | Train Loss: 0.0509 | Val Loss: 0.1264
+  Early Stop bei Epoche 88 (bester Val-Loss: 0.121679)
+Trainingszeit: 29.6s
+MAE: 80.96 | RMSE: 117.96 | R²: 0.8833
+
+Trainiere Modell 10/10: 720_Schwyz_R2_v8
+LR: 0.0001811350437176944, Max. Epochen: 500, Batch Size: 512
+Epoch: 0 | Train Loss: 0.5345 | Val Loss: 0.3743
+Epoch: 10 | Train Loss: 0.1436 | Val Loss: 0.2000
+Epoch: 20 | Train Loss: 0.1095 | Val Loss: 0.1808
+Epoch: 30 | Train Loss: 0.0914 | Val Loss: 0.1812
+  Early Stop bei Epoche 31 (bester Val-Loss: 0.176248)
+Trainingszeit: 10.8s
+MAE: 75.84 | RMSE: 107.68 | R²: 0.8956
+
+Alle Modelle trainiert und Ergebnisse gespeichert.
+
+============================================================
+Validierung: 050_Brunnen_Mositunnel_R1_v7
+============================================================
+Epochen gesamt: 19
+Erste 3 Zeilen:
+ epoch    train_mse      val_mse  train_rmse   val_rmse  train_r2   val_r2
+     0 21077.648615 16044.959602  145.181433 126.668700  0.583239 0.706998
+     1 14358.613778 13817.747030  119.827433 117.548913  0.716092 0.747670
+     2 12555.673744 12499.753920  112.052103 111.802298  0.751741 0.771738
+Letzte 3 Zeilen:
+ epoch   train_mse     val_mse  train_rmse  val_rmse  train_r2   val_r2
+    16 6856.168866 9411.368094   82.801986 97.012206  0.864435 0.828136
+    17 6834.378650 9284.390669   82.670301 96.355543  0.864866 0.830455
+    18 6746.746297 9427.486227   82.138580 97.095243  0.866599 0.827842
+
+============================================================
+Validierung: 050_Brunnen_Mositunnel_R2_v7
+============================================================
+Epochen gesamt: 22
+Erste 3 Zeilen:
+ epoch    train_mse      val_mse  train_rmse   val_rmse  train_r2   val_r2
+     0 20319.676363 16033.595771  142.547102 126.623836  0.555212 0.692064
+     1 13834.042250 13724.495667  117.618205 117.151593  0.697179 0.736412
+     2 12004.350851 13057.903469  109.564369 114.271184  0.737230 0.749214
+Letzte 3 Zeilen:
+ epoch   train_mse     val_mse  train_rmse  val_rmse  train_r2   val_r2
+    19 6182.447986 9045.808174   78.628544 95.109454  0.864669 0.826269
+    20 6014.897162 9524.860352   77.555768 97.595391  0.868337 0.817068
+    21 5990.901172 9574.729536   77.400912 97.850547  0.868862 0.816111
+
+============================================================
+Validierung: 171_Sattel_R1_v7
+============================================================
+Epochen gesamt: 45
+Erste 3 Zeilen:
+ epoch    train_mse      val_mse  train_rmse   val_rmse  train_r2   val_r2
+     0 15516.070779 10079.663088  124.563521 100.397525  0.393444 0.615261
+     1  8528.577043  6949.013904   92.350295  83.360746  0.666600 0.734757
+     2  6935.264890  5664.350079   83.278238  75.261877  0.728886 0.783793
+Letzte 3 Zeilen:
+ epoch   train_mse     val_mse  train_rmse  val_rmse  train_r2   val_r2
+    42 2285.314279 2052.710494   47.804961 45.306848  0.910662 0.921648
+    43 2258.546988 2121.592227   47.524173 46.060745  0.911709 0.919019
+    44 2255.993085 2265.678549   47.497296 47.599144  0.911808 0.913519
+
+============================================================
+Validierung: 171_Sattel_R2_v7
+============================================================
+Epochen gesamt: 28
+Erste 3 Zeilen:
+ epoch    train_mse      val_mse  train_rmse   val_rmse  train_r2   val_r2
+     0 16622.127670 10291.214536  128.926831 101.445624  0.410453 0.640307
+     1  9073.251288  7220.748941   95.253616  84.974990  0.678194 0.747625
+     2  7464.386156  5897.193783   86.396679  76.793188  0.735256 0.793885
+Letzte 3 Zeilen:
+ epoch   train_mse     val_mse  train_rmse  val_rmse  train_r2   val_r2
+    25 2585.436660 2162.152980   50.847189 46.498957  0.908301 0.924430
+    26 2629.290117 2108.518450   51.276604 45.918607  0.906745 0.926304
+    27 2517.122105 2237.804334   50.170929 47.305437  0.910724 0.921786
+
+============================================================
+Validierung: 216_Wangen_SZ_R1_v7
+============================================================
+Epochen gesamt: 42
+Erste 3 Zeilen:
+ epoch     train_mse       val_mse  train_rmse   val_rmse  train_r2   val_r2
+     0 172379.165119 129039.651894  415.185700 359.220896  0.613362 0.729956
+     1 110078.166421  97543.443075  331.780298 312.319457  0.753100 0.795869
+     2  89395.659357  79038.685453  298.991069 281.138196  0.799490 0.834594
+Letzte 3 Zeilen:
+ epoch    train_mse      val_mse  train_rmse   val_rmse  train_r2   val_r2
+    39 46787.038242 55086.144712  216.303117 234.704377  0.895059 0.884720
+    40 46244.826376 61013.773339  215.046103 247.009662  0.896275 0.872315
+    41 45988.708839 56914.245301  214.449782 238.567067  0.896850 0.880894
+
+============================================================
+Validierung: 216_Wangen_SZ_R2_v7
+============================================================
+Epochen gesamt: 39
+Erste 3 Zeilen:
+ epoch     train_mse       val_mse  train_rmse   val_rmse  train_r2   val_r2
+     0 185602.137377 133611.750662  430.815665 365.529411  0.576530 0.715204
+     1 110521.879026  95281.647686  332.448310 308.677255  0.747833 0.796905
+     2  86171.351645  77000.363161  293.549573 277.489393  0.803391 0.835872
+Letzte 3 Zeilen:
+ epoch    train_mse      val_mse  train_rmse   val_rmse  train_r2   val_r2
+    36 42813.449672 53416.226601  206.914112 231.119507  0.902317 0.886142
+    37 43275.394579 51605.972253  208.027389 227.169479  0.901263 0.890001
+    38 43259.581153 52704.205804  207.989378 229.573966  0.901299 0.887660
+
+============================================================
+Validierung: 299_Wollerau_Blatttunnel_R1_v7
+============================================================
+Epochen gesamt: 33
+Erste 3 Zeilen:
+ epoch     train_mse       val_mse  train_rmse   val_rmse  train_r2   val_r2
+     0 206242.216361 127348.031465  454.138984 356.858559  0.668851 0.797217
+     1 113464.302829  81052.376602  336.844627 284.696991  0.817818 0.870936
+     2  84935.839473  61494.516179  291.437540 247.980879  0.863624 0.902079
+Letzte 3 Zeilen:
+ epoch    train_mse      val_mse  train_rmse   val_rmse  train_r2   val_r2
+    30 39072.026425 34636.953303  197.666452 186.110057  0.937265 0.944846
+    31 37416.821784 34348.986932  193.434283 185.334797  0.939922 0.945304
+    32 37312.850537 34216.758223  193.165345 184.977724  0.940089 0.945515
+
+============================================================
+Validierung: 299_Wollerau_Blatttunnel_R2_v7
+============================================================
+Epochen gesamt: 34
+Erste 3 Zeilen:
+ epoch     train_mse       val_mse  train_rmse   val_rmse  train_r2   val_r2
+     0 270432.122952 138298.910140  520.030887 371.885614  0.599048 0.785922
+     1 141626.779429  86291.141198  376.333336 293.753538  0.790019 0.866427
+     2 102226.584505  60922.578521  319.728923 246.824996  0.848435 0.905696
+Letzte 3 Zeilen:
+ epoch    train_mse      val_mse  train_rmse   val_rmse  train_r2   val_r2
+    31 38588.720415 35915.135118  196.440119 189.512889  0.942787 0.944406
+    32 40197.748385 36509.398761  200.493761 191.074328  0.940401 0.943486
+    33 39685.827818 34048.437445  199.213021 184.522187  0.941160 0.947295
+
+============================================================
+Validierung: 720_Schwyz_R1_v7
+============================================================
+Epochen gesamt: 44
+Erste 3 Zeilen:
+ epoch    train_mse      val_mse  train_rmse   val_rmse  train_r2   val_r2
+     0 46114.689508 36813.267666  214.743311 191.867839  0.558536 0.661746
+     1 26835.218950 30353.629887  163.814587 174.222932  0.743102 0.721099
+     2 22980.757621 26081.033921  151.594055 161.496235  0.780001 0.760357
+Letzte 3 Zeilen:
+ epoch   train_mse      val_mse  train_rmse   val_rmse  train_r2   val_r2
+    41 8839.783468 15372.921598   94.020123 123.987586  0.915375 0.858748
+    42 8993.419454 15567.596774   94.833641 124.770176  0.913904 0.856959
+    43 8751.932579 14944.543750   93.551764 122.247878  0.916216 0.862684
+
+============================================================
+Validierung: 720_Schwyz_R2_v7
+============================================================
+Epochen gesamt: 23
+Erste 3 Zeilen:
+ epoch    train_mse      val_mse  train_rmse   val_rmse  train_r2   val_r2
+     0 47032.731197 42363.869106  216.870310 205.824851  0.516798 0.602835
+     1 28459.417021 35215.808365  168.699191 187.658755  0.707615 0.669849
+     2 23960.388296 30425.797420  154.791435 174.429921  0.753837 0.714755
+Letzte 3 Zeilen:
+ epoch   train_mse      val_mse  train_rmse   val_rmse  train_r2   val_r2
+    20 9732.846221 16827.610104   98.655189 129.721279  0.900007 0.842240
+    21 9793.265906 17527.323497   98.960931 132.390798  0.899387 0.835680
+    22 9668.281297 16805.808038   98.327419 129.637217  0.900671 0.842444
+Plot gespeichert: results\model_results\mlp_v7\plots\trainingsverlauf\abbildung_trainingsverlauf_v7_050_Brunnen_Mositunnel_R1_v7.png
+Bildunterschrift: Abbildung 1: Kombination der R²- und Verlustkurven des MLP v7-Modells (Station 050_Brunnen_Mositunnel_R1_v7)
+Plot gespeichert: results\model_results\mlp_v7\plots\trainingsverlauf\abbildung_trainingsverlauf_v7_050_Brunnen_Mositunnel_R2_v7.png
+Bildunterschrift: Abbildung 2: Kombination der R²- und Verlustkurven des MLP v7-Modells (Station 050_Brunnen_Mositunnel_R2_v7)
+Plot gespeichert: results\model_results\mlp_v7\plots\trainingsverlauf\abbildung_trainingsverlauf_v7_171_Sattel_R1_v7.png
+Bildunterschrift: Abbildung 3: Kombination der R²- und Verlustkurven des MLP v7-Modells (Station 171_Sattel_R1_v7)
+Plot gespeichert: results\model_results\mlp_v7\plots\trainingsverlauf\abbildung_trainingsverlauf_v7_171_Sattel_R2_v7.png
+Bildunterschrift: Abbildung 4: Kombination der R²- und Verlustkurven des MLP v7-Modells (Station 171_Sattel_R2_v7)
+Plot gespeichert: results\model_results\mlp_v7\plots\trainingsverlauf\abbildung_trainingsverlauf_v7_216_Wangen_SZ_R1_v7.png
+Bildunterschrift: Abbildung 5: Kombination der R²- und Verlustkurven des MLP v7-Modells (Station 216_Wangen_SZ_R1_v7)
+Plot gespeichert: results\model_results\mlp_v7\plots\trainingsverlauf\abbildung_trainingsverlauf_v7_216_Wangen_SZ_R2_v7.png
+Bildunterschrift: Abbildung 6: Kombination der R²- und Verlustkurven des MLP v7-Modells (Station 216_Wangen_SZ_R2_v7)
+Plot gespeichert: results\model_results\mlp_v7\plots\trainingsverlauf\abbildung_trainingsverlauf_v7_299_Wollerau_Blatttunnel_R1_v7.png
+Bildunterschrift: Abbildung 7: Kombination der R²- und Verlustkurven des MLP v7-Modells (Station 299_Wollerau_Blatttunnel_R1_v7)
+Plot gespeichert: results\model_results\mlp_v7\plots\trainingsverlauf\abbildung_trainingsverlauf_v7_299_Wollerau_Blatttunnel_R2_v7.png
+Bildunterschrift: Abbildung 8: Kombination der R²- und Verlustkurven des MLP v7-Modells (Station 299_Wollerau_Blatttunnel_R2_v7)
+Plot gespeichert: results\model_results\mlp_v7\plots\trainingsverlauf\abbildung_trainingsverlauf_v7_720_Schwyz_R1_v7.png
+Bildunterschrift: Abbildung 9: Kombination der R²- und Verlustkurven des MLP v7-Modells (Station 720_Schwyz_R1_v7)
+Plot gespeichert: results\model_results\mlp_v7\plots\trainingsverlauf\abbildung_trainingsverlauf_v7_720_Schwyz_R2_v7.png
+Bildunterschrift: Abbildung 10: Kombination der R²- und Verlustkurven des MLP v7-Modells (Station 720_Schwyz_R2_v7)
+============================================================
+Starte vollstaendige Reproduzierbarkeits-Pipeline...
+============================================================
+
+--- Phase 1: Datenverarbeitung (Rohdaten -> v5_engineered) ---
+
+[1/29] Fuehre aus: split_directions.py ...
+-> split_directions.py erfolgreich beendet.
+
+[2/29] Fuehre aus: transform_hourly.py ...
+-> transform_hourly.py erfolgreich beendet.
+
+[3/29] Fuehre aus: generate_holidays.py ...
+-> generate_holidays.py erfolgreich beendet.
+
+[4/29] Fuehre aus: filter_weather_luzern.py ...
+-> filter_weather_luzern.py erfolgreich beendet.
+
+[5/29] Fuehre aus: filter_weather_waedenswil.py ...
+-> filter_weather_waedenswil.py erfolgreich beendet.
+
+[6/29] Fuehre aus: add_snow_1h.py ...
+-> add_snow_1h.py erfolgreich beendet.
+
+[7/29] Fuehre aus: categorize_weather.py ...
+-> categorize_weather.py erfolgreich beendet.
+
+[8/29] Fuehre aus: drop_snowheight.py ...
+-> drop_snowheight.py erfolgreich beendet.
+
+[9/29] Fuehre aus: merge_datasets.py ...
+-> merge_datasets.py erfolgreich beendet.
+
+[10/29] Fuehre aus: show_gaps.py ...
+-> show_gaps.py erfolgreich beendet.
+
+[11/29] Fuehre aus: clean_merged_data.py ...
+-> clean_merged_data.py erfolgreich beendet.
+
+[12/29] Fuehre aus: add_time_features.py ...
+-> add_time_features.py erfolgreich beendet.
+
+[13/29] Fuehre aus: create_engineered_features.py ...
+-> create_engineered_features.py erfolgreich beendet.
+
+[14/29] Fuehre aus: plot_hourly_averages.py ...
+-> plot_hourly_averages.py erfolgreich beendet.
+
+[15/29] Fuehre aus: create_correlation_matrix_engineered.py ...
+-> create_correlation_matrix_engineered.py erfolgreich beendet.
+
+--- Phase 2: Analyse + Corona-Bereinigung (v6) + v7/v8-Aufbau ---
+
+[16/29] Fuehre aus: dataset_overview.py ...
+-> dataset_overview.py erfolgreich beendet.
+
+[17/29] Fuehre aus: covid_anomaly_analysis.py ...
+-> covid_anomaly_analysis.py erfolgreich beendet.
+
+[18/29] Fuehre aus: build_v6.py ...
+-> build_v6.py erfolgreich beendet.
+
+[19/29] Fuehre aus: build_v7.py ...
+-> build_v7.py erfolgreich beendet.
+
+[20/29] Fuehre aus: build_v8.py ...
+-> build_v8.py erfolgreich beendet.
+
+--- Phase 3: Modelltraining (Lineare Regression & MLP auf v5/v6, MLP auf v7/v8) ---
+
+[21/29] Fuehre aus: models/linear_regression_v5.py ...
+-> models/linear_regression_v5.py erfolgreich beendet.
+
+[22/29] Fuehre aus: models/mlp_v5.py ...
+-> models/mlp_v5.py erfolgreich beendet.
+
+[23/29] Fuehre aus: models/linear_regression_v6.py ...
+-> models/linear_regression_v6.py erfolgreich beendet.
+
+[24/29] Fuehre aus: models/mlp_v6.py ...
+-> models/mlp_v6.py erfolgreich beendet.
+
+[25/29] Fuehre aus: models/linear_regression_v7.py ...
+-> models/linear_regression_v7.py erfolgreich beendet.
+
+[26/29] Fuehre aus: models/mlp_v7.py ...
+-> models/mlp_v7.py erfolgreich beendet.
+
+[27/29] Fuehre aus: models/linear_regression_v8.py ...
+-> models/linear_regression_v8.py erfolgreich beendet.
+
+[28/29] Fuehre aus: models/mlp_v8.py ...
+-> models/mlp_v8.py erfolgreich beendet.
+
+[29/29] Fuehre aus: plot_trainingsverlauf.py ...
+-> plot_trainingsverlauf.py erfolgreich beendet.
+
+============================================================
+Pipeline erfolgreich und fehlerfrei abgeschlossen!
+Alle Datensaetze, Analysen und Modelle wurden reproduziert.
+============================================================

@@ -21,6 +21,7 @@ Die Webapp ermöglicht:
 - **Live-Vorhersage** – MLP und lineare Regression rechnen Prognosen live im Browser (aktuelle Wetterdaten via Open-Meteo, automatische Feiertagserkennung für Kt. Schwyz, manueller Schulferien-Schalter)
 - **Datums-Analyse** – Tagesverlauf eines beliebigen Datums im Testset: Ist-Werte vs. MLP- und LR-Vorhersagen
 - **Feiertags-Analyse** – Zeigt für jeden Schwyzer Feiertag im Testset, wie stark der Verkehr vom Wochentags-Durchschnitt abweicht, wie gut das Modell diesen Tag vorhersagt und welchen isolierten Effekt die Feiertagskodierung hat (Counterfactual: selber Stunden-Vektor mit allen `holiday_*`-Spalten auf 0 vs. dem realen Feiertag)
+- **Schulferien-Analyse** – Analog zur Feiertags-Analyse, aber für die mehrwöchigen Schwyzer Schulferien (Sport-, Frühlings-, Sommer-, Herbst-, Weihnachtsferien): durchschnittliches Tagesprofil je Ferienperiode, Abweichung von normalen Schulwochen, Modellgüte und der isolierte Effekt des Schulferien-Features (Counterfactual mit allen `schoolholiday_*`-Spalten auf 0)
 - **Feature-Sensitivität** – Wie stark verändern Uhrzeit, Temperatur, Niederschlag und Sonnenstunden die Vorhersage (Sweep über den vollen Wertebereich, beide Modelle); Feiertag und Schulferien als Basislinien-Schalter
 - **Ausreisseranalyse** – Durchsucht alle stündlichen Ergebnisse nach grossen Fehlern, Peak-Versagen und Wochentag-Mustern; Export als CSV
 
@@ -135,6 +136,8 @@ Die Webapp nutzt die **v8-Modelle** (MLP + lineare Baseline). Sie liest ausschli
 | `webapp/public/data/weights/{id}_linear.json` | LR-Gewichte als JSON | `export_weights.py` |
 | `webapp/public/data/results/{id}_daily.json` | Stündliche Test-Vorhersagen (actual, pred_mlp, pred_linear) | `export_weights.py` |
 | `webapp/public/data/features/{id}_holidays.json` | Rohe Feature-Vektoren (67 bzw. 66 bei Sattel) aller Feiertags-Stunden im Testset (für Counterfactual) | `export_weights.py` |
+| `webapp/public/data/features/schoolholidays_sz.json` | Gemeinsamer SZ-Schulferien-Kalender als benannte Perioden (`[{name, start, end}]`) | `export_weights.py` |
+| `webapp/public/data/features/{id}_schoolholidays.json` | Counterfactual-Vorhersage (`[{datetime, mlpNo}]`, Modell ohne Schulferien-Flag) je Schulferien-Stunde im Testset | `export_weights.py` |
 
 ## Installation
 
@@ -200,7 +203,7 @@ Das Skript läuft in drei Phasen ab:
 python export_weights.py
 ```
 
-Dieser Schritt ist **nicht** Teil von `run_pipeline.py` und muss nach dem Training separat ausgeführt werden. Er liest die trainierten `.pt`-Gewichte und die Test-Vorhersagen der **v8-Modelle** (`mlp_v8`, `linear_regression_v8`) aus `results/` und schreibt alle für die Webapp nötigen JSON-Dateien nach `webapp/public/data/`. Dabei werden auch die rohen Feature-Vektoren aller Feiertags-Stunden im Testset exportiert (für das Counterfactual in der Feiertags-Analyse-Seite). Die aktive Modellversion ist über die Konstante `VERSION` am Anfang von `export_weights.py` gesteuert.
+Dieser Schritt ist **nicht** Teil von `run_pipeline.py` und muss nach dem Training separat ausgeführt werden. Er liest die trainierten `.pt`-Gewichte und die Test-Vorhersagen der **v8-Modelle** (`mlp_v8`, `linear_regression_v8`) aus `results/` und schreibt alle für die Webapp nötigen JSON-Dateien nach `webapp/public/data/`. Dabei werden auch die rohen Feature-Vektoren aller Feiertags-Stunden (für das Counterfactual der Feiertags-Analyse), der SZ-Schulferien-Kalender und die Schulferien-Counterfactual-Werte (für die Schulferien-Analyse) exportiert. Die aktive Modellversion ist über die Konstante `VERSION` am Anfang von `export_weights.py` gesteuert.
 
 ### Optionales Hyperparameter-Tuning (MLP)
 

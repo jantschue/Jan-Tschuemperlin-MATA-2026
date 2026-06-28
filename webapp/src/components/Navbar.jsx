@@ -6,6 +6,7 @@ const VIEWS = [
   { id: 'vorhersage', label: 'Live-Vorhersage' },
   { id: 'datum', label: 'Datums-Analyse' },
   { id: 'feiertage', label: 'Feiertage' },
+  { id: 'schulferien', label: 'Schulferien' },
   { id: 'sensitivitaet', label: 'Feature-Sensitivität' },
   { id: 'anomalie', label: 'Ausreisseranalyse' }
 ]

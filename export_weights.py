@@ -39,6 +39,10 @@ OUT_WEIGHTS.mkdir(parents=True, exist_ok=True)
 OUT_RESULTS.mkdir(parents=True, exist_ok=True)
 OUT_FEATURES.mkdir(parents=True, exist_ok=True)
 
+# Rohe Schulferien-CSV (alle 26 Kantone, 2015-2026). Quelle der SZ-Schulferien-
+# Perioden für die Schulferien-Analyse-Seite der Webapp.
+SCHULFERIEN_RAW = PROJECT_ROOT / "data" / "holidays" / "raw" / "schulferien_kantone_2015_2026.csv"
+
 # ── Modellklassen aus den vorhandenen Python-Files importieren ──────────────
 sys.path.insert(0, str(PROJECT_ROOT / "models"))
 # noqa: import order – MLP und LinearRegressionModel werden zur Laufzeit gebraucht
@@ -330,6 +334,116 @@ def export_holiday_features(station_id: str) -> int:
     return len(records)
 
 
+def _school_period_name(start: date) -> str:
+    """
+    Benennt eine Schulferien-Periode heuristisch anhand ihres Startdatums
+    (Kanton Schwyz). Die SZ-Schulferien folgen jährlich demselben Muster:
+    Weihnachts-, Sport-, Frühlings-, Sommer- und Herbstferien.
+    """
+    m, d = start.month, start.day
+    if m == 12 or (m == 1 and d <= 15):
+        return "Weihnachtsferien"
+    if m in (1, 2):
+        return "Sportferien"
+    if m in (3, 4, 5):
+        return "Frühlingsferien"
+    if m in (6, 7, 8):
+        return "Sommerferien"
+    return "Herbstferien"
+
+
+def load_sz_school_periods() -> list[dict]:
+    """
+    Liest die SZ-Spalte der rohen Schulferien-CSV und fasst aufeinanderfolgende
+    Tage zu benannten Perioden zusammen. Gibt eine Liste
+    [{name, start, end}] (Datumsstrings YYYY-MM-DD) zurück.
+    """
+    if not SCHULFERIEN_RAW.exists():
+        print(f"  !Schulferien-CSV fehlt: {SCHULFERIEN_RAW} – Schulferien-Kalender übersprungen")
+        return []
+    df = pd.read_csv(SCHULFERIEN_RAW)
+    df["Datum"] = pd.to_datetime(df["Datum"]).dt.date
+    df = df.sort_values("Datum")
+    sz_days = df.loc[df["SZ"] == 1, "Datum"].tolist()
+    if not sz_days:
+        return []
+
+    periods = []
+    start = prev = sz_days[0]
+    for day in sz_days[1:]:
+        if (day - prev).days == 1:
+            prev = day
+            continue
+        periods.append({"name": _school_period_name(start),
+                        "start": start.isoformat(), "end": prev.isoformat()})
+        start = prev = day
+    periods.append({"name": _school_period_name(start),
+                    "start": start.isoformat(), "end": prev.isoformat()})
+    return periods
+
+
+def export_school_schedule() -> int:
+    """Schreibt den SZ-Schulferien-Kalender (benannte Perioden) als gemeinsames JSON."""
+    periods = load_sz_school_periods()
+    (OUT_FEATURES / "schoolholidays_sz.json").write_text(
+        json.dumps(periods), encoding="utf-8"
+    )
+    return len(periods)
+
+
+def export_schoolholiday_features(station_id: str) -> int:
+    """
+    Exportiert die Counterfactual-Vorhersage für jede Test-Set-Stunde, die in den
+    Schwyzer Schulferien liegt (analog zur Feiertags-Analyse). Pro Stunde wird das
+    MLP einmal mit allen `schoolholiday_*`-Spalten auf 0 ("keine Schulferien")
+    ausgewertet; der reale Modellwert (mit Flag) liegt bereits in den daily-results.
+    Speichert [{datetime, mlpNo}] (mlpNo = Vorhersage ohne Schulferien-Flag).
+    """
+    pt_path  = MLP_WEIGHTS_DIR / f"mlp_{station_id}{SUFFIX}.pt"
+    csv_path = DATA_DIR / f"{station_id}{SUFFIX}.csv"
+    if not pt_path.exists() or not csv_path.exists():
+        print(f"  !Schulferien-CF {station_id}: Datei fehlt – übersprungen")
+        return 0
+
+    feature_cols, X_train, y_train, X_test, _, test_index = load_csv_with_split(
+        csv_path, MLP_TRAIN_RATIO, MLP_VAL_RATIO, station_id=station_id
+    )
+    x_scaler, y_scaler = fit_scalers(X_train, y_train)
+
+    if "schoolholiday_SZ" not in feature_cols:
+        print(f"  !Schulferien-CF {station_id}: schoolholiday_SZ fehlt – übersprungen")
+        return 0
+    sz_idx     = feature_cols.index("schoolholiday_SZ")
+    school_idx = [i for i, c in enumerate(feature_cols) if c.startswith("schoolholiday_")]
+
+    model = MLP(len(feature_cols), HIDDEN_DIMS, DROPOUT)
+    model.load_state_dict(torch.load(pt_path, map_location="cpu", weights_only=True))
+    model.eval()
+
+    # Alle Schulferien-Stunden auf einmal (Batch) durch das Modell schicken.
+    mask = X_test[:, sz_idx] == 1
+    rows = np.where(mask)[0]
+    if len(rows) == 0:
+        (OUT_FEATURES / f"{station_id}_schoolholidays.json").write_text("[]", encoding="utf-8")
+        return 0
+
+    X0 = X_test[rows].copy()
+    X0[:, school_idx] = 0.0                      # Counterfactual: keine Schulferien
+    X0_s = x_scaler.transform(X0)
+    with torch.inference_mode():
+        preds_scaled = model(torch.tensor(X0_s, dtype=torch.float32)).numpy()
+    preds = y_scaler.inverse_transform(preds_scaled).flatten()
+
+    records = [{
+        "datetime": test_index[r].strftime("%Y-%m-%dT%H:%M:%S"),
+        "mlpNo":    int(round(max(0.0, float(p)))),
+    } for r, p in zip(rows, preds)]
+
+    out = OUT_FEATURES / f"{station_id}_schoolholidays.json"
+    out.write_text(json.dumps(records), encoding="utf-8")
+    return len(records)
+
+
 def export_daily_results(station_id: str) -> list[dict]:
     """Merged stündliche Test-Vorhersagen MLP + Linear → daily-results JSON."""
     mlp_csv = MLP_PREDS_DIR / f"predictions_{station_id}{SUFFIX}.csv"
@@ -400,6 +514,9 @@ def main():
     station_ids = collect_station_ids()
     print(f"{len(station_ids)} Stationen gefunden.\n")
 
+    n_periods = export_school_schedule()
+    print(f"Schulferien-Kalender (SZ): {n_periods} Perioden\n")
+
     stations_out = []
     for sid in station_ids:
         number, direction_key = parse_station_id(sid)
@@ -414,6 +531,8 @@ def main():
         export_daily_results(sid)
         n_holiday = export_holiday_features(sid)
         print(f"   Feiertags-Stunden exportiert: {n_holiday}")
+        n_school = export_schoolholiday_features(sid)
+        print(f"   Schulferien-Stunden exportiert: {n_school}")
 
         lat, lng = lv95_to_wgs84(meta["E"], meta["N"])
         # R1/R2 minimal versetzen, damit beide Marker auf der Karte sichtbar sind
