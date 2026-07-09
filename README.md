@@ -62,14 +62,15 @@ Die Rohdaten durchlaufen mehrere Verarbeitungsstufen, bevor sie für das Modellt
 
 | Ordner | Inhalt |
 |---|---|
-| `scripts/` | Python-Skripte für die Datenverarbeitung (v1 → v8), die Corona-Bereinigung (v6), den v7/v8-Aufbau, explorative Analysen sowie die Parameter-vs-Performance-Studien (v6, v7, v8) und den Trainingsverlauf-Plot (v7) |
+| `scripts/` | Python-Skripte für die Datenverarbeitung (v1 → v8), die Corona-Bereinigung (v6), den v7/v8-Aufbau, explorative Analysen sowie die Parameter-vs-Performance-Studien (v6, v7, v8), den Trainingsverlauf-Plot (v7) und die Permutations-Wichtigkeit (v8) |
 | `models/` | Trainings-Skripte für die ML-Modelle (Varianten für v5, v6, v7, v8) sowie Optuna-Tuning (v5, v7, v8) |
 | `results/model_results/` | Metriken, Plots und Vorhersage-Vergleiche pro Modell (separat für v5-, v6-, v7- und v8-Varianten) |
-| `results/analysis/` | Output der explorativen Analyse-Skripte (Datensatz-Übersicht, COVID-Anomalie) |
+| `results/analysis/` | Output der explorativen Analyse-Skripte (Datensatz-Übersicht, COVID-Anomalie, Permutations-Wichtigkeit der Merkmalsgruppen) |
 | `results/data_visualizations/` | Diagnostik der Datenpipeline: Korrelationsmatrizen, Tagesverlaufs-Plots und Lücken-Übersicht (`gaps.txt`) |
 | `webapp/` | Interaktive React-Webapp (Vite + Tailwind + Recharts); live unter [tschue.ch](https://tschue.ch) |
 | `Theorie/` | Lokale Erklärungsdateien zu den Modellskripten (Prüfungsvorbereitung; nicht im Repository) |
 | `Tutorials/` | Lernmaterialien, die ich während der Einarbeitung in Python, NumPy, Pandas und PyTorch erstellt habe |
+| `Abbildungen_MATA/` | Abbildungen für die schriftliche Arbeit samt erzeugendem Code (`Code/`) und den fertigen Grafiken (`Abbildungen/`); eigenständige Skripte, nicht Teil von `run_pipeline.py`. Enthält u. a. die Zählstellen-Karte (`Code/plot_zaehlstellen_karte.py`, benötigt `geopandas`/`contextily`, die Kantonsgrenze unter `data/geo/` sowie eine Internetverbindung für die Kartenkacheln von OpenStreetMap/CARTO) |
 
 ### Modell-Skripte
 
@@ -102,6 +103,11 @@ Die Rohdaten durchlaufen mehrere Verarbeitungsstufen, bevor sie für das Modellt
 | `scripts/parameter_vs_performance_v7.py` | Dasselbe für das v7-Modell (importiert Hyperparameter live aus `mlp_v7.py`) | `results/model_results/mlp_v7/analysen/` |
 | `scripts/parameter_vs_performance_v8.py` | Dasselbe für das v8-Modell | `results/model_results/mlp_v8/analysen/` |
 | `scripts/plot_trainingsverlauf.py` | Liest die pro Station von `mlp_v7.py` gespeicherten `training_history_*.csv`-Dateien und plottet je Station eine Kombination aus R²- und Verlustkurve (Trainings-/Validierungswerte) | `results/model_results/mlp_v7/plots/trainingsverlauf/abbildung_trainingsverlauf_v7_<station>.png` |
+| `scripts/permutation_importance.py` | Lädt die trainierten v8-Gewichte (`lr_*.pt`, `mlp_*.pt`), rekonstruiert Split und Skalierung exakt wie in den Trainingsskripten und berechnet die gruppierte Permutations-Wichtigkeit der Merkmalsgruppen (mittlerer R²-Abfall bei Permutation) für lineare Regression und MLP | `results/analysis/feature_importance/` (CSV je Modell + Balkendiagramme, inkl. Vergleich) |
+| `scripts/plot_r2_summary_clean.py` | Aufgeräumtes R²-Balkendiagramm für Kapitel 4.1 direkt aus `linear_regression_v8/metrics/all_metrics.csv` (kein PyTorch nötig): lesbare Stationsnamen, neutrale Einheitsfarbe, y-Bereich 0–0,8, Balkenwerte in Schweizer Schreibweise (Komma) | `results/model_results/linear_regression_v8/summary/r2_summary_clean.png` |
+| `scripts/plot_timeseries_clean.py` | Aufgeräumte Zeitreihe (Kapitel 4.1) der ersten zwei zusammenhängenden Wochen des Testsets für Schwyz R1 aus den v8-LR-Vorhersagen: Messwert (schwarz) vs. Vorhersage (orange) | `results/model_results/linear_regression_v8/summary/timeseries_clean_Schwyz_R1.png` |
+| `scripts/plot_r2_summary_clean_mlp.py` | Wie `plot_r2_summary_clean.py`, aber für das MLP-Hauptmodell aus `mlp_v8/metrics/all_metrics.csv`; y-Bereich bis 1,0 (höhere R²-Werte) | `results/model_results/mlp_v8/summary/r2_summary_clean.png` |
+| `scripts/plot_timeseries_clean_mlp.py` | Wie `plot_timeseries_clean.py`, aber für das MLP (Schwyz R1) aus den v8-MLP-Vorhersagen | `results/model_results/mlp_v8/summary/timeseries_clean_Schwyz_R1.png` |
 
 ### Ergebnisse pro Modell
 
@@ -195,7 +201,7 @@ Das Skript läuft in drei Phasen ab:
 
 **Phase 2 – Analyse + Corona-Bereinigung + v7/v8 (5 Skripte):** `dataset_overview.py` und `covid_anomaly_analysis.py` erzeugen die Diagnostik unter `results/analysis/`; `build_v6.py` schreibt den Corona-bereinigten Datensatz nach `data/v6/`; `build_v7.py` erweitert v6 mit 26 kantonsspezifischen Feiertagsspalten aus der zentralen Feiertags-DB nach `data/v7/`; `build_v8.py` fügt 26 Schulferienspalten hinzu und speichert nach `data/v8/`.
 
-**Phase 3 – Modelltraining (8 Skripte + 1 Plot):** `linear_regression_v5.py` und `mlp_v5.py` trainieren je 10 Modelle auf v5, `linear_regression_v6.py` und `mlp_v6.py` trainieren mit identischen Hyperparametern dieselben Modelle auf v6. `linear_regression_v7.py` und `mlp_v7.py` trainieren Baseline und MLP auf den v7-Daten, `linear_regression_v8.py` und `mlp_v8.py` dieselben auf den v8-Daten. Beide neuen MLPs (v7, v8) nutzen eigene getunte Hyperparameter. Direkt danach liest `scripts/plot_trainingsverlauf.py` die von `mlp_v7.py` erzeugten `training_history/training_history_*.csv`-Dateien ein und erstellt je Station eine R²-/Verlust-Trainingsverlauf-Abbildung unter `plots/trainingsverlauf/`.
+**Phase 3 – Modelltraining (8 Skripte + 6 Analysen/Abbildungen):** `linear_regression_v5.py` und `mlp_v5.py` trainieren je 10 Modelle auf v5, `linear_regression_v6.py` und `mlp_v6.py` trainieren mit identischen Hyperparametern dieselben Modelle auf v6. `linear_regression_v7.py` und `mlp_v7.py` trainieren Baseline und MLP auf den v7-Daten, `linear_regression_v8.py` und `mlp_v8.py` dieselben auf den v8-Daten. Beide neuen MLPs (v7, v8) nutzen eigene getunte Hyperparameter. Direkt danach liest `scripts/plot_trainingsverlauf.py` die von `mlp_v7.py` erzeugten `training_history/training_history_*.csv`-Dateien ein und erstellt je Station eine R²-/Verlust-Trainingsverlauf-Abbildung unter `plots/trainingsverlauf/`. Danach berechnet `scripts/permutation_importance.py` aus den trainierten v8-Gewichten die gruppierte Permutations-Wichtigkeit der Merkmalsgruppen und speichert CSV und Balkendiagramme unter `results/analysis/feature_importance/`. Zum Schluss erzeugen `scripts/plot_r2_summary_clean.py`/`scripts/plot_timeseries_clean.py` (lineare Regression) sowie `scripts/plot_r2_summary_clean_mlp.py`/`scripts/plot_timeseries_clean_mlp.py` (MLP) aus den jeweiligen v8-Metriken bzw. -Vorhersagen die aufgeräumten Abbildungen für Kapitel 4.1 (`r2_summary_clean.png`, `timeseries_clean_Schwyz_R1.png`) unter `results/model_results/linear_regression_v8/summary/` bzw. `results/model_results/mlp_v8/summary/`.
 
 ### Schritt 2: Webapp-Daten exportieren
 

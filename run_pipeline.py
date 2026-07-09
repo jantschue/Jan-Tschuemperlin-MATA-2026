@@ -64,7 +64,9 @@ def main():
         "mlp_v8.py",
     ]
 
-    total_steps = len(data_scripts) + len(analysis_scripts) + len(training_scripts) + 1
+    # +6 Schluss-Skripte: plot_trainingsverlauf, permutation_importance,
+    # plot_r2_summary_clean(+_mlp), plot_timeseries_clean(+_mlp)
+    total_steps = len(data_scripts) + len(analysis_scripts) + len(training_scripts) + 6
     step_counter = 0
 
     def run_step(script_path, label):
@@ -105,6 +107,17 @@ def main():
     # plot_trainingsverlauf.py braucht die training_history_*.csv-Dateien, die
     # mlp_v7.py beim Training erzeugt, daher erst nach Phase 3 ausfuehren.
     run_step(os.path.join(scripts_dir, "plot_trainingsverlauf.py"), "plot_trainingsverlauf.py")
+
+    # permutation_importance.py braucht die trainierten Modellgewichte (lr_*.pt /
+    # mlp_*.pt) aus Phase 3, daher ebenfalls erst am Schluss ausfuehren.
+    run_step(os.path.join(scripts_dir, "permutation_importance.py"), "permutation_importance.py")
+
+    # Aufgeraeumte Abbildungen fuer Kapitel 4.1: lesen nur die bereits in Phase 3
+    # erzeugten Metriken bzw. Vorhersagen der linearen Regression und des MLP (v8).
+    run_step(os.path.join(scripts_dir, "plot_r2_summary_clean.py"), "plot_r2_summary_clean.py")
+    run_step(os.path.join(scripts_dir, "plot_timeseries_clean.py"), "plot_timeseries_clean.py")
+    run_step(os.path.join(scripts_dir, "plot_r2_summary_clean_mlp.py"), "plot_r2_summary_clean_mlp.py")
+    run_step(os.path.join(scripts_dir, "plot_timeseries_clean_mlp.py"), "plot_timeseries_clean_mlp.py")
 
     print("\n" + "=" * 60)
     print("Pipeline erfolgreich und fehlerfrei abgeschlossen!")
