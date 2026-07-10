@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
+# Titeltext der Abbildung (Schweizer Schreibweise, kein Gedankenstrich)
+TITLE = "Suche nach der bestpassenden Regressionsgeraden"
+
 # --- Daten (erfundenes Beispiel) ---
 xs = [15, 18, 20, 22, 28, 30, 32, 35]
 ys = [124.2, 175.5, 171.6, 215.8, 234.2, 278.4, 264.5, 295.8]
@@ -44,6 +47,9 @@ ax.set_axisbelow(True)
 for s in ["top", "right"]:
     ax.spines[s].set_visible(False)
 ax.legend(frameon=False, fontsize=9, loc="upper left")
+
+# Aussagekraeftiger Titel direkt im Plot
+ax.set_title(TITLE, fontsize=12, fontweight="bold", pad=10)
 
 fig.tight_layout()
 

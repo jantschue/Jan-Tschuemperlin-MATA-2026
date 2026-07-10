@@ -250,12 +250,14 @@ def main():
 
         print(f"MAE: {mae:.2f} | RMSE: {rmse:.2f} | R²: {r2:.4f}")
 
-        # In all_metrics anhängen
+        # In all_metrics anhängen (train_seconds = gemessene Trainingszeit dieser
+        # Datenreihe, fuer die Ressourcenverbrauch-Auswertung in Kapitel 4.6)
         metric_dict = {
             'station': name,
             'MAE': mae,
             'RMSE': rmse,
-            'R2': r2
+            'R2': r2,
+            'train_seconds': round(train_duration, 2)
         }
         all_metrics.append(metric_dict)
 

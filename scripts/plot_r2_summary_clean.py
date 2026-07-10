@@ -26,6 +26,9 @@ Y_MIN, Y_MAX   = 0.0, 0.8    # y-Achse startet bei 0
 LABEL_ROTATION = 30          # Drehung der x-Achsenbeschriftungen in Grad
 BAR_DECIMALS   = 2           # Nachkommastellen der Balkenbeschriftung
 
+# Titeltext der Abbildung (Schweizer Schreibweise, kein Gedankenstrich)
+TITLE = "Bestimmtheitsmass R² der linearen Regression je Datenreihe"
+
 # Lesbare Bezeichnungen statt der Dateinamen (Suffix _v8 und Nummern entfernt)
 STATION_LABELS = {
     "050_Brunnen_Mositunnel_R1":  "Brunnen R1",
@@ -63,6 +66,7 @@ def main():
     ax.set_ylim(Y_MIN, Y_MAX)
     ax.set_ylabel("R² (Bestimmtheitsmass)")
     ax.set_xlabel("Datenreihe")
+    ax.set_title(TITLE, fontsize=13, fontweight="bold", pad=12)
     plt.setp(ax.get_xticklabels(), rotation=LABEL_ROTATION, ha="right")
 
     # Balkenwerte im Schweizer Zahlenformat ueber die Balken schreiben

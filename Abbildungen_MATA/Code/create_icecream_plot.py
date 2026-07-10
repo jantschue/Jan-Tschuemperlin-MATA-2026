@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
+# Titeltext der Abbildung (Schweizer Schreibweise, kein Gedankenstrich)
+TITLE = "Lineare Regression am Beispiel Temperatur und Glaceverkauf"
+
 # Verzeichnisse erstellen, falls sie nicht existieren
 os.makedirs("Abbildungen_MATA/Abbildungen", exist_ok=True)
 os.makedirs("Abbildungen_MATA/Code", exist_ok=True)
@@ -52,6 +55,9 @@ ax.spines['right'].set_visible(False)
 
 # Legende
 ax.legend(loc='upper left', fontsize=11, frameon=True, edgecolor='#E0E0E0')
+
+# Aussagekraeftiger Titel direkt im Plot
+ax.set_title(TITLE, fontsize=14, fontweight='bold', pad=12)
 
 plt.tight_layout()
 

@@ -38,8 +38,11 @@ CIRCLE_RADIUS = 0.25
 FONT_SIZE_LABELS = 11
 FONT_SIZE_BOTTOM = 12
 
-# Pfade relativ zum Projektroot
-SAVE_DIR = 'Abbildungen_MATA'
+# Titeltext der Abbildung (Schweizer Schreibweise, kein Gedankenstrich)
+TITLE = 'Aufbau des verwendeten MLP'
+
+# Pfade relativ zum Projektroot (einheitlicher Abbildungsordner)
+SAVE_DIR = os.path.join('Abbildungen_MATA', 'Abbildungen')
 SAVE_PATH = os.path.join(SAVE_DIR, 'mlp_schema.png')
 
 
@@ -120,10 +123,13 @@ def draw_mlp_schema():
     ax.axis('off')
     ax.set_aspect('equal')
 
+    # Aussagekraeftiger Titel direkt im Plot
+    ax.set_title(TITLE, fontsize=16, fontweight='bold', pad=16)
+
     # Layout optimieren und speichern/anzeigen
     plt.tight_layout()
     plt.savefig(SAVE_PATH, dpi=300, bbox_inches='tight', facecolor=COLOR_BG)
-    plt.show()
+    plt.close(fig)
 
 if __name__ == "__main__":
     draw_mlp_schema()

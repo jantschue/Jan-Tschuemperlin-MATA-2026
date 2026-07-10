@@ -17,6 +17,9 @@ LINE_WIDTH_PLOT = 3
 COLOR_LINE = '#1B4F82'      # Dunkelblau
 COLOR_RELU = 'firebrick'    # Rot
 
+# Gesamttitel der Abbildung (Schweizer Schreibweise, kein Gedankenstrich)
+TITLE = "Lineare Aktivierungsfunktion und ReLU im Vergleich"
+
 def generate_activation_plot():
     """
     Erstellt die Abbildung mit zwei Subplots für die lineare und die ReLU-Aktivierungsfunktion
@@ -72,8 +75,11 @@ def generate_activation_plot():
         ax.plot(5.5, 0, ">k", clip_on=False, zorder=4)
         ax.plot(0, 5.5, "^k", clip_on=False, zorder=4)
     
+    # Gesamttitel ueber beide Teilplots (die bestehenden f(x)-Beschriftungen bleiben)
+    fig.suptitle(TITLE, fontsize=16, fontweight="bold")
+
     plt.tight_layout(w_pad=5.0)
-    
+
     # Ordner erstellen und speichern
     output_dir = os.path.join("Abbildungen_MATA", "Abbildungen")
     os.makedirs(output_dir, exist_ok=True)

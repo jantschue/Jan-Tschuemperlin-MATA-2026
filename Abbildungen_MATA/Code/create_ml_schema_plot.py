@@ -2,13 +2,20 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import os
 
-# Create directory if it doesn't exist
-os.makedirs("Abbildungen_MATA", exist_ok=True)
+# Titeltext der Abbildung (Schweizer Schreibweise, kein Gedankenstrich)
+TITLE = "Klassische Programmierung vs. maschinelles Lernen"
+
+# Zielordner der Abbildung (einheitlich mit den uebrigen Abbildungen)
+OUTPUT_DIR = os.path.join("Abbildungen_MATA", "Abbildungen")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 fig, ax = plt.subplots(figsize=(11, 6.5))
 ax.set_xlim(0, 11.5)
 ax.set_ylim(-0.5, 5.5)
 ax.axis('off')
+
+# Aussagekraeftiger Titel direkt im Plot
+ax.set_title(TITLE, fontsize=17, fontweight="bold", pad=16)
 
 # Colors - completely different palette (modern & muted)
 color_rules = "#5D9B9B" # Muted Teal
@@ -80,7 +87,7 @@ draw_arrow(left_x + sb_w + 0.15, y_bot2, box_x - 0.1, y_bot2)
 draw_custom_box(right_x, center_y_bot - sb_h/2, sb_w, sb_h, "Regeln", color_rules, 'white', font_small_box)
 draw_arrow(box_x + box_w + 0.15, center_y_bot, right_x - 0.1, center_y_bot)
 
-# Save high quality formats
-plt.savefig("Abbildungen_MATA/klassische_vs_ml_programmierung.png", dpi=300, bbox_inches='tight')
-plt.savefig("Abbildungen_MATA/klassische_vs_ml_programmierung.pdf", bbox_inches='tight')
-print("Abbildung erfolgreich im Ordner 'Abbildungen_MATA' erstellt!")
+# Save high quality formats (in den Standard-Abbildungsordner)
+plt.savefig(os.path.join(OUTPUT_DIR, "klassische_vs_ml_programmierung.png"), dpi=300, bbox_inches='tight')
+plt.savefig(os.path.join(OUTPUT_DIR, "klassische_vs_ml_programmierung.pdf"), bbox_inches='tight')
+print(f"Abbildung erfolgreich im Ordner '{OUTPUT_DIR}' erstellt!")

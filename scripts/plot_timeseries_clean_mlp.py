@@ -30,6 +30,9 @@ WINDOW_HOURS   = N_WEEKS * HOURS_PER_WEEK   # 336 Stunden = 2 Wochen
 ACTUAL_COLOR = "black"       # Messwert
 PRED_COLOR   = "#DD8452"     # Vorhersage (orange)
 
+# Titeltext der Abbildung (Schweizer Schreibweise, kein Gedankenstrich)
+TITLE = "DNN: Prognose und Messwerte (Schwyz R1, zwei Wochen)"
+
 
 def first_contiguous_window(df: pd.DataFrame, window: int) -> pd.DataFrame:
     """Gibt die ersten `window` Stunden ohne Zeitluecke (1h-Schritte) zurueck."""
@@ -59,6 +62,7 @@ def main():
     ax.plot(window.index, window["predicted_volume"], color=PRED_COLOR,   label="Vorhersage")
     ax.set_xlabel("Datum")
     ax.set_ylabel("Fahrzeuge/h")
+    ax.set_title(TITLE, fontsize=13, fontweight="bold", pad=12)
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
     ax.xaxis.set_major_locator(mdates.DayLocator(interval=2))
     ax.legend()

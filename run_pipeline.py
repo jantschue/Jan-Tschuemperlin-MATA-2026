@@ -49,6 +49,8 @@ def main():
         "build_v6.py",
         "build_v7.py",                   # v6 + 26 Feiertagsspalten -> v7
         "build_v8.py",                   # v7 + 26 Schulferienspalten -> v8
+        "create_correlation_matrix_v8.py",  # aufgeraeumte Korrelationsmatrix auf v8
+        "plot_hourly_averages_clean.py",    # aufgeraeumter Tagesverlauf auf v8
     ]
 
     # Phase 3: Modelltraining (v5 + v6 + v7 + v8)
@@ -64,9 +66,9 @@ def main():
         "mlp_v8.py",
     ]
 
-    # +6 Schluss-Skripte: plot_trainingsverlauf, permutation_importance,
-    # plot_r2_summary_clean(+_mlp), plot_timeseries_clean(+_mlp)
-    total_steps = len(data_scripts) + len(analysis_scripts) + len(training_scripts) + 6
+    # +7 Schluss-Skripte: plot_trainingsverlauf, plot_trainingsverlauf_r2_schwyz_r1,
+    # permutation_importance, plot_r2_summary_clean(+_mlp), plot_timeseries_clean(+_mlp)
+    total_steps = len(data_scripts) + len(analysis_scripts) + len(training_scripts) + 7
     step_counter = 0
 
     def run_step(script_path, label):
@@ -107,6 +109,11 @@ def main():
     # plot_trainingsverlauf.py braucht die training_history_*.csv-Dateien, die
     # mlp_v7.py beim Training erzeugt, daher erst nach Phase 3 ausfuehren.
     run_step(os.path.join(scripts_dir, "plot_trainingsverlauf.py"), "plot_trainingsverlauf.py")
+
+    # Aufgeraeumte R²-Trainingsverlauf-Abbildung fuer Schwyz R1 (Kapitel 4): liest die
+    # von mlp_v8.py erzeugte training_history_720_Schwyz_R1_v8.csv, daher nach Phase 3.
+    run_step(os.path.join(scripts_dir, "plot_trainingsverlauf_r2_schwyz_r1.py"),
+             "plot_trainingsverlauf_r2_schwyz_r1.py")
 
     # permutation_importance.py braucht die trainierten Modellgewichte (lr_*.pt /
     # mlp_*.pt) aus Phase 3, daher ebenfalls erst am Schluss ausfuehren.

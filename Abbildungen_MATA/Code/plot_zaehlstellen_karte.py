@@ -42,6 +42,9 @@ SAVE_DIR = os.path.join(PROJECT_ROOT, "Abbildungen_MATA", "Abbildungen")
 SAVE_PATH_PNG = os.path.join(SAVE_DIR, "zaehlstellen_karte.png")
 SAVE_PATH_PDF = os.path.join(SAVE_DIR, "zaehlstellen_karte.pdf")
 
+# Titeltext der Abbildung (Schweizer Schreibweise, kein Gedankenstrich)
+TITLE = "Lage der fünf Zählstellen im Kanton Schwyz"
+
 # ---------------------------------------------------------
 # Koordinatensysteme
 # ---------------------------------------------------------
@@ -270,6 +273,9 @@ def plot_map(schwyz, stations):
 
     # Aufgeraeumte Achsen
     ax.set_axis_off()
+
+    # Aussagekraeftiger Titel direkt im Plot
+    ax.set_title(TITLE, fontsize=15, fontweight="bold", pad=12)
 
     if SHOW_SCALEBAR:
         draw_scalebar(ax)
