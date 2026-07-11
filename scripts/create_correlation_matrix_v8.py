@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 # Pfade relativ zum Skript-Speicherort festlegen
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 input_dir = os.path.join(base_dir, "data", "v8")
-output_dir = os.path.join(base_dir, "results", "correlation_analysis")
+output_dir = os.path.join(base_dir, "results", "data_visualizations", "correlation_analysis")
 
 # Titeltext der Abbildung (Schweizer Schreibweise, kein Gedankenstrich)
 TITLE = "Korrelationsmatrix der Eingabemerkmale"

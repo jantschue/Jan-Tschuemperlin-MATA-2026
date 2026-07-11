@@ -1,5 +1,5 @@
 """
-"Liest die Feature-Engineered-Datensätze ein, berechnet die Pearson-Korrelationsmatrix über alle numerischen Variablen und visualisiert sie als Heatmap. Die Ergebnisse (CSV und Plot) werden im Ordner 'correlation_analysis_engineered' abgelegt."
+"Liest die Feature-Engineered-Datensätze ein, berechnet die Pearson-Korrelationsmatrix über alle numerischen Variablen und visualisiert sie als Heatmap. Die Ergebnisse (CSV und Plot) werden im Ordner 'results/data_visualizations/correlation_analysis' abgelegt."
 """
 
 import pandas as pd
@@ -11,7 +11,7 @@ import glob
 # Pfade relativ zum Skript-Speicherort festlegen
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 input_dir = os.path.join(base_dir, "data", "v5")
-output_dir = os.path.join(base_dir, "results", "correlation_analysis")
+output_dir = os.path.join(base_dir, "results", "data_visualizations", "correlation_analysis")
 
 def main():
     # Zielordner erstellen, falls nicht vorhanden

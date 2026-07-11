@@ -24,8 +24,8 @@ MLP8 = os.path.join("results", "model_results", "mlp_v8", "summary")
 MLP8_TRAIN = os.path.join(
     "results", "model_results", "mlp_v8", "plots", "trainingsverlauf"
 )
-HOURLY = os.path.join("results", "hourly_plots")
-CORR = os.path.join("results", "correlation_analysis")
+HOURLY = os.path.join("results", "data_visualizations", "hourly_plots")
+CORR = os.path.join("results", "data_visualizations", "correlation_analysis")
 
 # Zuordnung: Abbildungsnummer -> (Quelldatei, sprechender Zielname).
 # Nur die aus Projekt-Skripten erzeugten Abbildungen (eigene Darstellungen);

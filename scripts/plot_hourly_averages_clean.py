@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 # Pfade relativ zum Skript-Speicherort festlegen
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 input_dir = os.path.join(base_dir, "data", "v8")
-output_dir = os.path.join(base_dir, "results", "hourly_plots")
+output_dir = os.path.join(base_dir, "results", "data_visualizations", "hourly_plots")
 
 # Titeltext der Abbildung (Schweizer Schreibweise, kein Gedankenstrich)
 TITLE = "Tagesverlauf von Wetter und Verkehrsvolumen"
