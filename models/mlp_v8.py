@@ -91,19 +91,23 @@ for sub in ["metrics", "model_weights", "plots/loss_curves", "plots/scatter",
 # Dataset-Klasse für den DataLoader (wandelt numpy arrays in torch Tensoren um)
 class VerkehrsDataset(Dataset):
     def __init__(self, X: np.ndarray, y: np.ndarray):
+        """Speichert Features und Zielgrösse als Float32-Tensoren."""
         self.X = torch.tensor(X, dtype=torch.float32)
         self.y = torch.tensor(y, dtype=torch.float32)
 
     def __len__(self) -> int:
+        """Gibt die Anzahl der Datenpunkte zurück."""
         return len(self.X)
 
     def __getitem__(self, idx):
+        """Gibt das Feature-Ziel-Paar an Position idx zurück."""
         return self.X[idx], self.y[idx]
 
 
 # MLP-Modell durch Subclassing von nn.Module
 class MLP(nn.Module):
     def __init__(self, input_dim: int, hidden_dims: list[int], dropout: float):
+        """Baut das Netz Schicht für Schicht aus Linear, BatchNorm, ReLU und Dropout auf."""
         super().__init__()
         layers = []
         in_dim = input_dim
@@ -118,10 +122,12 @@ class MLP(nn.Module):
         self.net = nn.Sequential(*layers)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Vorwärtsdurchlauf durch alle Schichten des Netzes."""
         return self.net(x)
 
 
 def main():
+    """Trainiert ein MLP pro Messstation mit Early Stopping und speichert alle Resultate."""
     all_metrics = []
 
     for i, filename in enumerate(DATASETS):
@@ -212,7 +218,7 @@ def main():
             VerkehrsDataset(X_val_s, y_val_s), batch_size=BATCH_SIZE, shuffle=False
         )
 
-        # Pro Datensatz neue Modellinstanz erstellen
+        # Modell, Verlustfunktion, Optimierer und Lernraten-Scheduler initialisieren
         model     = MLP(len(feature_cols), HIDDEN_DIMS, DROPOUT).to(device)
         loss_fn   = nn.MSELoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
@@ -225,7 +231,7 @@ def main():
         best_weights  = None
         no_improve    = 0
 
-        # Track different values
+        # Verlauf von Loss und R² über alle Epochen festhalten
         epoch_count  = []
         train_losses = []
         val_losses   = []
@@ -237,11 +243,10 @@ def main():
 
         start_time = time.time()
 
-        # 0. Loop through the data
+        # Trainingsschleife über alle Epochen
         for epoch in range(MAX_EPOCHS):
 
-            ### Training
-            # Set the model to training mode
+            # Training
             model.train()
 
             epoch_train_loss = 0.0
@@ -250,19 +255,19 @@ def main():
             for X_batch, y_batch in train_loader:
                 X_batch, y_batch = X_batch.to(device), y_batch.to(device)
 
-                # 1. Forward pass
+                # 1. Vorwärtsdurchlauf: Vorhersage berechnen
                 y_pred = model(X_batch)
 
-                # 2. Calculate the loss
+                # 2. Verlust berechnen
                 loss = loss_fn(y_pred, y_batch)
 
-                # 3. Optimizer zero grad
+                # 3. Gradienten zurücksetzen
                 optimizer.zero_grad()
 
-                # 4. Perform backpropagation on the loss
+                # 4. Rückwärtsdurchlauf: Gradienten berechnen
                 loss.backward()
 
-                # 5. Step the optimizer (gradient descent)
+                # 5. Gewichte aktualisieren (Gradientenabstieg)
                 optimizer.step()
 
                 epoch_train_loss += loss.item() * len(X_batch)
@@ -274,8 +279,8 @@ def main():
                 np.concatenate(train_true_batches), np.concatenate(train_pred_batches)
             )
 
-            ### Validation
-            model.eval()  # turns off dropout and batchnorm training behaviour
+            # Validierung
+            model.eval()  # Dropout und BatchNorm in Auswertungsmodus schalten
             with torch.inference_mode():
                 epoch_val_loss = 0.0
                 val_true_batches = []

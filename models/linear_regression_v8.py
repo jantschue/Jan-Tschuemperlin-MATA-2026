@@ -82,18 +82,21 @@ FEATURE_EXCLUDE = {
 (RESULTS_DIR / "predictions").mkdir(parents=True, exist_ok=True)
 
 
-# Create a linear model by subclassing nn.Module
+# Lineares Regressionsmodell als PyTorch nn.Module
 class LinearRegressionModel(nn.Module):
     def __init__(self, input_dim):
+        """Initialisiert das Modell mit einer einzigen linearen Schicht."""
         super().__init__()
-        # Use nn.Linear() for creating the model parameters / also called: linear transform
+        # nn.Linear erstellt eine vollverknüpfte Schicht mit Gewichten und Bias
         self.linear_layer = nn.Linear(in_features=input_dim, out_features=1)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Vorwärtsdurchlauf: gibt die lineare Transformation der Eingabe zurück."""
         return self.linear_layer(x)
 
 
 def main():
+    """Trainiert ein lineares Regressionsmodell pro Messstation und speichert alle Resultate."""
     all_metrics = []
 
     for i, filename in enumerate(DATASETS):
@@ -167,7 +170,7 @@ def main():
         X_train_scaled = scaler.fit_transform(X_train)
         X_test_scaled = scaler.transform(X_test)
 
-        # NEU: y ebenfalls skalieren
+        # y ebenfalls skalieren (verbessert numerische Stabilität des Trainings)
         y_scaler = StandardScaler()
         y_train_scaled = y_scaler.fit_transform(y_train)
         y_test_scaled = y_scaler.transform(y_test)
@@ -194,33 +197,33 @@ def main():
         loss_values = []
         test_loss_values = []
 
-        # 0. Loop through the data
+        # Trainingsschleife über alle Epochen
         for epoch in range(epochs):
-            # Set the model to training mode
+            # Training
             model.train()
 
-            # 1. Forward pass
+            # 1. Vorwärtsdurchlauf: Vorhersage berechnen
             y_pred = model(X_train_t)
 
-            # 2. Calculate the loss
+            # 2. Verlust berechnen
             loss = loss_fn(y_pred, y_train_t)
 
-            # 3. Optimizer zero grad
+            # 3. Gradienten zurücksetzen
             optimizer.zero_grad()
 
-            # 4. Perform backpropagation on the loss
+            # 4. Rückwärtsdurchlauf: Gradienten berechnen
             loss.backward()
 
-            # 5. Step the optimizer (gradient descent)
+            # 5. Gewichte aktualisieren (Gradientenabstieg)
             optimizer.step()
 
-            ### Testing
+            # Test
             model.eval()
             with torch.inference_mode():
-                # 1. Do the forward pass
+                # Vorhersage auf dem Testset
                 test_pred = model(X_test_t)
 
-                # 2. Calculate the loss
+                # Testverlust berechnen
                 test_loss = loss_fn(test_pred, y_test_t)
 
             if epoch % 10 == 0:
