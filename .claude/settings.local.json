@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\jants\\\\Documents\\\\Developing\\\\MATA Code\\\\Jan-Tschuemperlin-MATA-2026\" -Force)",
+      "Bash(Select-Object Mode, Name)",
+      "PowerShell(head *)",
+      "PowerShell($env:PATH -split ';')",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\jants\\\\AppData\\\\Local\" -Directory | Where-Object { $_.Name -match 'python|conda|miniconda|anaconda' })",
+      "PowerShell(Get-ChildItem \"C:\\\\ProgramData\" -Directory | Where-Object { $_.Name -match 'python|conda|miniconda|anaconda' })",
+      "PowerShell(& \"C:\\\\mata_venv\\\\Scripts\\\\python.exe\" -c \"import torch; import pandas; import sklearn; import matplotlib; import optuna; import holidays; print\\('torch:', torch.__version__\\); print\\('pandas:', pandas.__version__\\); print\\('sklearn:', sklearn.__version__\\); print\\('matplotlib:', matplotlib.__version__\\); print\\('optuna:', optuna.__version__\\)\")",
+      "PowerShell(python -m pip install -r \"H:\\\\Other computers\\\\JanPC\\\\MATA Code\\\\Jan-Tschuemperlin-MATA-2026\\\\requirements.txt\"7)",
+      "Bash(python -c \"import pandas as pd; df = pd.read_csv\\('data/v4_cleaned/050_Brunnen_Mositunnel_R1_merged_gapless.csv'\\); print\\('rows:', len\\(df\\)\\); print\\('first:', df['datetime'].iloc[0]\\); print\\('last:', df['datetime'].iloc[-1]\\); print\\('cols:', list\\(df.columns\\)\\)\")",
+      "Bash(python -c \"import os; os.makedirs\\('src/analysis', exist_ok=True\\); print\\('created'\\)\")",
+      "Bash(python src/analysis/covid_anomaly_analysis.py)",
+      "Bash(python src/analysis/dataset_overview.py)",
+      "Bash(npm --version)",
+      "Bash(xargs -I{} basename {})"
+    ]
+  }
+}

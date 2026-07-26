@@ -1,12 +1,12 @@
 """
-"Überprüft alle zusammengeführten Datensätze ('_v3.csv') auf fehlende Verkehrsdaten (lückenhafte Stunden). Die gefundenen Lücken werden berechnet und in einer Übersichtstextdatei ('gaps.txt') im Ordner 'results' gespeichert."
+"Überprüft alle zusammengeführten Datensätze ('_v3.csv') auf fehlende Verkehrsdaten (lückenhafte Stunden). Die gefundenen Lücken werden berechnet und in einer Übersichtstextdatei ('gaps.txt') im Ordner 'results/data_visualizations' gespeichert."
 """
 
 import pandas as pd
 import os
 
 merged_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'v3')
-results_dir = os.path.join(os.path.dirname(__file__), '..', 'results')
+results_dir = os.path.join(os.path.dirname(__file__), '..', 'results', 'data_visualizations')
 os.makedirs(results_dir, exist_ok=True)
 output_file = os.path.join(results_dir, 'gaps.txt')
 

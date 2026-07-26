@@ -185,9 +185,13 @@ def main():
 
     optuna.logging.set_verbosity(optuna.logging.WARNING)
 
+    # Optuna-Studie samt SQLite-Datenbank im Modell-Ordner ablegen (neben best_params_v8.json),
+    # damit der Projekt-Root sauber bleibt. Ordner vor der Study-Erstellung sicherstellen.
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    storage_url = f"sqlite:///{(RESULTS_DIR / 'optuna_mlp_v8.db').as_posix()}"
     study = optuna.create_study(
         study_name="mlp_v8_tuning",
-        storage="sqlite:///optuna_mlp_v8.db",
+        storage=storage_url,
         load_if_exists=True,
         direction="minimize",
         sampler=optuna.samplers.TPESampler(seed=None),

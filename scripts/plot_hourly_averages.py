@@ -1,5 +1,5 @@
 """
-"Dieses Skript berechnet den durchschnittlichen Verlauf von Temperatur, Sonnenstunden und Verkehrsvolumen über die Stunden des Tages (0-23) für alle Datensätze in 'merged_gapless_time'. Es erstellt Liniendiagramme und speichert diese im Ordner 'hourly_plots'."
+"Dieses Skript berechnet den durchschnittlichen Verlauf von Temperatur, Sonnenstunden und Verkehrsvolumen über die Stunden des Tages (0-23) für alle Datensätze in 'merged_gapless_time'. Es erstellt Liniendiagramme und speichert diese im Ordner 'results/data_visualizations/hourly_plots'."
 """
 
 import pandas as pd
@@ -10,7 +10,7 @@ import glob
 # Definiere Pfade relativ zum Speicherort des Skripts
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 input_dir = os.path.join(base_dir, "data", "v5")
-output_dir = os.path.join(base_dir, "results", "hourly_plots")
+output_dir = os.path.join(base_dir, "results", "data_visualizations", "hourly_plots")
 
 def main():
     # Erstelle den Ausgabeordner, falls er nicht existiert

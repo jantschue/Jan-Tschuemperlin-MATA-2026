@@ -16,17 +16,7 @@ Thumbs.db
 # Jupyter
 .ipynb_checkpoints/
 
-# Claude Code
-.claude/
-.agents/
-skills-lock.json
-CLAUDE.md
+# Pipeline-Logdatei (wird bei jedem Lauf neu erzeugt)
+pipeline_run.log
 
-# Optuna Datenbank
-*.db
 
-# Modell-Weights
-results/model_results/**/model_weights/
-
-# Theorie-Ordner (lokale Erklärungsdateien, nicht im Repo)
-Theorie/
