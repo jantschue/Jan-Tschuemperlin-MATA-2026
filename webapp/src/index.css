@@ -113,6 +113,10 @@ html.theme-transition *::after {
 /* ------------------------------------------------------------------ */
 /* Basis                                                              */
 /* ------------------------------------------------------------------ */
+html {
+  scroll-behavior: smooth;
+}
+
 html,
 body,
 #root {
@@ -312,7 +316,7 @@ input[type='number'] {
   font-family: 'Geist', sans-serif;
   font-size: 0.9rem;
   border-radius: var(--radius-sm);
-  color-scheme: dark;
+  /* color-scheme wird von :root geerbt (dark/light je nach Theme) */
   transition: border-color 160ms var(--ease-out),
     background-color 160ms var(--ease-out);
 }

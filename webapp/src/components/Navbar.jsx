@@ -37,14 +37,14 @@ export default function Navbar({
         </a>
 
         {/* Desktop-Navigation */}
-        <nav className="hidden md:flex items-center gap-0">
+        <nav className="hidden lg:flex items-center gap-0">
           {VIEWS.map((v) => {
             const active = view === v.id
             return (
               <button
                 key={v.id}
                 onClick={() => onChangeView(v.id)}
-                className={`relative px-2 py-1.5 text-[0.78rem] rounded-sm transition-colors whitespace-nowrap ${
+                className={`relative px-2.5 py-1.5 text-[0.78rem] rounded-sm transition-colors whitespace-nowrap active:translate-y-px ${
                   active
                     ? 'text-[var(--text-primary)]'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
@@ -59,9 +59,9 @@ export default function Navbar({
           })}
         </nav>
 
-        {/* Mobile-Navigation */}
+        {/* Mobile/Tablet-Navigation */}
         <select
-          className="md:hidden flex-1"
+          className="lg:hidden flex-1"
           value={view}
           onChange={(e) => onChangeView(e.target.value)}
         >
@@ -73,13 +73,13 @@ export default function Navbar({
         </select>
 
         {/* Rechter Bereich: Stations-Picker + Theme-Schalter */}
-        <div className="ml-auto flex items-center gap-3 shrink-0">
-          <div className="flex items-center gap-2.5">
+        <div className="ml-auto flex items-center gap-2.5 shrink-0">
+          <div className="flex items-center gap-2">
             <span className="hidden xl:inline eyebrow">Station</span>
             <select
               value={selectedStationId || ''}
               onChange={(e) => onChangeStation(e.target.value)}
-              className="w-[152px] xl:min-w-[180px]"
+              className="w-[148px] lg:w-[164px] xl:w-[192px] text-[0.82rem]"
             >
               {stations.map((s) => (
                 <option key={s.id} value={s.id}>

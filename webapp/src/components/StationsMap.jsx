@@ -124,7 +124,7 @@ export default function StationsMap({ stations, selectedStationId, onSelectStati
 
         <div
           className="card overflow-hidden"
-          style={{ height: 'min(60vh, 540px)', minHeight: 380 }}
+          style={{ height: 'min(60vh, 540px)', minHeight: 380, isolation: 'isolate' }}
         >
           <MapContainer
             bounds={bounds || undefined}

@@ -661,7 +661,7 @@ export default function AnomalieExplorer({ stations, onGoToDatum }) {
             className="w-full py-2.5 rounded-sm text-sm font-medium transition-opacity"
             style={{
               background: 'var(--accent)',
-              color: '#0c0c0d',
+              color: 'var(--bg-base)',
               opacity: allData.length ? 1 : 0.45,
               cursor: allData.length ? 'pointer' : 'not-allowed'
             }}
@@ -768,7 +768,10 @@ export default function AnomalieExplorer({ stations, onGoToDatum }) {
           {/* Leerzustand vor erster Suche */}
           {results === null && (
             <div className="card p-14 text-center text-[var(--text-muted)]">
-              <div className="text-[2rem] mb-3 opacity-20 font-mono">⌕</div>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-4 opacity-25" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
               <p className="text-sm">Wähle Filter und klicke «Suchen», um Treffer anzuzeigen.</p>
             </div>
           )}

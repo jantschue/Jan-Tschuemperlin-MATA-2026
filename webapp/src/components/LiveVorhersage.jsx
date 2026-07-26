@@ -419,7 +419,8 @@ export default function LiveVorhersage({ station, onGoToMap }) {
                     {dayPredictions.map((entry, i) => (
                       <Cell
                         key={`mlp-${i}`}
-                        fill={entry.hour === inputs.hour ? '#6c8ff5' : 'rgba(108,143,245,0.32)'}
+                        fill="var(--accent)"
+                        fillOpacity={entry.hour === inputs.hour ? 1 : 0.28}
                       />
                     ))}
                   </Bar>
@@ -427,7 +428,8 @@ export default function LiveVorhersage({ station, onGoToMap }) {
                     {dayPredictions.map((entry, i) => (
                       <Cell
                         key={`lr-${i}`}
-                        fill={entry.hour === inputs.hour ? '#d4a86a' : 'rgba(212,168,106,0.32)'}
+                        fill="var(--lr-color)"
+                        fillOpacity={entry.hour === inputs.hour ? 1 : 0.28}
                       />
                     ))}
                   </Bar>
