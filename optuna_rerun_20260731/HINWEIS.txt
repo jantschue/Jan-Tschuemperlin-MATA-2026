@@ -1,0 +1,45 @@
+HINWEIS – Zweck dieses Ordners (optuna_rerun_20260731/)
+========================================================
+
+Dieser isolierte Re-Run dient AUSSCHLIESSLICH der Dokumentation von
+  - Tuning-DAUER (Wanduhr), und
+  - Ressourcen-AUSLASTUNG (CPU / RAM / GPU)
+des Optuna-Hyperparameter-Tunings für das MLP-v8-Modell.
+
+WICHTIG – Architektur bleibt unverändert
+-----------------------------------------
+Die für die Maturaarbeit gültige Architektur ist und bleibt die ursprüngliche aus
+    results/model_results/mlp_v8/best_params_v8.json
+        HIDDEN_DIMS   = [512, 256, 256, 128]
+        DROPOUT       = 0.2826
+        LEARNING_RATE = 0.0001811
+        WEIGHT_DECAY  = 0.0004191
+        BATCH_SIZE    = 512
+
+Der Sampler nutzt (wie im Original) seed=None, die Hyperparameter-Suche ist damit
+NICHT-DETERMINISTISCH. Die in best_params_v8_rerun.json genannte "beste" Architektur
+dieses Re-Runs weicht deshalb erwartungsgemäss ab (z. B. [128, 32, 512, 512]) und ist
+NUR ein Nebenprodukt der Messung. Sie darf die Architektur der Arbeit NICHT ersetzen.
+
+Der Grund: Eine Optuna-Suche lässt sich nicht dazu zwingen, eine bereits früher
+gefundene Architektur erneut auszugeben. Auch ein fester Seed würde nur eine andere
+feste Architektur liefern, nicht [512, 256, 256, 128]. Die Güte ist ohnehin nahezu
+gleich – die Verlust-Landschaft ist flach, viele Architekturen sind praktisch
+gleichwertig.
+
+Dokumentierte Messwerte dieses Re-Runs
+--------------------------------------
+Die konkreten Zahlen (Dauer, Trials, Auslastung) werden vom Skript bei jedem Lauf neu
+erzeugt und stehen in:
+  - tuning_dauer.txt      (Dauer in Sekunden und h:min:s, Trial-Zahlen)
+  - best_params_v8_rerun.json  (Felder "tuning_seconds"/"tuning_hms", "resource_usage")
+  - resource_summary.txt  (CPU/RAM/GPU: Ø / Max / Min)
+  - resource_usage.csv    (Rohdaten je Messung, alle 2 s)
+
+Bitte immer diese Dateien als Quelle verwenden. Frühere Läufe ergaben eine Dauer in
+der Grössenordnung von rund 30–38 min für 150 Trials; der genaue Wert schwankt von
+Lauf zu Lauf, weil der Sampler seed=None nutzt (andere Konfigurationen -> anderer
+Rechenaufwand und anderes Pruning).
+
+Diese Dauer- und Auslastungswerte gelten für den Tuning-PROZESS (150 Trials) und sind
+unabhängig davon, welcher Trial gewinnt.

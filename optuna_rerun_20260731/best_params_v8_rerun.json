@@ -1,0 +1,58 @@
+{
+    "HIDDEN_DIMS": [
+        256,
+        512,
+        512,
+        32
+    ],
+    "DROPOUT": 0.2836904468724817,
+    "LEARNING_RATE": 0.00011780160214508201,
+    "WEIGHT_DECAY": 0.002931268166983794,
+    "BATCH_SIZE": 512,
+    "best_val_loss": 0.15264939070270772,
+    "trial_number": 98,
+    "n_trials_completed": 88,
+    "n_trials_pruned": 62,
+    "raw_params": {
+        "n_layers": 4,
+        "n_units_l0": 256,
+        "n_units_l1": 512,
+        "n_units_l2": 512,
+        "n_units_l3": 32,
+        "dropout": 0.2836904468724817,
+        "lr": 0.00011780160214508201,
+        "weight_decay": 0.002931268166983794,
+        "batch_size": 512
+    },
+    "tuning_seconds": 1923.0,
+    "tuning_hms": "0h 32min 3s",
+    "resource_usage": {
+        "n_samples": 936,
+        "interval_seconds": 2.0,
+        "cpu_percent": {
+            "avg": 19.8,
+            "max": 43.7,
+            "min": 0.0
+        },
+        "ram_percent": {
+            "avg": 48.4,
+            "max": 51.1,
+            "min": 47.8
+        },
+        "ram_used_gb": {
+            "avg": 15.4,
+            "max": 16.3,
+            "min": 15.2
+        },
+        "gpu_util_percent": {
+            "avg": 36.5,
+            "max": 70.0,
+            "min": 9.0
+        },
+        "gpu_mem_used_mb": {
+            "avg": 1551.2,
+            "max": 1566.0,
+            "min": 1514.0
+        }
+    }
+}

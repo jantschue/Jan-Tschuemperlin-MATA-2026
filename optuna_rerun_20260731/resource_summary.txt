@@ -1,0 +1,10 @@
+Ressourcen-Auslastung während des Tunings
+(Abtastung alle 2s, 936 Messungen)
+
+CPU-Auslastung : Ø 19.8 %  |  Max 43.7 %  |  Min 0.0 %
+RAM-Auslastung : Ø 48.4 %  |  Max 51.1 %  |  Min 47.8 %
+RAM belegt     : Ø 15.4 GB  |  Max 16.3 GB  |  Min 15.2 GB
+GPU-Auslastung : Ø 36.5 %  |  Max 70.0 %  |  Min 9.0 %
+GPU-Speicher   : Ø 1551.2 MiB  |  Max 1566.0 MiB  |  Min 1514.0 MiB
+
+Rohdaten je Messung: resource_usage.csv

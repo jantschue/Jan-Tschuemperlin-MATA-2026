@@ -1,0 +1,4 @@
+Tuning-Dauer (Wanduhr): 1923.0 s
+Tuning-Dauer (h:min:s): 0h 32min 3s
+Abgeschlossene Trials: 88
+Geprunte Trials: 62
