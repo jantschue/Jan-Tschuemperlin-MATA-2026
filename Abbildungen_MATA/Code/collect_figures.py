@@ -46,11 +46,11 @@ FIGURES = [
     (16, os.path.join(MLP8, "timeseries_clean_Schwyz_R1.png"), "prognose_dnn_SchwyzR1"),
     (17, os.path.join(MLP8_TRAIN, "trainingsverlauf_r2_720_Schwyz_R1_v8.png"), "trainingsverlauf_dnn_SchwyzR1"),
     (18, os.path.join(ABB, "abbildung_prognose_vs_messwert_r1_v8.png"), "prognose_vs_messwert_raster_R1"),
-    (19, os.path.join(ABB, "abbildung_r2_vergleich_lr_dnn_v8.png"), "r2_vergleich_lr_dnn"),
-    (20, os.path.join(ABB, "abbildung_permutation_importance_v8.png"), "permutation_importance"),
-    (21, os.path.join(ABB, "abbildung_r2_veraenderung_corona_v8.png"), "r2_veraenderung_corona"),
-    (22, os.path.join(ABB, "abbildung_trainingszeit_lr_dnn_v8.png"), "trainingszeit_lr_dnn"),
-    (23, os.path.join(ABB, "abbildung_genauigkeit_vs_aufwand_v8.png"), "genauigkeit_vs_aufwand"),
+    (19, os.path.join(ABB, "abbildung_permutation_importance_v8.png"), "permutation_importance"),
+    (20, os.path.join(ABB, "abbildung_r2_veraenderung_corona_v8.png"), "r2_veraenderung_corona"),
+    (21, os.path.join(ABB, "abbildung_trainingszeit_lr_dnn_v8.png"), "trainingszeit_lr_dnn"),
+    (22, os.path.join(ABB, "abbildung_fehler_werktag_wochenende_v8.png"), "fehler_werktag_wochenende"),
+    (23, os.path.join(ABB, "abbildung_fehler_normaltag_ferientag_v8.png"), "fehler_normaltag_ferientag"),
 ]
 
 
