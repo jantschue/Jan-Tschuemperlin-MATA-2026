@@ -228,7 +228,7 @@ def main():
             "val_pct": round(len(X_val) / len(df) * 100, 2),
             "test_samples": len(X_test),
             "test_pct": round(len(X_test) / len(df) * 100, 2),
-            "split_type": "chronological 70/15/15",
+            "split_type": "chronological 70/10/20",
             "date_range_train": {"start": str(train_idx[0]), "end": str(train_idx[-1])},
             "date_range_val":   {"start": str(val_idx[0]),   "end": str(val_idx[-1])},
             "date_range_test":  {"start": str(test_idx[0]),  "end": str(test_idx[-1])},

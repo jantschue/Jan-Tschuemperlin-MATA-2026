@@ -19,4 +19,5 @@ Thumbs.db
 # Pipeline-Logdatei (wird bei jedem Lauf neu erzeugt)
 pipeline_run.log
 
-
+# Claude-Code-Skill-Verknuepfungen (Junctions auf .agents/skills/, dort versioniert)
+.claude/skills/

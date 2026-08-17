@@ -1,6 +1,6 @@
 # Theorie-Ordner: Zeilengenaue Erklärungen der Modellskripte
 
-Dieser Ordner enthält didaktische Erklärungsdateien zu den Modellskripten des Projekts. Er ist für die Prüfungsvorbereitung gedacht und nicht Teil des produktiven Codes. Der Ordner ist in `.gitignore` eingetragen und wird nicht ins Repository commitet.
+Dieser Ordner enthält didaktische Erklärungsdateien zu den Modellskripten des Projekts. Er ist für die Prüfungsvorbereitung gedacht und nicht Teil des produktiven Codes.
 
 ---
 

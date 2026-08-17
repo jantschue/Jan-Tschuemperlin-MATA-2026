@@ -6,7 +6,7 @@
     "val_pct": 10.0,
     "test_samples": 17813,
     "test_pct": 20.0,
-    "split_type": "chronological 70/15/15",
+    "split_type": "chronological 70/10/20",
     "date_range_train": {
         "start": "2015-01-01 00:00:00",
         "end": "2022-12-13 15:00:00"
