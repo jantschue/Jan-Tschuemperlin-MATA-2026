@@ -139,7 +139,7 @@ def main():
 
         feature_cols = [c for c in FEATURES if c in df.columns]
 
-        # Stationsspezifische Ausnahmen anwenden (z.B. Year bei Sattel R1 entfernen)
+        # Stationsspezifische Ausnahmen anwenden (z.B. Year bei Sattel entfernen)
         excluded = next((cols for key, cols in FEATURE_EXCLUDE.items() if key in name), [])
         if excluded:
             feature_cols = [c for c in feature_cols if c not in excluded]
@@ -166,7 +166,8 @@ def main():
         y_train_s = y_scaler.fit_transform(y_train)
         y_val_s   = y_scaler.transform(y_val)
 
-        # DataLoader erstellen (kein shuffle – Daten sind bereits chronologisch gesplittet)
+        # DataLoader erstellen; bewusst kein Shuffle, damit die Läufe deterministisch
+        # reproduzierbar bleiben (der chronologische Split selbst verlangt das nicht)
         train_loader = DataLoader(
             VerkehrsDataset(X_train_s, y_train_s), batch_size=BATCH_SIZE, shuffle=False
         )
@@ -234,7 +235,7 @@ def main():
         # Zurück in Fahrzeuge/h
         preds = y_scaler.inverse_transform(preds_scaled)
 
-        # Metriken (kein MSE in den Resultaten – nur MAE, RMSE, R²)
+        # Metriken (kein MSE in den Resultaten; nur MAE, RMSE, R²)
         # y_test bleibt original (nicht skaliert) für Metriken
         mae  = mean_absolute_error(y_test, preds)
         rmse = np.sqrt(mean_squared_error(y_test, preds))

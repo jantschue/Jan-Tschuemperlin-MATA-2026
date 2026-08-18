@@ -20,6 +20,10 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 DATA_DIR = Path("data/v8")
 
+# ── Hyperparameter ──────────────────────────────────────────────────────────
+LEARNING_RATE = 0.01
+EPOCHS        = 200
+
 DATASETS = [
     "050_Brunnen_Mositunnel_R1_v8.csv", "050_Brunnen_Mositunnel_R2_v8.csv",
     "171_Sattel_R1_v8.csv", "171_Sattel_R2_v8.csv",
@@ -129,11 +133,10 @@ def main():
 
         model = LinearRegressionModel(input_dim=len(feature_cols)).to(device)
         loss_fn = nn.MSELoss()
-        optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-        epochs = 200
+        optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
         # Trainingsschleife über alle Epochen
-        for epoch in range(epochs):
+        for epoch in range(EPOCHS):
             model.train()
 
             y_pred = model(X_train_t)
@@ -152,7 +155,7 @@ def main():
         # Zurück in Fahrzeuge/h
         preds = y_scaler.inverse_transform(preds_scaled)
 
-        # Metriken (kein MSE in den Resultaten – nur MAE, RMSE, R²)
+        # Metriken (kein MSE in den Resultaten; nur MAE, RMSE, R²)
         # y_test bleibt original (nicht skaliert) für Metriken
         mae = mean_absolute_error(y_test, preds)
         rmse = np.sqrt(mean_squared_error(y_test, preds))

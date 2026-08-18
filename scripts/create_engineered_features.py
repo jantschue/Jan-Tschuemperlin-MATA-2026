@@ -33,6 +33,9 @@ for filename in sorted(os.listdir(input_dir)):
     out_df['Year'] = df['Year']
 
     # 2. Zyklische Zeit-Features (von klein nach gross)
+    # Sinus/Kosinus-Kodierung nach dem Vorgehen im TensorFlow-Tutorial
+    # «Time series forecasting» (Abschnitt Feature Engineering / Time of day signals),
+    # https://www.tensorflow.org/tutorials/structured_data/time_series
     # Stunde (24h)
     out_df['Hour_sin'] = np.sin(2 * np.pi * df['Hour'] / 24)
     out_df['Hour_cos'] = np.cos(2 * np.pi * df['Hour'] / 24)
