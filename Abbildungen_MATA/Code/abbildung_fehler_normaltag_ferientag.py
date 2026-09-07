@@ -1,6 +1,6 @@
 """
 Abb. 23: Relativer Vorhersagefehler des DNN (v8) nach Normal- und Ferientag
-je Zaehlstelle. Ferientag = Schulferien oder Feiertag im Kanton Schwyz
+je Zählstelle. Ferientag = Schulferien oder Feiertag im Kanton Schwyz
 (Flags schoolholiday_SZ / holiday_SZ aus den v8-Daten, ueber den Zeitstempel
 mit den Vorhersagen verbunden). MAE geteilt durch das mittlere Volumen der
 jeweiligen Teilmenge. Datenquelle: results/model_results/mlp_v8/predictions/
@@ -51,7 +51,7 @@ def main():
     ax.set_xticks(x); ax.set_xticklabels(order)
     ax.set_ylabel("Relativer Fehler (MAE / mittleres Volumen) in %")
     ax.set_ylim(0, max(ft) + 3)
-    ax.set_title("Relativer Vorhersagefehler des DNN nach Normal- und Ferientag je Zaehlstelle",
+    ax.set_title("Relativer Vorhersagefehler des DNN nach Normal- und Ferientag je Zählstelle",
                  fontsize=12, fontweight="bold")
     ax.legend(frameon=False, fontsize=9)
     ax.spines[["top", "right"]].set_visible(False)

@@ -1,6 +1,6 @@
 """
 Abb. 22: Relativer Vorhersagefehler des DNN (v8) nach Werktag und Wochenende
-je Zaehlstelle. MAE geteilt durch das mittlere Volumen der jeweiligen Teilmenge,
+je Zählstelle. MAE geteilt durch das mittlere Volumen der jeweiligen Teilmenge,
 damit die Stationen mit unterschiedlichem Verkehrsniveau vergleichbar sind.
 Quelle der Daten: results/model_results/mlp_v8/predictions/ (Testset).
 """
@@ -43,7 +43,7 @@ def main():
     ax.set_xticks(x); ax.set_xticklabels(order)
     ax.set_ylabel("Relativer Fehler (MAE / mittleres Volumen) in %")
     ax.set_ylim(0, max(wk) + 3)
-    ax.set_title("Relativer Vorhersagefehler des DNN nach Werktag und Wochenende je Zaehlstelle",
+    ax.set_title("Relativer Vorhersagefehler des DNN nach Werktag und Wochenende je Zählstelle",
                  fontsize=12, fontweight="bold")
     ax.legend(frameon=False)
     ax.spines[["top", "right"]].set_visible(False)

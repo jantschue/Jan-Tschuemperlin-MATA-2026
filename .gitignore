@@ -21,3 +21,6 @@ pipeline_run.log
 
 # Claude-Code-Skill-Verknuepfungen (Junctions auf .agents/skills/, dort versioniert)
 .claude/skills/
+
+# Interne Notiz zu bekannten Datenluecken (nicht veroeffentlichen)
+data/holidays/BEKANNTE_LUECKEN.md
