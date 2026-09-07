@@ -1,5 +1,5 @@
 """
-Abb. 24: Relativer Vorhersagefehler des DNN (v8) nach Werktag und Wochenende
+Abb. 22: Relativer Vorhersagefehler des DNN (v8) nach Werktag und Wochenende
 je Zaehlstelle. MAE geteilt durch das mittlere Volumen der jeweiligen Teilmenge,
 damit die Stationen mit unterschiedlichem Verkehrsniveau vergleichbar sind.
 Quelle der Daten: results/model_results/mlp_v8/predictions/ (Testset).

@@ -1,5 +1,5 @@
 """
-Abb. 25: Relativer Vorhersagefehler des DNN (v8) nach Normal- und Ferientag
+Abb. 23: Relativer Vorhersagefehler des DNN (v8) nach Normal- und Ferientag
 je Zaehlstelle. Ferientag = Schulferien oder Feiertag im Kanton Schwyz
 (Flags schoolholiday_SZ / holiday_SZ aus den v8-Daten, ueber den Zeitstempel
 mit den Vorhersagen verbunden). MAE geteilt durch das mittlere Volumen der

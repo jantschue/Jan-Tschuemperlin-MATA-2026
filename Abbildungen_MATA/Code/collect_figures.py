@@ -32,8 +32,8 @@ CORR = os.path.join("results", "data_visualizations", "correlation_analysis")
 # die externen Abbildungen 4, 5 und 6 stammen nicht aus dem Repository.
 FIGURES = [
     (1,  os.path.join(ABB, "klassische_vs_ml_programmierung.png"), "klassische_vs_ml_programmierung"),
-    (2,  os.path.join(ABB, "abbildung_2_regression_diagramm.png"), "suche_regressionsgerade"),
-    (3,  os.path.join(ABB, "temperatur_glace_regression.png"), "lineare_regression_glace"),
+    (2,  os.path.join(ABB, "temperatur_glace_regression.png"), "suche_regressionsgerade"),
+    (3,  os.path.join(ABB, "abbildung_2_regression_diagramm.png"), "lineare_regression_glace"),
     (7,  os.path.join(ABB, "abbildung_5_linear_vs_relu.png"), "linear_vs_relu"),
     (8,  os.path.join(ABB, "mlp_schema.png"), "mlp_schema"),
     (9,  os.path.join(HOURLY, "720_Schwyz_R1_v8_hourly_trend_clean.png"), "tagesverlauf_wetter_verkehr_SchwyzR1"),
