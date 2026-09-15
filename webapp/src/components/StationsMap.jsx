@@ -48,11 +48,12 @@ export default function StationsMap({ stations, selectedStationId, onSelectStati
   const [theme] = useTheme()
   const isLight = theme === 'light'
 
-  // Kachel-Layer passend zum Theme: helle CartoDB-Kacheln im Light-Mode,
-  // dunkle im Dark-Mode. Der aktive Marker-Ring wird entsprechend kontrastiert.
-  const tileUrl = isLight
-    ? 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
-    : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+  // Kachel-Layer: die graue Landeskarte von swisstopo. Sie ist Open Government
+  // Data und braucht keinen API-Key (CartoDB verlangt inzwischen einen). Es gibt
+  // nur diese eine Fassung, den Dark-Mode erzeugt index.css durch Invertieren
+  // der Kachel-Ebene.
+  const tileUrl =
+    'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-grau/default/current/3857/{z}/{x}/{y}.jpeg'
   const activeRing = isLight ? '#1b1b18' : '#f0f0f5'
 
   const bounds = useMemo(() => stationsBounds(stations), [stations])
@@ -131,12 +132,15 @@ export default function StationsMap({ stations, selectedStationId, onSelectStati
             center={bounds ? undefined : [47.09, 8.75]}
             zoom={bounds ? undefined : 11}
             scrollWheelZoom
+            minZoom={7}
+            maxZoom={17}
             style={{ height: '100%', width: '100%', background: 'var(--bg-base)' }}
           >
             <TileLayer
-              attribution='&copy; <a href="https://carto.com/">CartoDB</a>'
+              attribution='&copy; <a href="https://www.swisstopo.admin.ch/">swisstopo</a>'
               url={tileUrl}
-              subdomains="abcd"
+              minZoom={7}
+              maxZoom={17}
             />
             {stations.map((s) => {
               const active = s.id === selectedStationId
