@@ -114,6 +114,9 @@ function CustomTooltip({ active, payload, label }) {
 export default function LiveVorhersage({ station, onGoToMap }) {
   const { loading, weights, error } = useModelWeights(station.id)
   const [inputs, setInputs] = useState(todayInputs)
+  // Sichtbarkeit der Modelle im 24-Stunden-Verlauf (mindestens eines bleibt an)
+  const [showMlp, setShowMlp] = useState(true)
+  const [showLr, setShowLr] = useState(true)
 
   // Aktuelles Wetter für Kanton Schwyz (47.02°N, 8.65°E) von Open-Meteo laden
   useEffect(() => {
@@ -393,30 +396,46 @@ export default function LiveVorhersage({ station, onGoToMap }) {
                     cursor={{ fill: 'rgba(255,255,255,0.03)' }}
                     content={<CustomTooltip />}
                   />
-                  <Bar dataKey="MLP" name="MLP" animationDuration={400} radius={[2, 2, 0, 0]}>
-                    {dayPredictions.map((entry, i) => (
-                      <Cell
-                        key={`mlp-${i}`}
-                        fill="var(--accent)"
-                        fillOpacity={entry.hour === inputs.hour ? 1 : 0.28}
-                      />
-                    ))}
-                  </Bar>
-                  <Bar dataKey="LR" name="LR" animationDuration={400} radius={[2, 2, 0, 0]}>
-                    {dayPredictions.map((entry, i) => (
-                      <Cell
-                        key={`lr-${i}`}
-                        fill="var(--lr-color)"
-                        fillOpacity={entry.hour === inputs.hour ? 1 : 0.28}
-                      />
-                    ))}
-                  </Bar>
+                  {showMlp && (
+                    <Bar dataKey="MLP" name="MLP" animationDuration={400} radius={[2, 2, 0, 0]}>
+                      {dayPredictions.map((entry, i) => (
+                        <Cell
+                          key={`mlp-${i}`}
+                          fill="var(--accent)"
+                          fillOpacity={entry.hour === inputs.hour ? 1 : 0.28}
+                        />
+                      ))}
+                    </Bar>
+                  )}
+                  {showLr && (
+                    <Bar dataKey="LR" name="LR" animationDuration={400} radius={[2, 2, 0, 0]}>
+                      {dayPredictions.map((entry, i) => (
+                        <Cell
+                          key={`lr-${i}`}
+                          fill="var(--lr-color)"
+                          fillOpacity={entry.hour === inputs.hour ? 1 : 0.28}
+                        />
+                      ))}
+                    </Bar>
+                  )}
                 </BarChart>
               </ResponsiveContainer>
             </div>
             <div className="flex items-center gap-5 mt-3 text-xs text-[var(--text-muted)]">
-              <LegendDot color="var(--accent)" label="MLP" />
-              <LegendDot color="var(--lr-color)" label="Lineare Regression" />
+              <LegendToggle
+                color="var(--accent)"
+                label="MLP"
+                checked={showMlp}
+                disabled={showMlp && !showLr}
+                onChange={setShowMlp}
+              />
+              <LegendToggle
+                color="var(--lr-color)"
+                label="Lineare Regression"
+                checked={showLr}
+                disabled={showLr && !showMlp}
+                onChange={setShowLr}
+              />
             </div>
           </div>
         </section>
@@ -425,15 +444,28 @@ export default function LiveVorhersage({ station, onGoToMap }) {
   )
 }
 
-function LegendDot({ color, label }) {
+// Legenden-Eintrag mit Häkchen: blendet das Modell im Verlauf ein oder aus.
+// disabled verhindert, dass beide Modelle gleichzeitig ausgeblendet werden.
+function LegendToggle({ color, label, checked, disabled, onChange }) {
   return (
-    <span className="inline-flex items-center gap-2">
+    <label
+      className="inline-flex items-center gap-2 select-none"
+      style={{ cursor: disabled ? 'not-allowed' : 'pointer' }}
+      title={disabled ? 'Mindestens ein Modell bleibt sichtbar' : undefined}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.checked)}
+        style={{ accentColor: color }}
+      />
       <span
         className="inline-block w-2 h-2 rounded-full"
-        style={{ background: color }}
+        style={{ background: color, opacity: checked ? 1 : 0.35 }}
       />
-      {label}
-    </span>
+      <span style={{ opacity: checked ? 1 : 0.6 }}>{label}</span>
+    </label>
   )
 }
 
