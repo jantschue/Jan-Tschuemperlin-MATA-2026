@@ -155,7 +155,7 @@ export default function StationsMap({ stations, selectedStationId, onSelectStati
             center={bounds ? undefined : [47.09, 8.75]}
             zoom={bounds ? undefined : 11}
             zoomSnap={0.25}
-            scrollWheelZoom={false}
+            scrollWheelZoom
             minZoom={8}
             maxZoom={16}
             className="stations-map"
