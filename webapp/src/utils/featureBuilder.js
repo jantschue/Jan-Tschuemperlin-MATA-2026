@@ -15,14 +15,27 @@
  * automatisch auch für Stationen mit Ausnahmen (Sattel R1/R2 enthalten kein
  * `Year`, siehe FEATURE_EXCLUDE in models/mlp_v8.py → 66 statt 67 Features).
  *
- * Feiertage / Schulferien: Die Live-UI kennt je einen einzigen "Feiertag"- bzw.
- * "Schulferien"-Schalter. Da das Projektgebiet im Kanton Schwyz liegt, werden
- * diese als Schwyzer Feiertag (holiday_SZ = 1) bzw. Schwyzer Schulferien
- * (schoolholiday_SZ = 1) interpretiert, alle übrigen Kantone bleiben 0.
+ * Feiertage: Die UI kennt einen einzigen "Feiertag"-Schalter. Fällt das
+ * eingestellte Datum auf einen Schwyzer Feiertag, werden die 26 holiday_*-
+ * Spalten genau so gesetzt, wie das Modell diesen Tag im Training gesehen hat
+ * (z. B. Auffahrt: alle Kantone, Josefstag: NW, SZ, TI, UR, VS). Wird der
+ * Schalter an einem gewöhnlichen Datum eingeschaltet, gilt das Muster eines
+ * landesweiten Feiertags (alle 26 Kantone = 1), weil im Training kein Tag
+ * vorkommt, an dem nur holiday_SZ = 1 ist.
+ *
+ * Schulferien: Der Schalter setzt schoolholiday_SZ = 1, alle übrigen Kantone
+ * bleiben 0.
+ *
+ * Wetter: Einheiten wie im Training (MeteoSchweiz): sun_1h = Sonnenscheindauer
+ * in Minuten pro Stunde (0–60), snow_1h = Schneezuwachs in cm pro Stunde.
+ * weather_cat folgt der Regel aus scripts/categorize_weather.py: Schnee und
+ * Regen gehen vor, sonst gilt zwischen 20 und 6 Uhr immer "Night" (2).
  *
  * Encodings (Periode, Offset) müssen mit der Daten-Engineering-Pipeline
  * (scripts/add_time_features.py) übereinstimmen.
  */
+
+import { findSwissHoliday } from './swissHolidays.js'
 
 // 26 Schweizer Kantonskürzel (alphabetisch, wie in scripts/generate_holidays.py)
 const CANTONS = [
@@ -53,9 +66,9 @@ function cyclic(value, period) {
  *   dayOfWeek:  0..6 (Montag = 0),
  *   month:      1..12,
  *   day:        1..31 (Default 15),
- *   temp, rain, sun, snow,
+ *   temp (°C), rain (mm), sun (Minuten 0..60), snow (cm),
  *   weatherCat: 0..4 (LabelEncoder-Index),
- *   isHoliday:       boolean (als Schwyzer Feiertag interpretiert),
+ *   isHoliday:       boolean (Feiertag, Kantonsmuster siehe oben),
  *   isSchoolHoliday: boolean (als Schwyzer Schulferien interpretiert)
  * }
  * @param {string[]} featureNames - die pro Station exportierte `features`-Liste
@@ -70,8 +83,21 @@ export function buildFeatureVector(inputs, featureNames) {
   const [doySin,  doyCos]    = cyclic(dayOfYear(inputs.month, day), 365)
 
   const isWeekend = inputs.dayOfWeek >= 5 ? 1 : 0
-  const isHoliday = inputs.isHoliday ? 1 : 0
   const isSchoolHoliday = inputs.isSchoolHoliday ? 1 : 0
+
+  // Kantone mit Feiertag: Muster des echten Feiertags, sonst landesweit
+  let holidayCantons = []
+  if (inputs.isHoliday) {
+    const h = findSwissHoliday(inputs.year, inputs.month, day)
+    holidayCantons = h ? h.cantons : CANTONS
+  }
+
+  // Night-Regel wie in scripts/categorize_weather.py (Snow > Rain > Night)
+  const isNightHour = inputs.hour >= 20 || inputs.hour <= 6
+  const weatherCat =
+    isNightHour && (inputs.weatherCat === 0 || inputs.weatherCat === 1)
+      ? 2
+      : inputs.weatherCat
 
   // Benannte Feature-Map (Schlüssel = exakte Spaltennamen der Python-Pipeline)
   const map = {
@@ -85,10 +111,10 @@ export function buildFeatureVector(inputs, featureNames) {
     rain_1h: inputs.rain,
     sun_1h: inputs.sun,
     snow_1h: inputs.snow,
-    weather_cat: inputs.weatherCat
+    weather_cat: weatherCat
   }
-  // 26 Kantons-Feiertagsspalten: einziger UI-Schalter -> holiday_SZ
-  for (const c of CANTONS) map[`holiday_${c}`] = c === 'SZ' ? isHoliday : 0
+  // 26 Kantons-Feiertagsspalten (Muster siehe oben)
+  for (const c of CANTONS) map[`holiday_${c}`] = holidayCantons.includes(c) ? 1 : 0
   // 26 Kantons-Schulferienspalten (v8): einziger UI-Schalter -> schoolholiday_SZ
   for (const c of CANTONS) map[`schoolholiday_${c}`] = c === 'SZ' ? isSchoolHoliday : 0
 
@@ -109,7 +135,8 @@ export const MONTHS = [
 
 // LabelEncoder-Reihenfolge entspricht alphabetischer Sortierung der Klassen
 // im Trainings-Datensatz (Clear, Cloudy, Night, Rain, Snow).
-// "Night" ist datengetrieben (Tageszeit) und wird nicht in der UI angeboten.
+// "Night" ist datengetrieben (Tageszeit) und wird nicht in der UI angeboten;
+// buildFeatureVector setzt es zwischen 20 und 6 Uhr automatisch.
 export const WEATHER_OPTIONS = [
   { id: 'clear',  label: 'Klar',     cat: 0 },
   { id: 'cloudy', label: 'Bewölkt',  cat: 1 },
@@ -126,7 +153,7 @@ export const DEFAULT_INPUTS = {
   day: 15,
   temp: 18,
   rain: 0,
-  sun: 0.7,
+  sun: 40, // Minuten Sonnenschein pro Stunde (0–60)
   snow: 0,
   weatherCat: 0, // Clear
   isHoliday: false,

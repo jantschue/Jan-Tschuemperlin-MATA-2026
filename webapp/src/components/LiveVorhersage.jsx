@@ -18,36 +18,11 @@ import {
   WEEKDAYS,
   WEATHER_OPTIONS
 } from '../utils/featureBuilder.js'
+import { findSwissHoliday } from '../utils/swissHolidays.js'
 
-// Ostersonntag nach Butcher's Algorithm
-function easterSunday(year) {
-  const a = year % 19
-  const b = Math.floor(year / 100)
-  const c = year % 100
-  const d = Math.floor(b / 4)
-  const e = b % 4
-  const f = Math.floor((b + 8) / 25)
-  const g = Math.floor((b - f + 1) / 3)
-  const h = (19 * a + b - d - g + 15) % 30
-  const i = Math.floor(c / 4)
-  const k = c % 4
-  const l = (32 + 2 * e + 2 * i - h - k) % 7
-  const m = Math.floor((a + 11 * h + 22 * l) / 451)
-  const month = Math.floor((h + l - 7 * m + 114) / 31)
-  const day = ((h + l - 7 * m + 114) % 31) + 1
-  return new Date(year, month - 1, day)
-}
-
-// Prüft ob ein Datum ein Schweizer Feiertag ist
+// Prüft, ob ein Datum ein Schwyzer Feiertag ist (dieselben 14 Tage wie im Training)
 function isSwissHoliday(date) {
-  const y = date.getFullYear()
-  const m = date.getMonth() + 1
-  const d = date.getDate()
-  if ((m === 1 && d === 1) || (m === 8 && d === 1) ||
-      (m === 12 && d === 25) || (m === 12 && d === 26)) return true
-  const easter = easterSunday(y)
-  const diff = Math.round((new Date(y, m - 1, d) - easter) / 86400000)
-  return diff === -2 || diff === 1 || diff === 39 || diff === 50
+  return findSwissHoliday(date.getFullYear(), date.getMonth() + 1, date.getDate()) !== null
 }
 
 // WMO-Wettercodes → weather_cat (0=Clear, 1=Cloudy, 3=Rain, 4=Snow)
@@ -144,19 +119,22 @@ export default function LiveVorhersage({ station, onGoToMap }) {
   useEffect(() => {
     fetch(
       'https://api.open-meteo.com/v1/forecast?latitude=47.02&longitude=8.65' +
-      '&current=temperature_2m,precipitation,snowfall,weathercode,cloud_cover&timezone=Europe%2FZurich'
+      '&current=temperature_2m,precipitation,snowfall,weathercode,cloud_cover,is_day&timezone=Europe%2FZurich'
     )
       .then(r => r.json())
       .then(data => {
         const cur = data.current
         if (!cur) return
-        const sun = Math.max(0, 1 - (cur.cloud_cover ?? 50) / 100)
+        // Sonnenschein in Minuten pro Stunde (wie MeteoSchweiz sre000h0),
+        // grob aus der Bewölkung geschätzt; nachts 0
+        const sun = cur.is_day === 0 ? 0 : Math.round(60 * Math.max(0, 1 - (cur.cloud_cover ?? 50) / 100))
         setInputs(s => ({
           ...s,
           temp: Math.round(cur.temperature_2m ?? s.temp),
           rain: Math.min(20, parseFloat((cur.precipitation ?? 0).toFixed(1))),
-          snow: Math.min(10, parseFloat(((cur.snowfall ?? 0) * 10).toFixed(1))),
-          sun: parseFloat(sun.toFixed(2)),
+          // Open-Meteo liefert snowfall bereits in cm, wie snow_1h im Training
+          snow: Math.min(10, parseFloat((cur.snowfall ?? 0).toFixed(1))),
+          sun,
           weatherCat: wmoCat(cur.weathercode ?? cur.weather_code ?? 0)
         }))
       })
@@ -312,23 +290,23 @@ export default function LiveVorhersage({ station, onGoToMap }) {
           />
 
           <Slider
-            label="Sonnenstunden (sun_1h)"
+            label="Sonnenschein (sun_1h)"
             value={inputs.sun}
             min={0}
-            max={1}
-            step={0.05}
+            max={60}
+            step={5}
             onChange={update('sun')}
-            display={inputs.sun.toFixed(2)}
+            display={`${inputs.sun} min/h`}
           />
 
           <Slider
-            label="Schnee (snow_1h)"
+            label="Neuschnee (snow_1h)"
             value={inputs.snow}
             min={0}
             max={10}
             step={0.5}
             onChange={update('snow')}
-            display={`${inputs.snow.toFixed(1)} mm`}
+            display={`${inputs.snow.toFixed(1)} cm`}
           />
 
           <Field label="Wetterkategorie">

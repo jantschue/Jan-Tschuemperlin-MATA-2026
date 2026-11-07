@@ -24,7 +24,7 @@ const SWEEPS = [
   { key: 'hour', label: 'Uhrzeit', unit: 'Uhr', min: 0, max: 23, step: 1, points: 24 },
   { key: 'temp', label: 'Temperatur', unit: '°C', min: -10, max: 35, points: 50 },
   { key: 'rain', label: 'Niederschlag', unit: 'mm', min: 0, max: 20, points: 50 },
-  { key: 'sun', label: 'Sonnenstunden', unit: '', min: 0, max: 1, points: 50 }
+  { key: 'sun', label: 'Sonnenschein', unit: 'min/h', min: 0, max: 60, points: 61 }
 ]
 
 // Lineare Werte-Reihe zwischen min und max
@@ -212,22 +212,22 @@ export default function FeatureSensitivitaet({ station }) {
               display={`${inputs.rain.toFixed(1)} mm`}
             />
             <CompactSlider
-              label="Sonnenstunden"
+              label="Sonnenschein"
               value={inputs.sun}
               min={0}
-              max={1}
-              step={0.05}
+              max={60}
+              step={5}
               onChange={update('sun')}
-              display={inputs.sun.toFixed(2)}
+              display={`${inputs.sun} min/h`}
             />
             <CompactSlider
-              label="Schnee"
+              label="Neuschnee"
               value={inputs.snow}
               min={0}
               max={10}
               step={0.5}
               onChange={update('snow')}
-              display={`${inputs.snow.toFixed(1)} mm`}
+              display={`${inputs.snow.toFixed(1)} cm`}
             />
             <div>
               <Label>Feiertag</Label>

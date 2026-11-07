@@ -273,14 +273,18 @@ def easter_sunday(year: int) -> date:
 def swiss_holiday_dates(year: int) -> set[date]:
     """
     Alle für den Kanton Schwyz verkehrsrelevanten Feiertage eines Jahres.
-    Enthält die 12 gesetzlichen Feiertage plus Berchtoldstag (2.1.), damit
-    die Webapp auch dessen Counterfactual zeigen kann. Die identische Logik
-    liegt clientseitig in webapp/src/utils/swissHolidays.js.
+    Enthält die 14 Schwyzer Feiertage, wie sie das Modell im Merkmal
+    holiday_SZ gesehen hat (data/holidays/swiss_holidays_2015_2025.csv, inkl.
+    Dreikönigstag und Josefstag), plus Berchtoldstag (2.1.), damit die Webapp
+    auch dessen Verlauf zeigen kann. Die identische Logik liegt clientseitig
+    in webapp/src/utils/swissHolidays.js.
     """
     es = easter_sunday(year)
     fixed = [
         date(year, 1, 1),    # Neujahr
-        date(year, 1, 2),    # Berchtoldstag (optional, nicht gesetzlich)
+        date(year, 1, 2),    # Berchtoldstag (optional, in SZ kein Feiertag)
+        date(year, 1, 6),    # Dreikönigstag
+        date(year, 3, 19),   # Josefstag
         date(year, 8, 1),    # Bundesfeier
         date(year, 8, 15),   # Mariä Himmelfahrt
         date(year, 11, 1),   # Allerheiligen

@@ -5,18 +5,52 @@
  * mit Datum (YYYY-MM-DD), Name und Kategorie. Das Osterdatum wird mit der
  * Gauss-Osterformel (Butcher-Algorithmus) berechnet, ohne externe API.
  *
+ * Die Liste entspricht den 14 Tagen, an denen im Trainingsdatensatz
+ * holiday_SZ = 1 ist (data/holidays/swiss_holidays_2015_2025.csv, erzeugt mit
+ * dem Python-Modul holidays). Dazu gehören auch Dreikönigstag (6.1.) und
+ * Josefstag (19.3.).
+ *
  * Die identische Datumslogik liegt serverseitig in export_weights.py
  * (swiss_holiday_dates), damit die exportierten Feiertags-Feature-Vektoren und
  * die hier angezeigten Feiertage exakt übereinstimmen.
+ *
+ * cantons: Kantone, die am selben Tag im Trainingsdatensatz ebenfalls einen
+ * Feiertag haben. featureBuilder.js setzt damit die 26 holiday_*-Spalten so,
+ * wie das Modell diesen Tag im Training gesehen hat (Stand 2025).
  *
  * Kategorien:
  *   fix        – gesetzlich, festes Kalenderdatum (z.B. Neujahr, Bundesfeier)
  *   beweglich  – ostergebunden (z.B. Karfreitag, Auffahrt)
  *   kirchlich  – fixes kirchliches Datum (z.B. Allerheiligen, Weihnachten)
  *
- * Berchtoldstag (2.1.) ist im Kanton Schwyz nicht gesetzlich, aber
- * verkehrsrelevant und wird mit optional=true markiert.
+ * Berchtoldstag (2.1.) ist im Kanton Schwyz kein Feiertag (holiday_SZ = 0),
+ * aber verkehrsrelevant und wird mit optional=true markiert.
  */
+
+const ALL_CANTONS = [
+  'AG', 'AI', 'AR', 'BE', 'BL', 'BS', 'FR', 'GE', 'GL', 'GR',
+  'JU', 'LU', 'NE', 'NW', 'OW', 'SG', 'SH', 'SO', 'SZ', 'TG',
+  'TI', 'UR', 'VD', 'VS', 'ZG', 'ZH'
+]
+
+// Kantonsmuster je Feiertag, abgeleitet aus swiss_holidays_2015_2025.csv
+const CANTONS = {
+  'Neujahr': ALL_CANTONS,
+  'Berchtoldstag': ['AG', 'BE', 'JU', 'LU', 'TG', 'VD', 'ZH'],
+  'Dreikönigstag': ['SZ', 'TI', 'UR'],
+  'Josefstag': ['NW', 'SZ', 'TI', 'UR', 'VS'],
+  'Karfreitag': ALL_CANTONS.filter((c) => !['GR', 'TI', 'VS'].includes(c)),
+  'Ostermontag': ['AG', 'AI', 'AR', 'BE', 'BL', 'BS', 'GE', 'GL', 'GR', 'JU', 'LU', 'SG', 'SH', 'SZ', 'TG', 'TI', 'UR', 'VD', 'ZH'],
+  'Auffahrt': ALL_CANTONS,
+  'Pfingstmontag': ['AG', 'AI', 'AR', 'BE', 'BL', 'BS', 'GE', 'GL', 'GR', 'JU', 'LU', 'SG', 'SH', 'SZ', 'TG', 'TI', 'UR', 'VD', 'ZH'],
+  'Fronleichnam': ['AG', 'AI', 'JU', 'LU', 'NE', 'NW', 'OW', 'SZ', 'TI', 'UR', 'VS', 'ZG'],
+  'Bundesfeier': ALL_CANTONS,
+  'Mariä Himmelfahrt': ['AG', 'AI', 'JU', 'LU', 'NW', 'OW', 'SZ', 'TI', 'UR', 'VS', 'ZG'],
+  'Allerheiligen': ['AG', 'AI', 'GL', 'JU', 'LU', 'NW', 'OW', 'SG', 'SZ', 'TI', 'UR', 'VS', 'ZG'],
+  'Mariä Empfängnis': ['AG', 'AI', 'LU', 'NW', 'OW', 'SZ', 'TI', 'UR', 'VS', 'ZG'],
+  'Weihnachten': ALL_CANTONS,
+  'Stephanstag': ['AG', 'AI', 'AR', 'BE', 'BL', 'BS', 'GL', 'GR', 'LU', 'SG', 'SH', 'SZ', 'TG', 'TI', 'UR', 'ZH'],
+}
 
 // Zweistellige Zahl mit führender Null
 function pad2(n) {
@@ -55,7 +89,7 @@ function addDays(date, days) {
 /**
  * Alle Schwyzer Feiertage eines Jahres.
  * @param {number} year
- * @returns {Array<{date:string, name:string, category:string, optional?:boolean}>}
+ * @returns {Array<{date:string, name:string, category:string, cantons:string[], optional?:boolean}>}
  */
 export function getSwissHolidays(year) {
   const easter = easterSunday(year)
@@ -67,6 +101,8 @@ export function getSwissHolidays(year) {
   return [
     { date: isoLocal(year, 1, 1),  name: 'Neujahr',            category: 'fix' },
     { date: isoLocal(year, 1, 2),  name: 'Berchtoldstag',      category: 'fix',       optional: true },
+    { date: isoLocal(year, 1, 6),  name: 'Dreikönigstag',      category: 'kirchlich' },
+    { date: isoLocal(year, 3, 19), name: 'Josefstag',          category: 'kirchlich' },
     { date: mov(-2),               name: 'Karfreitag',         category: 'beweglich' },
     { date: mov(1),                name: 'Ostermontag',        category: 'beweglich' },
     { date: mov(39),               name: 'Auffahrt',           category: 'beweglich' },
@@ -78,7 +114,18 @@ export function getSwissHolidays(year) {
     { date: isoLocal(year, 12, 8), name: 'Mariä Empfängnis',   category: 'kirchlich' },
     { date: isoLocal(year, 12, 25), name: 'Weihnachten',       category: 'kirchlich' },
     { date: isoLocal(year, 12, 26), name: 'Stephanstag',       category: 'kirchlich' },
-  ]
+  ].map((h) => ({ ...h, cantons: CANTONS[h.name] }))
+}
+
+/**
+ * Schwyzer Feiertag an einem bestimmten Datum (ohne Berchtoldstag) oder null.
+ * @param {number} year
+ * @param {number} month 1..12
+ * @param {number} day 1..31
+ */
+export function findSwissHoliday(year, month, day) {
+  const key = isoLocal(year, month, day)
+  return getSwissHolidays(year).find((h) => h.date === key && !h.optional) || null
 }
 
 /**
@@ -113,7 +160,8 @@ export function holidayDateSet(years) {
 
 // Feste Reihenfolge der Feiertage im Kalenderjahr (für Ranking-Achsen)
 export const HOLIDAY_ORDER = [
-  'Neujahr', 'Berchtoldstag', 'Karfreitag', 'Ostermontag', 'Auffahrt',
-  'Pfingstmontag', 'Fronleichnam', 'Bundesfeier', 'Mariä Himmelfahrt',
-  'Allerheiligen', 'Mariä Empfängnis', 'Weihnachten', 'Stephanstag',
+  'Neujahr', 'Berchtoldstag', 'Dreikönigstag', 'Josefstag', 'Karfreitag',
+  'Ostermontag', 'Auffahrt', 'Pfingstmontag', 'Fronleichnam', 'Bundesfeier',
+  'Mariä Himmelfahrt', 'Allerheiligen', 'Mariä Empfängnis', 'Weihnachten',
+  'Stephanstag',
 ]
