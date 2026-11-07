@@ -13,12 +13,36 @@ function stationsBounds(stations) {
     if (s.lng < minLng) minLng = s.lng
     if (s.lng > maxLng) maxLng = s.lng
   }
-  const padLat = Math.max(0.02, (maxLat - minLat) * 0.15)
-  const padLng = Math.max(0.02, (maxLng - minLng) * 0.15)
+  const padLat = Math.max(0.02, (maxLat - minLat) * 0.12)
+  const padLng = Math.max(0.02, (maxLng - minLng) * 0.25)
   return [
     [minLat - padLat, minLng - padLng],
     [maxLat + padLat, maxLng + padLng]
   ]
+}
+
+// Seite der Beschriftung je Standort. Brunnen und Schwyz liegen nur gut 2 km
+// auseinander, ihre Beschriftungen zeigen deshalb in entgegengesetzte Richtungen.
+const LABEL_SIDE = {
+  '050_Brunnen_Mositunnel': 'left',
+  '720_Schwyz': 'right',
+  '171_Sattel': 'right',
+  '299_Wollerau_Blatttunnel': 'left',
+  '216_Wangen_SZ': 'right'
+}
+
+function groupByLocation(stations) {
+  const map = new Map()
+  for (const s of stations) {
+    const key = s.id.replace(/_R\d+$/, '')
+    if (!map.has(key)) map.set(key, { key, name: s.name, lat: 0, lng: 0, stations: [] })
+    map.get(key).stations.push(s)
+  }
+  return [...map.values()].map((loc) => ({
+    ...loc,
+    lat: loc.stations.reduce((a, s) => a + s.lat, 0) / loc.stations.length,
+    lng: loc.stations.reduce((a, s) => a + s.lng, 0) / loc.stations.length
+  }))
 }
 
 // Farbgebung nach R²-Schwellenwert
@@ -54,8 +78,13 @@ export default function StationsMap({ stations, selectedStationId, onSelectStati
   // der Kachel-Ebene.
   const tileUrl =
     'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-grau/default/current/3857/{z}/{x}/{y}.jpeg'
-  const activeRing = isLight ? '#1b1b18' : '#f0f0f5'
+  const markerRing = isLight ? '#ffffff' : '#0b0b0d'
+  const markerFill = isLight ? '#4861c9' : '#6c8ff5'
 
+  // Beide Fahrtrichtungen einer Messstelle liegen praktisch am selben Ort.
+  // Die Karte zeigt deshalb einen Punkt pro Standort, die Richtungen stehen
+  // in der Beschriftung.
+  const locations = useMemo(() => groupByLocation(stations), [stations])
   const bounds = useMemo(() => stationsBounds(stations), [stations])
 
   const sorted = useMemo(() => {
@@ -108,19 +137,13 @@ export default function StationsMap({ stations, selectedStationId, onSelectStati
   return (
     <div className="space-y-12">
       <section className="stagger-in">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
-          <div>
-            <h1 className="mb-2">Stationskarte</h1>
-            <p className="text-sm text-[var(--text-secondary)] max-w-prose">
-              Zehn ASTRA-Messstellen im Kanton Schwyz. Markierungsfarbe codiert die
-              MLP-Vorhersagegüte (R²) je Station.
-            </p>
-          </div>
-          <div className="flex items-center gap-5 text-xs text-[var(--text-muted)]">
-            <LegendDot color="var(--success)" label="R² ≥ 0.70" />
-            <LegendDot color="var(--warning)" label="0.60–0.69" />
-            <LegendDot color="var(--danger)" label="&lt; 0.60" />
-          </div>
+        <div className="mb-6">
+          <h1 className="mb-2">Stationskarte</h1>
+          <p className="text-sm text-[var(--text-secondary)] max-w-prose">
+            Fünf ASTRA-Messstellen im Kanton Schwyz, je zwei Fahrtrichtungen. Die
+            Zahl neben der Richtung ist das R² des MLP auf den Testdaten. Ein Klick
+            auf eine Richtung öffnet die Live-Vorhersage.
+          </p>
         </div>
 
         <div
@@ -131,67 +154,65 @@ export default function StationsMap({ stations, selectedStationId, onSelectStati
             bounds={bounds || undefined}
             center={bounds ? undefined : [47.09, 8.75]}
             zoom={bounds ? undefined : 11}
-            scrollWheelZoom
-            minZoom={7}
-            maxZoom={17}
+            zoomSnap={0.25}
+            scrollWheelZoom={false}
+            minZoom={8}
+            maxZoom={16}
+            className="stations-map"
             style={{ height: '100%', width: '100%', background: 'var(--bg-base)' }}
           >
             <TileLayer
               attribution='&copy; <a href="https://www.swisstopo.admin.ch/">swisstopo</a>'
               url={tileUrl}
-              minZoom={7}
-              maxZoom={17}
+              minZoom={8}
+              maxZoom={16}
             />
-            {stations.map((s) => {
-              const active = s.id === selectedStationId
+            {locations.map((loc) => {
+              const active = loc.stations.some((s) => s.id === selectedStationId)
               return (
                 <CircleMarker
-                  key={s.id}
-                  center={[s.lat, s.lng]}
-                  radius={active ? 11 : 7}
+                  key={loc.key}
+                  center={[loc.lat, loc.lng]}
+                  radius={active ? 9 : 7}
                   pathOptions={{
-                    fillColor: r2Hex(s.metrics.mlp.r2),
-                    fillOpacity: 0.95,
-                    color: active ? activeRing : r2Hex(s.metrics.mlp.r2),
-                    weight: active ? 2 : 1
+                    fillColor: markerFill,
+                    fillOpacity: 1,
+                    color: markerRing,
+                    weight: 2.5
                   }}
                   eventHandlers={{
-                    click: () => onSelectStation(s.id)
+                    // Klicks in der Beschriftung leitet Leaflet ebenfalls an den
+                    // Marker weiter. Dort entscheidet der Richtungs-Knopf.
+                    click: (e) => {
+                      if (e.originalEvent?.target?.closest?.('.station-label')) return
+                      onSelectStation(loc.stations[0].id)
+                    }
                   }}
                 >
                   <Tooltip
-                    direction="top"
-                    offset={[0, -8]}
+                    permanent
+                    interactive
+                    direction={LABEL_SIDE[loc.key] || 'right'}
+                    offset={LABEL_SIDE[loc.key] === 'left' ? [-12, 0] : [12, 0]}
                     opacity={1}
-                    className="station-tooltip"
+                    className="station-label"
                   >
-                    <div style={{ minWidth: 200 }}>
-                      <div className="font-medium text-sm mb-0.5 whitespace-nowrap">{s.name}</div>
-                      <div className="text-xs text-[var(--text-muted)] mb-3 whitespace-nowrap">
-                        Richtung {s.direction}
-                      </div>
-                      <table className="text-xs w-full border-collapse">
-                        <thead>
-                          <tr>
-                            <th className="font-normal text-left pb-1.5 text-[var(--text-faint)] pr-5" />
-                            <th className="font-normal text-right pb-1.5 text-[var(--lr-color)] pr-4">LR</th>
-                            <th className="font-normal text-right pb-1.5 text-[var(--accent)]">MLP</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {[
-                            { label: 'MAE',  lr: s.metrics.linear.mae.toFixed(1),  mlp: s.metrics.mlp.mae.toFixed(1) },
-                            { label: 'RMSE', lr: s.metrics.linear.rmse.toFixed(1), mlp: s.metrics.mlp.rmse.toFixed(1) },
-                            { label: 'R²',   lr: s.metrics.linear.r2.toFixed(2),   mlp: s.metrics.mlp.r2.toFixed(2) }
-                          ].map(row => (
-                            <tr key={row.label}>
-                              <td className="text-[var(--text-muted)] py-0.5 pr-5">{row.label}</td>
-                              <td className="font-mono text-right whitespace-nowrap pr-4 text-[var(--text-secondary)]">{row.lr}</td>
-                              <td className="font-mono text-right whitespace-nowrap text-[var(--text-primary)]">{row.mlp}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                    <div className="station-label-name">{loc.name}</div>
+                    <div className="station-label-dirs">
+                      {loc.stations.map((s) => (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => onSelectStation(s.id)}
+                          className={`station-label-dir ${
+                            s.id === selectedStationId ? 'is-active' : ''
+                          }`}
+                          title={`${s.name}, Richtung ${s.direction}: Live-Vorhersage öffnen`}
+                        >
+                          {s.direction}
+                          <span className="font-mono">{s.metrics.mlp.r2.toFixed(2)}</span>
+                        </button>
+                      ))}
                     </div>
                   </Tooltip>
                 </CircleMarker>
@@ -278,17 +299,5 @@ export default function StationsMap({ stations, selectedStationId, onSelectStati
         </div>
       </section>
     </div>
-  )
-}
-
-function LegendDot({ color, label }) {
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      <span
-        className="inline-block w-2 h-2 rounded-full"
-        style={{ background: color }}
-      />
-      {label}
-    </span>
   )
 }

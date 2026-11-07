@@ -575,6 +575,67 @@ a:focus-visible {
 :root[data-theme='dark'] .leaflet-tile-pane {
   filter: invert(1) brightness(0.88) contrast(0.95);
 }
+/* Auf der Stationskarte tritt die Grundkarte zurück, damit die Ortsnamen der
+   Landeskarte nicht mit den Stationsbeschriftungen konkurrieren. */
+:root[data-theme='light'] .stations-map .leaflet-tile-pane {
+  filter: grayscale(1) contrast(0.75) brightness(1.08);
+  opacity: 0.55;
+}
+:root[data-theme='dark'] .stations-map .leaflet-tile-pane {
+  filter: invert(1) grayscale(1) contrast(0.7) brightness(0.75);
+  opacity: 0.5;
+}
+.leaflet-tooltip.station-label {
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-pop);
+  padding: 6px 8px 7px;
+  font-family: 'Geist', sans-serif;
+  white-space: nowrap;
+}
+.leaflet-tooltip.station-label::before {
+  display: none;
+}
+.station-label-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 5px;
+}
+.station-label-dirs {
+  display: flex;
+  gap: 4px;
+}
+.station-label-dir {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  font-size: 0.7rem;
+  line-height: 1;
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color 120ms, color 120ms;
+}
+.station-label-dir .font-mono {
+  color: var(--text-primary);
+}
+.station-label-dir:hover,
+.station-label-dir:focus-visible {
+  border-color: var(--accent);
+  color: var(--text-primary);
+  outline: none;
+}
+.station-label-dir.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text-primary);
+}
 .leaflet-control-attribution a {
   color: var(--text-secondary) !important;
 }
